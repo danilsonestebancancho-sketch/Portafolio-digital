@@ -1,2027 +1,1573 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portafolio Académico - Universidad Peruana Los Andes</title>
-  <style>
-    /* ==========================================================================
-       ESTILOS GLOBALES Y PALETA DE COLORES (HUMO Y CALAVERAS)
-       ========================================================================== */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    body {
-      background-color: #0B0B0D;
-      color: #F0F0F5;
-      min-height: 100vh;
-      overflow-x: hidden;
-      position: relative;
-    }
-
-    /* Canvas Interactivo de Fondo */
-    #smokeCanvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: -1;
-      background: radial-gradient(circle at center, #121214 0%, #0B0B0D 100%);
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    /* Botones y UI */
-    .btn {
-      padding: 10px 18px;
-      border: 1px solid #4A4A50;
-      border-radius: 6px;
-      background: linear-gradient(135deg, #2A2A2E 0%, #1A1A1D 100%);
-      color: #F0F0F5;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .btn:hover {
-      background: #3A3A40;
-      border-color: #D1D1D6;
-      box-shadow: 0 0 12px rgba(240, 240, 245, 0.2);
-      transform: translateY(-2px);
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #4A4A50 0%, #2A2A2E 100%);
-      border-color: #8E8E93;
-    }
-
-    .btn-secondary {
-      background: transparent;
-      border-color: #3A3A40;
-    }
-
-    .btn-teacher {
-      background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
-      border-color: #818CF8;
-      color: #FFF;
-    }
-
-    .btn-download {
-      background: #1E3A8A;
-      border-color: #3B82F6;
-      color: #FFF;
-    }
-
-    .btn-delete {
-      background: #7F1D1D;
-      border-color: #EF4444;
-      color: #FFF;
-    }
-
-    .btn-small {
-      padding: 5px 10px;
-      font-size: 0.85rem;
-    }
-
-    /* ==========================================================================
-       PANTALLA DE AUTENTICACIÓN (LOGIN FIRST & REGISTRO)
-       ========================================================================== */
-    .auth-container {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .auth-card {
-      background: rgba(26, 26, 29, 0.85);
-      border: 1px solid #3A3A40;
-      backdrop-filter: blur(10px);
-      border-radius: 12px;
-      padding: 35px;
-      width: 100%;
-      max-width: 480px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
-      text-align: center;
-    }
-
-    .upla-logo {
-      max-width: 160px;
-      height: auto;
-      margin-bottom: 20px;
-      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
-    }
-
-    .auth-card h2 {
-      margin-bottom: 20px;
-      color: #F0F0F5;
-      font-size: 1.5rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .form-group {
-      margin-bottom: 18px;
-      text-align: left;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 0.85rem;
-      color: #D1D1D6;
-      margin-bottom: 6px;
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 12px;
-      background: #121214;
-      border: 1px solid #2A2A2E;
-      border-radius: 6px;
-      color: #F0F0F5;
-      outline: none;
-      transition: border-color 0.3s ease;
-    }
-
-    .form-control:focus {
-      border-color: #8E8E93;
-      box-shadow: 0 0 8px rgba(142, 142, 147, 0.3);
-    }
-
-    .avatar-preview-container {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-top: 5px;
-    }
-
-    .avatar-preview {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid #3A3A40;
-    }
-
-    .divider {
-      margin: 20px 0;
-      border-bottom: 1px solid #2A2A2E;
-      position: relative;
-    }
-
-    .divider span {
-      position: absolute;
-      top: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1A1A1D;
-      padding: 0 10px;
-      color: #8E8E93;
-      font-size: 0.8rem;
-    }
-
-    /* ==========================================================================
-       HEADER Y SECCIÓN DE PERFIL
-       ========================================================================== */
-    header {
-      background: rgba(18, 18, 20, 0.9);
-      border-bottom: 1px solid #2A2A2E;
-      backdrop-filter: blur(8px);
-      padding: 15px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .header-branding {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .header-logo {
-      height: 45px;
-      width: auto;
-    }
-
-    .header-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-
-    .user-profile-widget {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      cursor: pointer;
-      padding: 6px 12px;
-      border-radius: 8px;
-      transition: background 0.3s ease;
-    }
-
-    .user-profile-widget:hover {
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .user-avatar-header {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid #4A4A50;
-    }
-
-    .user-info-header {
-      text-align: right;
-    }
-
-    .user-name-header {
-      font-weight: 600;
-      font-size: 0.95rem;
-    }
-
-    .user-code-header {
-      font-size: 0.8rem;
-      color: #D1D1D6;
-    }
-
-    /* Banner Profesor */
-    .teacher-banner {
-      background: #312E81;
-      color: #E0E7FF;
-      text-align: center;
-      padding: 8px;
-      font-size: 0.85rem;
-      border-bottom: 1px solid #4338CA;
-    }
-
-    /* ==========================================================================
-       DASHBOARD Y SECCIÓN ACADÉMICA
-       ========================================================================== */
-    .main-container {
-      max-width: 1300px;
-      margin: 30px auto;
-      padding: 0 20px;
-    }
-
-    .course-tabs {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 25px;
-      border-bottom: 2px solid #2A2A2E;
-      padding-bottom: 10px;
-    }
-
-    .tab-btn {
-      background: transparent;
-      border: none;
-      color: #D1D1D6;
-      font-size: 1.1rem;
-      font-weight: 600;
-      padding: 10px 20px;
-      cursor: pointer;
-      border-radius: 6px;
-      transition: all 0.3s ease;
-    }
-
-    .tab-btn.active {
-      background: #2A2A2E;
-      color: #FFF;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-    }
-
-    .units-container {
-      display: flex;
-      flex-direction: column;
-      gap: 30px;
-    }
-
-    .unit-card {
-      background: rgba(26, 26, 29, 0.7);
-      border: 1px solid #2A2A2E;
-      border-radius: 10px;
-      padding: 20px;
-      backdrop-filter: blur(5px);
-    }
-
-    .unit-card h3 {
-      font-size: 1.2rem;
-      color: #F0F0F5;
-      margin-bottom: 15px;
-      border-left: 4px solid #8E8E93;
-      padding-left: 10px;
-    }
-
-    .weeks-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 15px;
-    }
-
-    .week-card {
-      background: #121214;
-      border: 1px solid #2A2A2E;
-      border-radius: 8px;
-      padding: 15px;
-      transition: all 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .week-card:hover {
-      border-color: #8E8E93;
-      box-shadow: 0 0 15px rgba(240, 240, 245, 0.08);
-      transform: translateY(-2px);
-    }
-
-    .week-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .week-title-input {
-      background: transparent;
-      border: none;
-      border-bottom: 1px dashed #3A3A40;
-      color: #F0F0F5;
-      width: 100%;
-      font-size: 0.9rem;
-      padding: 4px 0;
-      margin-bottom: 12px;
-      outline: none;
-    }
-
-    .week-title-input:focus {
-      border-bottom-color: #8E8E93;
-    }
-
-    .file-status {
-      background: #1A1A1D;
-      border: 1px rgba(255, 255, 255, 0.05) solid;
-      border-radius: 6px;
-      padding: 10px;
-      font-size: 0.8rem;
-    }
-
-    .file-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-
-    .file-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    /* ==========================================================================
-       VENTANAS MODALES
-       ========================================================================== */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(6px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 200;
-    }
-
-    .modal-box {
-      background: #1A1A1D;
-      border: 1px solid #3A3A40;
-      border-radius: 12px;
-      padding: 25px;
-      width: 100%;
-      max-width: 500px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .modal-header h3 {
-      font-size: 1.2rem;
-    }
-
-    .close-modal {
-      background: transparent;
-      border: none;
-      color: #D1D1D6;
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
-
-    .modal-tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-
-    .upload-tab-btn {
-      flex: 1;
-      padding: 8px;
-      background: #121214;
-      border: 1px solid #2A2A2E;
-      color: #D1D1D6;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-
-    .upload-tab-btn.active {
-      background: #3A3A40;
-      color: #FFF;
-    }
-
-    @media (max-width: 768px) {
-      header {
-        flex-direction: column;
-        gap: 15px;
-      }
-      .course-tabs {
-        flex-direction: column;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <!-- CANVAS ANIMACIÓN DE HUMO Y CALAVERAS -->
-  <canvas id="smokeCanvas"></canvas>
-
-  <!-- ==========================================================================
-       SECCIÓN DE AUTENTICACIÓN (LOGIN FIRST / REGISTRO)
-       ========================================================================== -->
-  <div id="authSection" class="auth-container">
-    <div class="auth-card">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/2/23/Logo_UPLA.png" alt="UPLA Logo" class="upla-logo" id="uplaAuthLogo" onerror="this.src='https://via.placeholder.com/160x80/2A2A2E/F0F0F5?text=UPLA+Logo'">
-      
-      <!-- FORMULARIO DE LOGIN -->
-      <form id="loginForm">
-        <h2>PORTAFOLIO UPLA</h2>
-        <div class="form-group">
-          <label>Usuario / Código Universitario</label>
-          <input type="text" id="loginUser" class="form-control" required placeholder="Ej. 70012345">
-        </div>
-        <div class="form-group">
-          <label>Contraseña</label>
-          <input type="password" id="loginPassword" class="form-control" required placeholder="••••••••">
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Iniciar Sesión</button>
-        
-        <div class="divider"><span>O</span></div>
-        
-        <button type="button" id="btnTeacherAccess" class="btn btn-teacher" style="width: 100%; margin-bottom: 15px;">
-          👨‍🏫 Acceso Profesor / Invitado
-        </button>
-        
-        <p style="font-size: 0.85rem; color: #D1D1D6;">
-          ¿No tienes cuenta? <a href="#" id="toggleRegister" style="color: #FFF;">Registrar Cuenta</a>
-        </p>
-      </form>
-
-      <!-- FORMULARIO DE REGISTRO -->
-      <form id="registerForm" class="hidden">
-        <h2>REGISTRO DE ESTUDIANTE</h2>
-        <div class="form-group">
-          <label>Nombres y Apellidos Completos</label>
-          <input type="text" id="regNames" class="form-control" required placeholder="Juan Pérez">
-        </div>
-        <div class="form-group">
-          <label>Código Universitario</label>
-          <input type="text" id="regCode" class="form-control" required placeholder="U202012345">
-        </div>
-        <div class="form-group">
-          <label>Carrera Universitaria</label>
-          <input type="text" id="regCareer" class="form-control" required placeholder="Ingeniería de Sistemas y Computación">
-        </div>
-        <div class="form-group">
-          <label>Ciclo Académico</label>
-          <select id="regCycle" class="form-control" required>
-            <option value="I">I Ciclo</option>
-            <option value="II">II Ciclo</option>
-            <option value="III">III Ciclo</option>
-            <option value="IV">IV Ciclo</option>
-            <option value="V">V Ciclo</option>
-            <option value="VI">VI Ciclo</option>
-            <option value="VII">VII Ciclo</option>
-            <option value="VIII">VIII Ciclo</option>
-            <option value="IX">IX Ciclo</option>
-            <option value="X">X Ciclo</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Foto de Perfil</label>
-          <input type="file" id="regAvatar" class="form-control" accept="image/*">
-          <div class="avatar-preview-container">
-            <img id="avatarPreview" src="https://via.placeholder.com/60/2A2A2E/F0F0F5?text=Foto" class="avatar-preview" alt="Previsualización">
-            <small style="color: #8E8E93;">Previsualización en tiempo real</small>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Contraseña</label>
-          <input type="password" id="regPassword" class="form-control" required placeholder="••••••••">
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Crear Cuenta</button>
-        <p style="font-size: 0.85rem; color: #D1D1D6; margin-top: 15px;">
-          ¿Ya tienes cuenta? <a href="#" id="toggleLogin" style="color: #FFF;">Iniciar Sesión</a>
-        </p>
-      </form>
-    </div>
-  </div>
-
-  <!-- ==========================================================================
-       DASHBOARD PRINCIPAL (CABECERA Y CURSOS)
-       ========================================================================== -->
-  <div id="dashboardSection" class="hidden">
-    <!-- Banner de Advertencia cuando accede un Profesor -->
-    <div id="teacherBanner" class="teacher-banner hidden">
-      👁️ <strong>MODO EVALUACIÓN / PROFESOR ACTIVADO:</strong> Acceso de Solo Lectura. No se permite modificar ni eliminar contenido.
-    </div>
-
-    <!-- CABECERA PRINCIPAL -->
-    <header>
-      <div class="header-branding">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/2/23/Logo_UPLA.png" alt="UPLA" class="header-logo" id="uplaHeaderLogo" onerror="this.src='https://via.placeholder.com/120x45/2A2A2E/F0F0F5?text=UPLA'">
-        <div class="header-title">PLATAFORMA ACADÉMICA UPLA</div>
-      </div>
-
-      <div style="display: flex; align-items: center; gap: 20px;">
-        <div class="user-profile-widget" id="profileTrigger" title="Clic para editar perfil">
-          <img id="userAvatarHeader" src="" class="user-avatar-header" alt="Avatar">
-          <div class="user-info-header">
-            <div id="userNameHeader" class="user-name-header">Estudiante</div>
-            <div id="userCodeHeader" class="user-code-header">CÓDIGO</div>
-          </div>
-        </div>
-        <button id="btnLogout" class="btn btn-secondary btn-small">🔒 Cerrar Sesión</button>
-      </div>
-    </header>
-
-    <!-- CUERPO PRINCIPAL -->
-    <main class="main-container">
-      <div class="course-tabs">
-        <button class="tab-btn active" data-course="algoritmos">Algoritmos y Estructura de Datos</button>
-        <button class="tab-btn" data-course="desarrollo">Desarrollo de Aplicaciones I</button>
-      </div>
-
-      <h2 id="currentCourseTitle" style="margin-bottom: 20px; color: #F0F0F5;">Algoritmos y Estructura de Datos</h2>
-
-      <div id="unitsContainer" class="units-container">
-        <!-- Renderizado dinámico de 4 Unidades y 16 Semanas -->
-      </div>
-    </main>
-  </div>
-
-  <!-- ==========================================================================
-       MODAL DE SUBIDA DE TAREAS (ARCHIVOS GRANDES E ENLACES NUBE)
-       ========================================================================== -->
-  <div id="uploadModal" class="modal-overlay hidden">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h3 id="uploadModalTitle">Subir Tarea</h3>
-        <button class="close-modal" id="closeUploadModal">&times;</button>
-      </div>
-
-      <div class="modal-tabs">
-        <button class="upload-tab-btn active" data-type="file">📁 Archivo Local (Sin límite)</button>
-        <button class="upload-tab-btn" data-type="link">🔗 Enlace (Drive / GitHub)</button>
-      </div>
-
-      <!-- Formulario para Subir Archivo Físico -->
-      <form id="uploadFileForm">
-        <div class="form-group">
-          <label>Seleccionar Archivo (.zip, .pdf, .docx, .pptx, imágenes, etc.)</label>
-          <input type="file" id="fileInput" class="form-control" required>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Guardar Trabajo</button>
-      </form>
-
-      <!-- Formulario para Pegar Enlace Nube -->
-      <form id="uploadLinkForm" class="hidden">
-        <div class="form-group">
-          <label>Título / Nombre del Trabajo</label>
-          <input type="text" id="linkTitleInput" class="form-control" placeholder="Ej. Tarea 3 - Google Drive" required>
-        </div>
-        <div class="form-group">
-          <label>URL Pública (Google Drive, GitHub Releases, Dropbox, etc.)</label>
-          <input type="url" id="linkUrlInput" class="form-control" placeholder="https://drive.google.com/file/d/..." required>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Registrar Enlace</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- ==========================================================================
-       MODAL DE EDICIÓN DE PERFIL
-       ========================================================================== -->
-  <div id="profileModal" class="modal-overlay hidden">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h3>Editar Perfil de Estudiante</h3>
-        <button class="close-modal" id="closeProfileModal">&times;</button>
-      </div>
-      <form id="editProfileForm">
-        <div class="form-group">
-          <label>Nombres y Apellidos</label>
-          <input type="text" id="editNames" class="form-control" required>
-        </div>
-        <div class="form-group">
-          <label>Código Universitario</label>
-          <input type="text" id="editCode" class="form-control" required>
-        </div>
-        <div class="form-group">
-          <label>Carrera</label>
-          <input type="text" id="editCareer" class="form-control" required>
-        </div>
-        <div class="form-group">
-          <label>Ciclo Académico</label>
-          <select id="editCycle" class="form-control" required>
-            <option value="I">I Ciclo</option>
-            <option value="II">II Ciclo</option>
-            <option value="III">III Ciclo</option>
-            <option value="IV">IV Ciclo</option>
-            <option value="V">V Ciclo</option>
-            <option value="VI">VI Ciclo</option>
-            <option value="VII">VII Ciclo</option>
-            <option value="VIII">VIII Ciclo</option>
-            <option value="IX">IX Ciclo</option>
-            <option value="X">X Ciclo</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Nueva Foto de Perfil (Opcional)</label>
-          <input type="file" id="editAvatar" class="form-control" accept="image/*">
-        </div>
-        <div class="form-group">
-          <label>Nueva Contraseña (Opcional)</label>
-          <input type="password" id="editPassword" class="form-control" placeholder="Dejar en blanco para conservar">
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Guardar Cambios</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- ==========================================================================
-       LOGICA JAVASCRIPT PRINCIPAL Y CANVAS
-       ========================================================================== -->
-  <script>
-    /* --------------------------------------------------------------------------
-       1. ANIMACIÓN DE HUMO Y CALAVERAS (CANVAS 2D)
-       -------------------------------------------------------------------------- */
-    const canvas = document.getElementById('smokeCanvas');
-    const ctx = canvas.getContext('2d');
-
-    let width, height;
-    function resize() {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    let mouse = { x: width / 2, y: height / 2 };
-    window.addEventListener('mousemove', (e) => {
-      mouse.x =Aquí tienes el código **100% completo, único y autosuficiente** en un solo archivo `index.html`. 
-
-Incluye toda la arquitectura solicitada:
-1. **Fondo Canvas 2D Interactivo:** Efecto de humo en tonos plomo y siluetas de calaveras con aura dinámica al mover el mouse.
-2. **Sistema de Autenticación Completo:** Login, Registro con carga y previsualización de foto de perfil en tiempo real, e inicio de sesión persistente.
-3. **Acceso Especial Docente / Invitado:** Botón directo para ingresar en **Modo Solo Lectura** (deshabilita edición, borrado y subida de archivos).
-4. **Perfil de Estudiante Editable:** Modal para modificar nombres, código, carrera, ciclo, foto de perfil y contraseña.
-5. **Estructura Académica de la UPLA:** 2 cursos (*Algoritmos y Estructura de Datos* y *Desarrollo de Aplicaciones I*), divididos en 4 Unidades y 16 Semanas con títulos interactivos por semana.
-6. **Subida de Archivos Sin Límites (Soporte Híbrido):** Pestañas para subir archivos pesados sin restricción de tamaño (mediante la API IndexedDB del navegador) y para adjuntar enlaces directos (Google Drive / GitHub Releases / Supabase).
-
----
-
-```html
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portafolio Académico UPLA - Universidad Peruana Los Andes</title>
-  <style>
-    /* =========================================================
-       1. VARIABLES Y ESTILOS GLOBALES (TEMÁTICA HUMO Y CALAVERAS)
-       ========================================================= */
-    :root {
-      --bg-dark: #0B0B0D;
-      --bg-card: #121214;
-      --bg-container: #2A2A2E;
-      --bg-hover: #3A3A40;
-      --text-main: #F0F0F5;
-      --text-muted: #D1D1D6;
-      --accent-silver: #C0C0C0;
-      --accent-glow: rgba(240, 240, 245, 0.25);
-      --danger: #e74c3c;
-      --success: #2ecc71;
-      --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      font-family: var(--font-family);
-      min-height: 100vh;
-      overflow-x: hidden;
-      position: relative;
-    }
-
-    /* Fondo de Humo e Interactivo */
-    #smokeCanvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    .app-container {
-      position: relative;
-      z-index: 1;
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    /* =========================================================
-       2. COMPONENTES REUTILIZABLES (BOTONES, FORMULARIOS, MODALES)
-       ========================================================= */
-    .btn {
-      background: #2A2A2E;
-      color: var(--text-main);
-      border: 1px solid var(--accent-silver);
-      padding: 10px 18px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      justify-content: center;
-    }
-
-    .btn:hover {
-      background: var(--bg-hover);
-      box-shadow: 0 0 12px var(--accent-glow);
-      border-color: #ffffff;
-      transform: translateY(-2px);
-    }
-
-    .btn-primary {
-      background: #3A3A40;
-      border-color: #ffffff;
-    }
-
-    .btn-secondary {
-      background: transparent;
-      border-color: var(--text-muted);
-    }
-
-    .btn-danger {
-      background: rgba(231, 76, 60, 0.2);
-      border-color: var(--danger);
-      color: #ff6b6b;
-    }
-
-    .btn-danger:hover {
-      background: var(--danger);
-      color: #fff;
-    }
-
-    .btn-small {
-      padding: 5px 10px;
-      font-size: 0.85rem;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-      text-align: left;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 10px 14px;
-      background: var(--bg-card);
-      border: 1px solid var(--bg-container);
-      border-radius: 6px;
-      color: var(--text-main);
-      font-size: 0.95rem;
-      transition: border 0.3s ease;
-    }
-
-    .form-control:focus {
-      outline: none;
-      border-color: var(--accent-silver);
-      box-shadow: 0 0 8px var(--accent-glow);
-    }
-
-    /* Modal Overlay */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(5px);
-      z-index: 1000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .modal-content {
-      background: var(--bg-card);
-      border: 1px solid var(--bg-container);
-      border-radius: 12px;
-      width: 100%;
-      max-width: 500px;
-      padding: 25px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-      position: relative;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      border-bottom: 1px solid var(--bg-container);
-      padding-bottom: 10px;
-    }
-
-    .close-btn {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
-
-    /* =========================================================
-       3. PANTALLA DE AUTENTICACIÓN (LOGIN Y REGISTRO)
-       ========================================================= */
-    .auth-container {
-      max-width: 450px;
-      margin: 60px auto;
-      background: var(--bg-card);
-      border: 1px solid var(--bg-container);
-      border-radius: 12px;
-      padding: 30px;
-      text-align: center;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.7);
-    }
-
-    .upla-logo {
-      width: 120px;
-      height: 120px;
-      object-fit: contain;
-      margin-bottom: 15px;
-      filter: drop-shadow(0 0 8px var(--accent-glow));
-    }
-
-    .auth-header h1 {
-      font-size: 1.5rem;
-      margin-bottom: 5px;
-      letter-spacing: 1px;
-    }
-
-    .auth-header p {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-bottom: 25px;
-    }
-
-    .avatar-preview-container {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 15px;
-    }
-
-    .avatar-preview {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid var(--accent-silver);
-      background: var(--bg-container);
-    }
-
-    /* =========================================================
-       4. CABECERA Y DASHBOARD PRINCIPAL
-       ========================================================= */
-    .header-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--bg-card);
-      border: 1px solid var(--bg-container);
-      border-radius: 12px;
-      padding: 15px 25px;
-      margin-bottom: 25px;
-    }
-
-    .header-branding {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .header-branding img {
-      height: 50px;
-    }
-
-    .header-branding h2 {
-      font-size: 1.1rem;
-      line-height: 1.2;
-    }
-
-    .header-user {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      cursor: pointer;
-      padding: 5px 10px;
-      border-radius: 8px;
-      transition: background 0.3s;
-    }
-
-    .header-user:hover {
-      background: var(--bg-container);
-    }
-
-    .header-user img {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid var(--accent-silver);
-    }
-
-    .user-info {
-      text-align: right;
-    }
-
-    .user-info strong {
-      display: block;
-      font-size: 0.95rem;
-    }
-
-    .user-info small {
-      color: var(--text-muted);
-      font-size: 0.8rem;
-    }
-
-    /* Banner Modo Profesor */
-    .teacher-banner {
-      background: rgba(231, 76, 60, 0.15);
-      border: 1px solid var(--danger);
-      color: #ff6b6b;
-      padding: 12px 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    /* Pestañas de Cursos */
-    .course-tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 25px;
-    }
-
-    .tab-btn {
-      flex: 1;
-      padding: 15px;
-      background: var(--bg-card);
-      border: 1px solid var(--bg-container);
-      color: var(--text-muted);
-      font-size: 1rem;
-      font-weight: bold;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .tab-btn.active {
-      background: var(--bg-container);
-      color: var(--text-main);
-      border-color: var(--accent-silver);
-      box-shadow: 0 0 15px var(--accent-glow);
-    }
-
-    /* =========================================================
-       5. ESTRUCTURA DE UNIDADES Y SEMANAS
-       ========================================================= */
-    .unit-card {
-      background: var(--bg-card);
-      border: 1px solid var(--bg-container);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 25px;
-    }
-
-    .unit-card h3 {
-      font-size: 1.2rem;
-      color: var(--accent-silver);
-      margin-bottom: 15px;
-      border-bottom: 1px solid var(--bg-container);
-      padding-bottom: 8px;
-    }
-
-    .weeks-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 15px;
-    }
-
-    .week-card {
-      background: var(--bg-container);
-      border: 1px solid #3A3A40;
-      border-radius: 8px;
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    .week-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px var(--accent-glow);
-      border-color: var(--accent-silver);
-    }
-
-    .week-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .week-title-input {
-      background: var(--bg-dark);
-      border: 1px solid #3A3A40;
-      color: var(--text-main);
-      padding: 6px 10px;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      width: 100%;
-      margin-bottom: 12px;
-    }
-
-    .week-title-input:disabled {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      padding-left: 0;
-    }
-
-    .file-status {
-      background: var(--bg-dark);
-      border: 1px dashed #3A3A40;
-      border-radius: 6px;
-      padding: 10px;
-      font-size: 0.85rem;
-    }
-
-    .file-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-
-    .file-actions {
-      display: flex;
-      gap: 5px;
-    }
-
-    .margin-top {
-      margin-top: 8px;
-    }
-
-    /* Pestañas de Modal Carga */
-    .upload-tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-
-    .upload-tab-btn {
-      flex: 1;
-      padding: 8px;
-      background: var(--bg-dark);
-      border: 1px solid var(--bg-container);
-      color: var(--text-muted);
-      cursor: pointer;
-      border-radius: 4px;
-    }
-
-    .upload-tab-btn.active {
-      background: var(--bg-container);
-      color: var(--text-main);
-      border-color: var(--accent-silver);
-    }
-
-    @media (max-width: 768px) {
-      .header-bar {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-      }
-      .header-user {
-        text-align: center;
-        flex-direction: column;
-      }
-      .user-info {
-        text-align: center;
-      }
-      .course-tabs {
-        flex-direction: column;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <!-- CANVA INTERACTIVO HUMO Y CALAVERAS -->
-  <canvas id="smokeCanvas"></canvas>
-
-  <div class="app-container">
-
-    <!-- =========================================================
-         MODULO DE AUTENTICACIÓN (LOGIN / REGISTRO)
-         ========================================================= -->
-    <section id="authSection" class="auth-container">
-      <img src="[https://upload.wikimedia.org/wikipedia/commons/2/23/Logo_UPLA.png](https://upload.wikimedia.org/wikipedia/commons/2/23/Logo_UPLA.png)" alt="UPLA Logo" class="upla-logo" id="uplaLogoAuth" onerror="this.src='[https://via.placeholder.com/120/2A2A2E/F0F0F5?text=UPLA](https://via.placeholder.com/120/2A2A2E/F0F0F5?text=UPLA)'">
-      
-      <div class="auth-header">
-        <h1>Universidad Peruana Los Andes</h1>
-        <p>Portafolio Académico Digital</p>
-      </div>
-
-      <!-- Formulario Login -->
-      <form id="loginForm">
-        <div class="form-group">
-          <label for="loginUser">Código Universitario / Usuario</label>
-          <input type="text" id="loginUser" class="form-control" placeholder="Ej. U202012345" required>
-        </div>
-        <div class="form-group">
-          <label for="loginPassword">Contraseña</label>
-          <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Iniciar Sesión</button>
-      </form>
-
-      <!-- Formulario Registro -->
-      <form id="registerForm" class="hidden">
-        <div class="form-group">
-          <label for="regNames">Nombres y Apellidos Completos</label>
-          <input type="text" id="regNames" class="form-control" required>
-        </div>
-        <div class="form-group">
-          <label for="regCode">Código Universitario</label>
-          <input type="text" id="regCode" class="form-control" required>
-        </div>
-        <div class="form-group">
-          <label for="regCareer">Carrera Universitaria</label>
-          <input type="text" id="regCareer" class="form-control" placeholder="Ej. Ingeniería de Sistemas y Computación" required>
-        </div>
-        <div class="form-group">
-          <label for="regCycle">Ciclo Académico</label>
-          <select id="regCycle" class="form-control" required>
-            <option value="I">I Ciclo</option>
-            <option value="II">II Ciclo</option>
-            <option value="III">III Ciclo</option>
-            <option value="IV">IV Ciclo</option>
-            <option value="V">V Ciclo</option>
-            <option value="VI">VI Ciclo</option>
-            <option value="VII">VII Ciclo</option>
-            <option value="VIII">VIII Ciclo</option>
-            <option value="IX">IX Ciclo</option>
-            <option value="X">X Ciclo</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Foto de Perfil</label>
-          <div class="avatar-preview-container">
-            <img id="avatarPreview" src="[https://via.placeholder.com/60/2A2A2E/F0F0F5?text=Foto](https://via.placeholder.com/60/2A2A2E/F0F0F5?text=Foto)" class="avatar-preview" alt="Preview">
-            <input type="file" id="regAvatar" accept="image/*" class="form-control">
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="regPassword">Contraseña de Acceso</label>
-          <input type="password" id="regPassword" class="form-control" required>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Crear Cuenta</button>
-      </form>
-
-      <hr style="border-color: var(--bg-container); margin: 20px 0;">
-
-      <!-- Acceso Directo Profesor e Intercambio de Vistas -->
-      <button id="btnTeacherAccess" class="btn btn-secondary" style="width: 100%; margin-bottom: 12px;">
-        👨‍🏫 Acceso Profesor / Invitado (Solo Lectura)
-      </button>
-
-      <p id="toggleAuthMode" style="font-size: 0.85rem; color: var(--text-muted);">
-        ¿No tienes cuenta? <a href="#" id="toggleRegister" style="color: var(--text-main);">Registrar Cuenta</a>
-        <a href="#" id="toggleLogin" class="hidden" style="color: var(--text-main);">Iniciar Sesión</a>
-      </p>
-    </section>
-
-    <!-- =========================================================
-         DASHBOARD PRINCIPAL (CABECERA Y CURSOS)
-         ========================================================= -->
-    <section id="dashboardSection" class="hidden">
-      
-      <!-- Cabecera / Header -->
-      <header class="header-bar">
-        <div class="header-branding">
-          <img src="[https://upload.wikimedia.org/wikipedia/commons/2/23/Logo_UPLA.png](https://upload.wikimedia.org/wikipedia/commons/2/23/Logo_UPLA.png)" alt="UPLA" onerror="this.src='[https://via.placeholder.com/50/2A2A2E/F0F0F5?text=UPLA](https://via.placeholder.com/50/2A2A2E/F0F0F5?text=UPLA)'">
-          <div>
-            <h2>Universidad Peruana Los Andes</h2>
-            <small style="color: var(--text-muted)">Plataforma Académica Estudiantil</small>
-          </div>
-        </div>
-
-        <div style="display: flex; align-items: center; gap: 15px;">
-          <div class="header-user" id="profileTrigger" title="Haz clic para editar perfil">
-            <img id="userAvatarHeader" src="" alt="Avatar">
-            <div class="user-info">
-              <strong id="userNameHeader">Cargando...</strong>
-              <small id="userCodeHeader">CÓDIGO: ---</small>
-            </div>
-          </div>
-          <button id="btnLogout" class="btn btn-danger btn-small">🚪 Cerrar Sesión</button>
-        </div>
-      </header>
-
-      <!-- Banner Informativo para el Profesor -->
-      <div id="teacherBanner" class="teacher-banner hidden">
-        <span>⚠️ Modo Profesor / Invitado Activo: Tienes acceso total de lectura a las tareas entregadas por el estudiante. La edición y eliminación está bloqueada.</span>
-      </div>
-
-      <!-- Pestañas de Cursos Académicos -->
-      <div class="course-tabs">
-        <button class="tab-btn active" data-course="algoritmos">
-          📘 Algoritmos y Estructura de Datos
-        </button>
-        <button class="tab-btn" data-course="desarrollo">
-          💻 Desarrollo de Aplicaciones I
-        </button>
-      </div>
-
-      <!-- Título del Curso Activo -->
-      <h2 id="currentCourseTitle" style="margin-bottom: 20px; color: var(--text-main);">Algoritmos y Estructura de Datos</h2>
-
-      <!-- Contenedor Dinámico de Unidades y Semanas -->
-      <div id="unitsContainer"></div>
-
-    </section>
-
-  </div>
-
-  <!-- =========================================================
-       MODALES (EDICIÓN PERFIL Y CARGA DE TRABAJOS)
-       ========================================================= -->
-
-  <!-- Modal de Edición de Perfil -->
-  <div id="profileModal" class="modal-overlay hidden">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Editar Perfil de Estudiante</h3>
-        <button class="close-btn" id="closeProfileModal">&times;</button>
-      </div>
-      <form id="editProfileForm">
-        <div class="form-group">
-          <label>Nombres y Apellidos</label>
-          <input type="text" id="editNames" class="form-control" required>
-        </div>
-        <div class="form-group">
-          <label>Código Universitario</label>
-          <input type="text" id="editCode" class="form-control" required>
-        </div>
-        <div class="form-group">
-          <label>Carrera</label>
-          <input type="text" id="editCareer" class="form-control" required>
-        </div>
-        <div class="form-group">
-          <label>Ciclo</label>
-          <select id="editCycle" class="form-control">
-            <option value="I">I</option><option value="II">II</option><option value="III">III</option>
-            <option value="IV">IV</option><option value="V">V</option><option value="VI">VI</option>
-            <option value="VII">VII</option><option value="VIII">VIII</option><option value="IX">IX</option>
-            <option value="X">X</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Cambiar Foto de Perfil</label>
-          <input type="file" id="editAvatar" accept="image/*" class="form-control">
-        </div>
-        <div class="form-group">
-          <label>Nueva Contraseña (dejar en blanco para mantener)</label>
-          <input type="password" id="editPassword" class="form-control" placeholder="••••••••">
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Guardar Cambios</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal de Subida de Archivos -->
-  <div id="uploadModal" class="modal-overlay hidden">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="uploadModalTitle">Cargar Tarea</h3>
-        <button class="close-btn" id="closeUploadModal">&times;</button>
-      </div>
-
-      <!-- Conmutador de Método de Carga -->
-      <div class="upload-tabs">
-        <button class="upload-tab-btn active" data-type="file">📁 Archivo Local (Sin límite)</button>
-        <button class="upload-tab-btn" data-type="link">🔗 Enlace (Google Drive / GitHub)</button>
-      </div>
-
-      <!-- Carga de Archivo Directo -->
-      <form id="uploadFileForm">
-        <div class="form-group">
-          <label>Selecciona tu archivo (.zip, .pdf, .docx, .png, etc.)</label>
-          <input type="file" id="fileInput" class="form-control" required>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Guardar Tarea</button>
-      </form>
-
-      <!-- Carga de Enlace Directo -->
-      <form id="uploadLinkForm" class="hidden">
-        <div class="form-group">
-          <label>Título / Nombre de la Tarea</label>
-          <input type="text" id="linkTitleInput" class="form-control" placeholder="Ej. Tarea 3 - Google Drive" required>
-        </div>
-        <div class="form-group">
-          <label>URL Pública (Google Drive / GitHub / Dropbox)</label>
-          <input type="url" id="linkUrlInput" class="form-control" placeholder="[https://drive.google.com/file/d/](https://drive.google.com/file/d/)..." required>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Adjuntar Enlace</button>
-      </form>
-
-    </div>
-  </div>
-
-  <!-- =========================================================
-       LÓGICA JAVASCRIPT INTEGRADA
-       ========================================================= -->
-  <script>
-    /* =========================================================
-       Efecto Canvas: Humo y Calaveras
-       ========================================================= */
-    const canvas = document.getElementById('smokeCanvas');
-    const ctx = canvas.getContext('2d');
-
-    let width = canvas.width = window.innerWidth;
-    let height = canvas.height = window.innerHeight;
-
-    window.addEventListener('resize', () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    });
-
-    const mouse = { x: width / 2, y: height / 2 };
-    window.addEventListener('mousemove', (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-    });
-
-    class Particle {
-      constructor() {
-        this.reset();
-      }
-
-      reset() {
-        this.x = Math.random() * width;
-        this.y = height + Math.random() * 100;
-        this.vx = (Math.random() - 0.5) * 0.8;
-        this.vy = -Math.random() * 1.5 - 0.5;
-        this.size = Math.random() * 40 + 20;
-        this.alpha = Math.random() * 0.2 + 0.05;
-        this.isSkull = Math.random() < 0.15; // 15% de probabilidad de generar aura de calavera
-      }
-
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-
-        // Reacción al puntero del mouse
-        const dx = mouse.x - this.x;
-        const dy = mouse.y - this.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 120) {
-          this.x -= (dx / dist) * 1.5;
-          this.y -= (dy / dist) * 1.5;
-        }
-
-        if (this.y < -50 || this.alpha <= 0) {
-          this.reset();
-        }
-      }
-
-      draw() {
-        ctx.save();
-        ctx.globalAlpha = this.alpha;
-
-        if (this.isSkull) {
-          // Dibujar silueta/aura estilizada de calavera con humo
-          ctx.fillStyle = '#D1D1D6';
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size * 0.6, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Ojos
-          ctx.fillStyle = '#0B0B0D';
-          ctx.beginPath();
-          ctx.arc(this.x - this.size * 0.2, this.y - this.size * 0.1, this.size * 0.12, 0, Math.PI * 2);
-          ctx.arc(this.x + this.size * 0.2, this.y - this.size * 0.1, this.size * 0.12, 0, Math.PI * 2);
-          ctx.fill();
-        } else {
-          // Humo fluido general
-          const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
-          grad.addColorStop(0, 'rgba(240, 240, 245, 0.15)');
-          grad.addColorStop(1, 'rgba(42, 42, 46, 0)');
-          ctx.fillStyle = grad;
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        ctx.restore();
-      }
-    }
-
-    const particles = Array.from({ length: 45 }, () => new Particle());
-
-    function animateSmoke() {
-      ctx.clearRect(0, 0, width, height);
-      particles.forEach(p => {
-        p.update();
-        p.draw();
-      });
-      requestAnimationFrame(animateSmoke);
-    }
-    animateSmoke();
-
-    /* =========================================================
-       Gestión de Datos y Almacenamiento (IndexedDB + LocalStorage)
-       ========================================================= */
-    const STORAGE_KEY_USER = 'upla_user_account';
-    const STORAGE_KEY_DATA = 'upla_academic_data';
-
-    let currentUser = null;
-    let isTeacherMode = false;
-    let activeCourse = 'algoritmos';
-    let selectedWeekContext = null;
-
-    // Inicializar IndexedDB para archivos sin límite
-    let db = null;
-    function initDB() {
-      return new Promise((resolve, reject) => {
-        const request = indexedDB.open('UplaFilesDB', 1);
-        request.onupgradeneeded = (e) => {
-          const database = e.target.result;
-          if (!database.objectStoreNames.contains('files')) {
-            database.createObjectStore('files', { keyPath: 'id' });
-          }
-        };
-        request.onsuccess = (e) => {
-          db = e.target.result;
-          resolve(db);
-        };
-        request.onerror = (e) => reject(e);
-      });
-    }
-
-    function saveFileToIDB(id, blobData) {
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction('files', 'readwrite');
-        const store = tx.objectStore('files');
-        store.put({ id: id, blob: blobData });
-        tx.oncomplete = () => resolve();
-        tx.onerror = (e) => reject(e);
-      });
-    }
-
-    function getFileFromIDB(id) {
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction('files', 'readonly');
-        const store = tx.objectStore('files');
-        const req = store.get(id);
-        req.onsuccess = () => resolve(req.result ? req.result.blob : null);
-        req.onerror = (e) => reject(e);
-      });
-    }
-
-    function deleteFileFromIDB(id) {
-      return new Promise((resolve) => {
-        const tx = db.transaction('files', 'readwrite');
-        const store = tx.objectStore('files');
-        store.delete(id);
-        tx.oncomplete = () => resolve();
-      });
-    }
-
-    // Estructura Académica Inicial
-    function getDefaultData() {
-      const courses = ['algoritmos', 'desarrollo'];
-      const data = {};
-
-      courses.forEach((c) => {
-        data[c] = {};
-        for (let w = 1; w <= 16; w++) {
-          data[c][`semana_${w}`] = {
-            title: `Semana ${w}: Tema por definir`,
-            file: null
-          };
-        }
-      });
-
-      return data;
-    }
-
-    function getAcademicData() {
-      const raw = localStorage.getItem(STORAGE_KEY_DATA);
-      return raw ? JSON.parse(raw) : getDefaultData();
-    }
-
-    function saveAcademicData(data) {
-      localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(data));
-    }
-
-    /* =========================================================
-       Controlador de la Interfaz y Eventos
-       ========================================================= */
-    const authSection = document.getElementById('authSection');
-    const dashboardSection = document.getElementById('dashboardSection');
-    const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
-    const toggleRegister = document.getElementById('toggleRegister');
-    const toggleLogin = document.getElementById('toggleLogin');
-    const btnTeacherAccess = document.getElementById('btnTeacherAccess');
-    const btnLogout = document.getElementById('btnLogout');
-    const teacherBanner = document.getElementById('teacherBanner');
-
-    // Previsualización de Foto de Perfil
-    const regAvatar = document.getElementById('regAvatar');
-    const avatarPreview = document.getElementById('avatarPreview');
-    let regAvatarBase64 = '[https://via.placeholder.com/60/2A2A2E/F0F0F5?text=Foto](https://via.placeholder.com/60/2A2A2E/F0F0F5?text=Foto)';
-
-    regAvatar.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          regAvatarBase64 = event.target.result;
-          avatarPreview.src = regAvatarBase64;
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    // Cambiar vistas Login / Registro
-    toggleRegister.addEventListener('click', (e) => {
-      e.preventDefault();
-      loginForm.classList.add('hidden');
-      registerForm.classList.remove('hidden');
-      toggleRegister.classList.add('hidden');
-      toggleLogin.classList.remove('hidden');
-    });
-
-    toggleLogin.addEventListener('click', (e) => {
-      e.preventDefault();
-      registerForm.classList.add('hidden');
-      loginForm.classList.remove('hidden');
-      toggleLogin.classList.add('hidden');
-      toggleRegister.classList.remove('hidden');
-    });
-
-    // Iniciar Sesión Estudiante
-    loginForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const userInput = document.getElementById('loginUser').value.trim();
-      const passInput = document.getElementById('loginPassword').value;
-
-      const savedUserRaw = localStorage.getItem(STORAGE_KEY_USER);
-      if (!savedUserRaw) {
-        alert('No existe una cuenta registrada. Por favor regístrate primero.');
-        return;
-      }
-
-      const savedUser = JSON.parse(savedUserRaw);
-      if ((userInput === savedUser.code || userInput === savedUser.names) && passInput === savedUser.password) {
-        currentUser = savedUser;
-        showDashboard(false);
-      } else {
-        alert('Credenciales incorrectas. Verifica tu código/usuario y contraseña.');
-      }
-    });
-
-    // Registrar Cuenta Estudiante
-    registerForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const newAccount = {
-        names: document.getElementById('regNames').value.trim(),
-        code: document.getElementById('regCode').value.trim(),
-        career: document.getElementById('regCareer').value.trim(),
-        cycle: document.getElementById('regCycle').value,
-        avatar: regAvatarBase64,
-        password: document.getElementById('regPassword').value
-      };
-
-      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(newAccount));
-      currentUser = newAccount;
-      alert('¡Cuenta creada exitosamente!');
-      showDashboard(false);
-    });
-
-    // Modo Profesor / Invitado
-    btnTeacherAccess.addEventListener('click', () => {
-      currentUser = {
-        names: 'Docente / Evaluador',
-        code: 'DOCENTE-UPLA',
-        career: 'Facultad de Ingeniería',
-        cycle: 'I-X',
-        avatar: '[https://via.placeholder.com/50/3A3A40/F0F0F5?text=Docente](https://via.placeholder.com/50/3A3A40/F0F0F5?text=Docente)'
-      };
-      showDashboard(true);
-    });
-
-    // Cerrar Sesión
-    btnLogout.addEventListener('click', () => {
-      currentUser = null;
-      isTeacherMode = false;
-      dashboardSection.classList.add('hidden');
-      authSection.classList.remove('hidden');
-      loginForm.reset();
-      registerForm.reset();
-    });
-
-    // Mostrar Dashboard
-    function showDashboard(teacherMode = false) {
-      isTeacherMode = teacherMode;
-      authSection.classList.add('hidden');
-      dashboardSection.classList.remove('hidden');
-
-      if (isTeacherMode) {
-        teacherBanner.classList.remove('hidden');
-      } else {
-        teacherBanner.classList.add('hidden');
-      }
-
-      document.getElementById('userNameHeader').textContent = currentUser.names;
-      document.getElementById('userCodeHeader').textContent = `CÓDIGO: ${currentUser.code}`;
-      document.getElementById('userAvatarHeader').src = currentUser.avatar;
-
-      renderAcademicContent();
-    }
-
-    // Pestañas de Cursos
-    document.querySelectorAll('.tab-btn').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
-        e.target.classList.add('active');
-        activeCourse = e.target.getAttribute('data-course');
-
-        document.getElementById('currentCourseTitle').textContent =
-          activeCourse === 'algoritmos'
-            ? 'Algoritmos y Estructura de Datos'
-            : 'Desarrollo de Aplicaciones I';
-
-        renderAcademicContent();
-      });
-    });
-
-    // Renderizar Unidades y Semanas
-    function renderAcademicContent() {
-      const container = document.getElementById('unitsContainer');
-      container.innerHTML = '';
-      const data = getAcademicData();
-      const courseData = data[activeCourse];
-
-      const unitTitles = ['Unidad I', 'Unidad II', 'Unidad III', 'Unidad IV'];
-
-      for (let u = 0; u < 4; u++) {
-        const unitCard = document.createElement('div');
-        unitCard.className = 'unit-card';
-
-        const unitHeader = document.createElement('h3');
-        unitHeader.textContent = `${unitTitles[u]} (Semanas ${u * 4 + 1} a ${u * 4 + 4})`;
-        unitCard.appendChild(unitHeader);
-
-        const weeksGrid = document.createElement('div');
-        weeksGrid.className = 'weeks-grid';
-
-        for (let w = 1; w <= 4; w++) {
-          const weekNum = u * 4 + w;
-          const weekKey = `semana_${weekNum}`;
-          const weekData = courseData[weekKey];
-
-          const weekCard = document.createElement('div');
-          weekCard.className = 'week-card';
-
-          const weekHeader = document.createElement('div');
-          weekHeader.className = 'week-header';
-          weekHeader.innerHTML = `<strong>Semana ${weekNum}</strong>`;
-
-          const titleInput = document.createElement('input');
-          titleInput.type = 'text';
-          titleInput.className = 'week-title-input';
-          titleInput.value = weekData.title;
-          titleInput.disabled = isTeacherMode;
-          titleInput.placeholder = 'Asignar título o tema...';
-
-          titleInput.addEventListener('change', (e) => {
-            const newData = getAcademicData();
-            newData[activeCourse][weekKey].title = e.target.value;
-            saveAcademicData(newData);
-          });
-
-          const fileStatus = document.createElement('div');
-          fileStatus.className = 'file-status';
-
-          if (weekData.file) {
-            fileStatus.innerHTML = `
-              <div class="file-info">
-                <span>📄</span>
-                <div>
-                  <strong>${weekData.file.name}</strong><br>
-                  <small>${weekData.file.size}</small>
-                </div>
-              </div>
-              <div class="file-actions">
-                <button class="btn btn-small btn-download" onclick="downloadTask('${activeCourse}', ${weekNum})">📥 Descargar</button>
-                ${
-                  !isTeacherMode
-                    ? `<button class="btn btn-small btn-danger" onclick="deleteTask('${activeCourse}',${weekNum})">🗑️ Borrar</button>`
-                    : ''
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPLA - Plataforma de Trabajos Universitarios</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        upla: {
+                            dark: '#0a0a0c',
+                            card: '#121318',
+                            border: '#2a2d36',
+                            silver: '#c0c0c0',
+                            bright: '#e0e0e0',
+                            accent: '#4f46e5'
+                        }
+                    }
                 }
-              </div>
-            `;
-          } else {
-            fileStatus.innerHTML = `
-              <small style="color: var(--text-muted)">Sin tarea entregada.</small><br>
-              ${
-                !isTeacherMode
-                  ? `<button class="btn btn-small btn-secondary margin-top" onclick="openUploadModal('${activeCourse}',${weekNum})">➕ Subir Tarea</button>`
-                  : '<small style="color:#A0A0A5">Sin entrega disponible</small>'
-              }
-            `;
-          }
-
-          weekCard.appendChild(weekHeader);
-          weekCard.appendChild(titleInput);
-          weekCard.appendChild(fileStatus);
-          weeksGrid.appendChild(weekCard);
+            }
         }
+    </script>
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-        unitCard.appendChild(weeksGrid);
-        container.appendChild(unitCard);
-      }
-    }
-
-    /* =========================================================
-       Modal de Carga de Tareas
-       ========================================================= */
-    const uploadModal = document.getElementById('uploadModal');
-    const closeUploadModal = document.getElementById('closeUploadModal');
-    const uploadFileForm = document.getElementById('uploadFileForm');
-    const uploadLinkForm = document.getElementById('uploadLinkForm');
-    const uploadTabBtns = document.querySelectorAll('.upload-tab-btn');
-
-    function openUploadModal(courseId, weekNum) {
-      selectedWeekContext = { courseId, weekNum };
-      document.getElementById('uploadModalTitle').textContent = `Cargar Tarea - Semana ${weekNum}`;
-      uploadModal.classList.remove('hidden');
-    }
-
-    closeUploadModal.addEventListener('click', () => {
-      uploadModal.classList.add('hidden');
-    });
-
-    uploadTabBtns.forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        uploadTabBtns.forEach((b) => b.classList.remove('active'));
-        e.target.classList.add('active');
-        const type = e.target.getAttribute('data-type');
-
-        if (type === 'file') {
-          uploadFileForm.classList.remove('hidden');
-          uploadLinkForm.classList.add('hidden');
-        } else {
-          uploadFileForm.classList.add('hidden');
-          uploadLinkForm.classList.remove('hidden');
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0c;
+            color: #e0e0e0;
+            overflow-x: hidden;
         }
-      });
-    });
-
-    // Guardar Archivo Directo
-    uploadFileForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const fileInput = document.getElementById('fileInput');
-      const file = fileInput.files[0];
-      if (!file) return;
-
-      const fileId = `${selectedWeekContext.courseId}_semana_${selectedWeekContext.weekNum}_${Date.now()}`;
-      await saveFileToIDB(fileId, file);
-
-      const academicData = getAcademicData();
-      academicData[selectedWeekContext.courseId][`semana_${selectedWeekContext.weekNum}`].file = {
-        id: fileId,
-        name: file.name,
-        size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
-        type: file.type || file.name.split('.').pop(),
-        isLink: false
-      };
-
-      saveAcademicData(academicData);
-      uploadModal.classList.add('hidden');
-      uploadFileForm.reset();
-      renderAcademicContent();
-    });
-
-    // Guardar Enlace Directo
-    uploadLinkForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const title = document.getElementById('linkTitleInput').value.trim();
-      const url = document.getElementById('linkUrlInput').value.trim();
-
-      const academicData = getAcademicData();
-      academicData[selectedWeekContext.courseId][`semana_${selectedWeekContext.weekNum}`].file = {
-        id: 'link_' + Date.now(),
-        name: title || 'Enlace Nube / Google Drive',
-        size: 'Nube Externa',
-        type: 'link',
-        isLink: true,
-        url: url
-      };
-
-      saveAcademicData(academicData);
-      uploadModal.classList.add('hidden');
-      uploadLinkForm.reset();
-      renderAcademicContent();
-    });
-
-    // Descargar Tarea
-    async function downloadTask(courseId, weekNum) {
-      const data = getAcademicData();
-      const fileMeta = data[courseId][`semana_${weekNum}`].file;
-
-      if (!fileMeta) return;
-
-      if (fileMeta.isLink) {
-        window.open(fileMeta.url, '_blank');
-      } else {
-        const blob = await getFileFromIDB(fileMeta.id);
-        if (blob) {
-          const link = document.createElement('a');
-          link.href = URL.createObjectURL(blob);
-          link.download = fileMeta.name;
-          link.click();
-        } else {
-          alert('No se encontró el archivo en el almacenamiento local.');
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
         }
-      }
+        #smokeCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        .glass-panel {
+            background: rgba(18, 19, 24, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(192, 192, 192, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+        }
+        .glass-panel-hover:hover {
+            border-color: rgba(192, 192, 192, 0.35);
+            box-shadow: 0 10px 30px rgba(192, 192, 192, 0.08);
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+        .silver-glow {
+            text-shadow: 0 0 10px rgba(224, 224, 224, 0.4);
+        }
+        .silver-button {
+            background: linear-gradient(135deg, #3a3d46 0%, #1f2127 100%);
+            border: 1px solid #c0c0c0;
+            transition: all 0.25s ease;
+        }
+        .silver-button:hover {
+            background: linear-gradient(135deg, #4f535e 0%, #2a2d36 100%);
+            box-shadow: 0 0 15px rgba(192, 192, 192, 0.3);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0c;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2d36;
+            border-radius: 4px;
+            border: 1px solid #3a3d46;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #c0c0c0;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative text-gray-200 antialiased selection:bg-slate-700 selection:text-white">
+
+    <canvas id="smokeCanvas"></canvas>
+
+    <!-- App Wrapper -->
+    <div id="app" class="relative z-10 flex flex-col min-h-screen">
+
+        <header id="mainHeader" class="sticky top-0 z-40 glass-panel border-b border-gray-800 px-4 lg:px-8 py-3 transition-all duration-300">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('dashboard')">
+                    <img id="uplaLogoHeader" src="https://placehold.co/120x120/1f2127/c0c0c0?text=UPLA" alt="Logo UPLA" class="w-10 h-10 object-contain rounded-full border border-gray-600 p-0.5">
+                    <div>
+                        <h1 class="font-cinzel text-lg md:text-xl font-bold tracking-wider text-white silver-glow">UPLA TRABAJOS</h1>
+                        <p class="text-[10px] text-gray-400 font-mono tracking-widest uppercase">Universidad Peruana Los Andes</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Links for authenticated state -->
+                <nav id="authNav" class="hidden md:flex items-center space-x-6">
+                    <button onclick="navigateTo('dashboard')" class="text-sm font-medium hover:text-white transition flex items-center gap-2 text-gray-300">
+                        <i class="fa-solid fa-house text-xs text-gray-400"></i> Inicio
+                    </button>
+                    <button onclick="navigateTo('cursos')" class="text-sm font-medium hover:text-white transition flex items-center gap-2 text-gray-300">
+                        <i class="fa-solid fa-book-bookmark text-xs text-gray-400"></i> Cursos & Semanas
+                    </button>
+                    <button onclick="navigateTo('perfil')" class="text-sm font-medium hover:text-white transition flex items-center gap-2 text-gray-300">
+                        <i class="fa-solid fa-user-gear text-xs text-gray-400"></i> Mi Perfil
+                    </button>
+                    <button id="docenteNavBtn" onclick="navigateTo('docente')" class="text-sm font-medium text-amber-400 hover:text-amber-300 transition flex items-center gap-2 hidden">
+                        <i class="fa-solid fa-graduation-cap"></i> Portal Docente
+                    </button>
+                </nav>
+
+                <!-- User Bar / Auth Buttons -->
+                <div class="flex items-center space-x-3">
+                    <button onclick="openConfigModal()" class="p-2 text-gray-400 hover:text-white transition rounded-lg hover:bg-gray-800/60" title="Configuración de Firebase & Deploy">
+                        <i class="fa-solid fa-gear text-lg"></i>
+                    </button>
+
+                    <div id="userHeaderProfile" class="hidden flex items-center space-x-3 pl-3 border-l border-gray-800">
+                        <img id="headerAvatar" src="https://placehold.co/80x80/2a2d36/e0e0e0?text=User" alt="Avatar" class="w-9 h-9 rounded-full border border-gray-500 object-cover">
+                        <div class="hidden lg:block text-left">
+                            <div id="headerUserName" class="text-xs font-semibold text-gray-200">Estudiante</div>
+                            <div id="headerUserRole" class="text-[10px] text-gray-400 font-mono">202310000A</div>
+                        </div>
+                        <button onclick="handleLogout()" class="p-2 text-red-400 hover:text-red-300 hover:bg-red-950/40 rounded-lg transition" title="Cerrar Sesión">
+                            <i class="fa-solid fa-power-off"></i>
+                        </button>
+                    </div>
+
+                    <!-- Mobile Menu Trigger -->
+                    <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="md:hidden p-2 text-gray-400 hover:text-white">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Nav Dropdown -->
+            <div id="mobileMenu" class="hidden md:hidden pt-3 pb-2 border-t border-gray-800 mt-3 flex flex-col space-y-2">
+                <button onclick="navigateTo('dashboard'); toggleMobileMenu();" class="text-left px-3 py-2 rounded text-sm text-gray-300 hover:bg-gray-800">
+                    <i class="fa-solid fa-house w-6 text-gray-400"></i> Inicio
+                </button>
+                <button onclick="navigateTo('cursos'); toggleMobileMenu();" class="text-left px-3 py-2 rounded text-sm text-gray-300 hover:bg-gray-800">
+                    <i class="fa-solid fa-book-bookmark w-6 text-gray-400"></i> Cursos y Semanas
+                </button>
+                <button onclick="navigateTo('perfil'); toggleMobileMenu();" class="text-left px-3 py-2 rounded text-sm text-gray-300 hover:bg-gray-800">
+                    <i class="fa-solid fa-user-gear w-6 text-gray-400"></i> Mi Perfil
+                </button>
+                <button id="mobileDocenteNavBtn" onclick="navigateTo('docente'); toggleMobileMenu();" class="text-left px-3 py-2 rounded text-sm text-amber-400 hover:bg-gray-800 hidden">
+                    <i class="fa-solid fa-graduation-cap w-6"></i> Portal Docente
+                </button>
+            </div>
+        </header>
+
+        <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+            <!-- VIEW 1: AUTH (LOGIN & REGISTER & RECOVERY) -->
+            <section id="viewAuth" class="max-w-md mx-auto my-8 space-y-6">
+                <!-- University Logo Banner -->
+                <div class="text-center space-y-3">
+                    <div class="relative inline-block">
+                        <div class="absolute -inset-1 rounded-full bg-gradient-to-r from-gray-600 via-slate-400 to-gray-700 opacity-30 blur"></div>
+                        <img id="uplaLogoAuth" src="https://placehold.co/150x150/121318/c0c0c0?text=UPLA+ESCUDO" alt="UPLA Escudo" class="relative w-28 h-28 mx-auto object-contain rounded-full border-2 border-gray-500 p-1 bg-gray-950">
+                    </div>
+                    <h2 class="font-cinzel text-2xl font-bold text-white tracking-wide silver-glow">Portal Académico UPLA</h2>
+                    <p class="text-xs text-gray-400">Gestión de Trabajos y Evidencias Universitarias</p>
+                </div>
+
+                <!-- Tabs Login / Register -->
+                <div class="glass-panel p-6 rounded-2xl border border-gray-800">
+                    <div class="flex border-b border-gray-800 mb-6">
+                        <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2 text-sm font-semibold text-center border-b-2 border-slate-300 text-white transition">Iniciar Sesión</button>
+                        <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-2 text-sm font-semibold text-center border-b-2 border-transparent text-gray-400 hover:text-gray-200 transition">Registrarse</button>
+                    </div>
+
+                    <!-- LOGIN FORM -->
+                    <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Correo o Código Universitario</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                                    <i class="fa-solid fa-id-card"></i>
+                                </span>
+                                <input type="text" id="loginIdentifier" required placeholder="Ej. A12345B o usuario@upla.edu.pe" class="w-full pl-10 pr-4 py-2.5 bg-gray-900/90 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400 transition">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Contraseña</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                                    <i class="fa-solid fa-key"></i>
+                                </span>
+                                <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full pl-10 pr-10 py-2.5 bg-gray-900/90 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400 transition">
+                                <button type="button" onclick="togglePasswordVisibility('loginPassword', 'loginEye')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-300">
+                                    <i id="loginEye" class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-xs">
+                            <label class="flex items-center space-x-2 text-gray-400 cursor-pointer">
+                                <input type="checkbox" id="loginRemember" class="rounded bg-gray-900 border-gray-700 text-slate-500 focus:ring-0">
+                                <span>Recordar acceso</span>
+                            </label>
+                            <button type="button" onclick="openResetPasswordModal()" class="text-slate-400 hover:text-white underline">¿Olvidaste tu clave?</button>
+                        </div>
+
+                        <button type="submit" class="w-full py-3 silver-button rounded-xl text-white font-semibold text-sm shadow-lg flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                            <span>Acceder a la Plataforma</span>
+                        </button>
+
+                        <div class="pt-4 border-t border-gray-800 text-center">
+                            <button type="button" onclick="handleDocenteDirectAccess()" class="w-full py-2.5 bg-amber-950/30 hover:bg-amber-900/50 border border-amber-600/40 rounded-xl text-amber-300 font-medium text-xs transition flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-user-shield"></i>
+                                <span>Acceso Especial para Docentes</span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- REGISTER FORM -->
+                    <form id="registerForm" onsubmit="handleRegisterSubmit(event)" class="space-y-4 hidden">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Nombres</label>
+                                <input type="text" id="regNames" required placeholder="Juan Carlos" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Apellidos</label>
+                                <input type="text" id="regSurnames" required placeholder="Pérez Gómez" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Código UPLA</label>
+                                <input type="text" id="regCode" required placeholder="U20231234" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400 font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Ciclo</label>
+                                <select id="regCycle" required class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
+                                    <option value="I">Ciclo I</option>
+                                    <option value="II">Ciclo II</option>
+                                    <option value="III">Ciclo III</option>
+                                    <option value="IV">Ciclo IV</option>
+                                    <option value="V" selected>Ciclo V</option>
+                                    <option value="VI">Ciclo VI</option>
+                                    <option value="VII">Ciclo VII</option>
+                                    <option value="VIII">Ciclo VIII</option>
+                                    <option value="IX">Ciclo IX</option>
+                                    <option value="X">Ciclo X</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Carrera Profesional</label>
+                            <select id="regCareer" required class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
+                                <option value="Ingeniería de Sistemas e Informática" selected>Ingeniería de Sistemas e Informática</option>
+                                <option value="Ingeniería Civil">Ingeniería Civil</option>
+                                <option value="Ingeniería Industrial">Ingeniería Industrial</option>
+                                <option value="Derecho y Ciencias Políticas">Derecho y Ciencias Políticas</option>
+                                <option value="Medicina Humana">Medicina Humana</option>
+                                <option value="Contabilidad y Finanzas">Contabilidad y Finanzas</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Correo Electrónico</label>
+                            <input type="email" id="regEmail" required placeholder="estudiante@upla.edu.pe" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">URL Foto de Perfil (Opcional)</label>
+                            <input type="url" id="regAvatarUrl" placeholder="https://..." class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Contraseña</label>
+                                <input type="password" id="regPass" required placeholder="••••••••" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Confirmar</label>
+                                <input type="password" id="regPassConfirm" required placeholder="••••••••" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-2 text-xs text-gray-400">
+                            <input type="checkbox" id="regTeacherRole" class="rounded bg-gray-900 border-gray-700 text-amber-500">
+                            <span>Registrar con permisos de Docente</span>
+                        </div>
+
+                        <button type="submit" class="w-full py-3 silver-button rounded-xl text-white font-semibold text-sm shadow-lg flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <span>Crear Mi Cuenta UPLA</span>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- VIEW 2: DASHBOARD -->
+            <section id="viewDashboard" class="hidden space-y-6">
+                <!-- User Welcome Card -->
+                <div class="glass-panel p-6 sm:p-8 rounded-2xl relative overflow-hidden border border-gray-800">
+                    <div class="absolute right-0 top-0 bottom-0 w-1/3 opacity-10 pointer-events-none flex items-center justify-center">
+                        <i class="fa-solid fa-skull text-9xl text-gray-200"></i>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6 relative z-10">
+                        <div class="relative">
+                            <img id="dashAvatar" src="https://placehold.co/120x120/1f2127/e0e0e0?text=Profile" alt="Avatar" class="w-24 h-24 rounded-2xl border-2 border-slate-400 object-cover shadow-xl">
+                            <span id="dashRoleBadge" class="absolute -bottom-2 -right-2 px-2 py-0.5 bg-slate-800 border border-slate-400 text-[10px] uppercase tracking-wider text-slate-200 rounded font-semibold">ESTUDIANTE</span>
+                        </div>
+
+                        <div class="text-center sm:text-left space-y-1">
+                            <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-wide">
+                                ¡Bienvenido(a), <span id="dashUserName" class="silver-glow text-slate-200">Usuario</span>!
+                            </h2>
+                            <p class="text-sm text-gray-400 flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-1">
+                                <span><i class="fa-solid fa-id-card text-xs text-gray-500 mr-1"></i> <strong id="dashCode" class="font-mono text-gray-300">U20230000</strong></span>
+                                <span><i class="fa-solid fa-graduation-cap text-xs text-gray-500 mr-1"></i> <span id="dashCareer">Ingeniería de Sistemas</span></span>
+                                <span><i class="fa-solid fa-layer-group text-xs text-gray-500 mr-1"></i> <span id="dashCycle">Ciclo V</span></span>
+                            </p>
+                            <p class="text-xs text-gray-500 pt-2">Plataforma sincronizada para entrega de evidencias académicas.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Quick Access Courses -->
+                    <div onclick="navigateTo('cursos')" class="glass-panel glass-panel-hover p-6 rounded-2xl cursor-pointer flex flex-col justify-between group">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-gray-800 border border-gray-700 flex items-center justify-center text-slate-300 mb-4 group-hover:border-slate-400 group-hover:text-white transition">
+                                <i class="fa-solid fa-book-open text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-1">Mis Cursos & Semanas</h3>
+                            <p class="text-xs text-gray-400">Accede a tus 2 materias registradas, 4 unidades y 16 semanas por curso.</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-xs font-semibold text-slate-300 group-hover:text-white">
+                            <span>Explorar Trabajos</span> <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <!-- Profile Management -->
+                    <div onclick="navigateTo('perfil')" class="glass-panel glass-panel-hover p-6 rounded-2xl cursor-pointer flex flex-col justify-between group">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-gray-800 border border-gray-700 flex items-center justify-center text-slate-300 mb-4 group-hover:border-slate-400 group-hover:text-white transition">
+                                <i class="fa-solid fa-user-pen text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-1">Mi Perfil Académico</h3>
+                            <p class="text-xs text-gray-400">Actualiza tus nombres, ciclo, carrera, foto e historial de seguridad.</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-xs font-semibold text-slate-300 group-hover:text-white">
+                            <span>Editar Información</span> <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <!-- Teacher Portal Access -->
+                    <div onclick="navigateTo('docente')" class="glass-panel glass-panel-hover p-6 rounded-2xl cursor-pointer flex flex-col justify-between group border-amber-900/30">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-amber-950/40 border border-amber-700/50 flex items-center justify-center text-amber-400 mb-4 group-hover:border-amber-400 transition">
+                                <i class="fa-solid fa-graduation-cap text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-amber-200 mb-1">Revisión Docente</h3>
+                            <p class="text-xs text-gray-400">Portal para docentes calificados. Filtra trabajos enviados por alumnos.</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-xs font-semibold text-amber-400 group-hover:text-amber-300">
+                            <span>Ingresar al Portal</span> <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activities / Quick Stats -->
+                <div class="glass-panel p-6 rounded-2xl border border-gray-800">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-gray-400 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-slate-400"></i> Estado General de Entregas
+                    </h3>
+                    <div id="quickStatsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="bg-gray-900/80 p-4 rounded-xl border border-gray-800">
+                            <div class="text-xs text-gray-400">Cursos Activos</div>
+                            <div class="text-xl font-bold text-white mt-1">2 Materias</div>
+                        </div>
+                        <div class="bg-gray-900/80 p-4 rounded-xl border border-gray-800">
+                            <div class="text-xs text-gray-400">Total Semanas</div>
+                            <div class="text-xl font-bold text-white mt-1">32 Semanas</div>
+                        </div>
+                        <div class="bg-gray-900/80 p-4 rounded-xl border border-gray-800">
+                            <div class="text-xs text-gray-400">Trabajos Subidos</div>
+                            <div id="statTotalWorks" class="text-xl font-bold text-slate-300 mt-1">0 Archivos</div>
+                        </div>
+                        <div class="bg-gray-900/80 p-4 rounded-xl border border-gray-800">
+                            <div class="text-xs text-gray-400">Modalidad</div>
+                            <div class="text-xl font-bold text-emerald-400 mt-1">Sincronizado</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 3: COURSES & WEEKS MANAGEMENT -->
+            <section id="viewCursos" class="hidden space-y-6">
+                <!-- Course Selector Header -->
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 glass-panel p-6 rounded-2xl border border-gray-800">
+                    <div>
+                        <h2 class="font-cinzel text-xl font-bold text-white silver-glow">Cursos y Asignaturas</h2>
+                        <p class="text-xs text-gray-400">Selecciona una materia para gestionar las 4 Unidades e insumos de las 16 Semanas.</p>
+                    </div>
+
+                    <div class="flex items-center space-x-2 w-full md:w-auto">
+                        <button onclick="selectCourse(1)" id="courseBtn1" class="flex-1 md:flex-none px-4 py-2.5 rounded-xl text-xs font-semibold border transition flex items-center justify-center gap-2 bg-slate-800 border-slate-400 text-white">
+                            <i class="fa-solid fa-code"></i> Algoritmos y Estr. Datos
+                        </button>
+                        <button onclick="selectCourse(2)" id="courseBtn2" class="flex-1 md:flex-none px-4 py-2.5 rounded-xl text-xs font-semibold border transition flex items-center justify-center gap-2 bg-gray-900 border-gray-800 text-gray-400 hover:text-white">
+                            <i class="fa-solid fa-laptop-code"></i> Des. Aplicaciones I
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Units & Weeks Accordion Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    <!-- Unit Selector Sidebar -->
+                    <div class="space-y-3">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 px-1">Unidades Didácticas</h3>
+                        <div id="unitButtonsContainer" class="space-y-2">
+                            <!-- JS Generated Unit Buttons -->
+                        </div>
+                    </div>
+
+                    <!-- Weeks & Details Content -->
+                    <div class="lg:col-span-3 space-y-6">
+                        <!-- Weeks Selector Header -->
+                        <div class="glass-panel p-4 rounded-xl border border-gray-800">
+                            <div id="weekTabsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                <!-- JS Generated Week Tabs -->
+                            </div>
+                        </div>
+
+                        <!-- Active Week Card details & Upload trigger -->
+                        <div id="weekDetailsCard" class="glass-panel p-6 rounded-2xl border border-gray-800 space-y-6">
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-800 pb-4">
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <span id="activeWeekBadge" class="px-2.5 py-1 bg-slate-800 border border-slate-600 text-slate-200 text-xs font-mono rounded-md font-bold">SEMANA 1</span>
+                                        <h3 id="activeWeekTitleDisplay" class="text-lg font-bold text-white">Introducción a la Asignatura</h3>
+                                    </div>
+                                    <p id="activeWeekDescDisplay" class="text-xs text-gray-400 mt-1">Definición de conceptos base y requerimientos del proyecto final.</p>
+                                </div>
+
+                                <button onclick="openEditWeekModal()" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-medium rounded-lg border border-gray-600 transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-pen-to-square text-xs"></i> Editar Semana
+                                </button>
+                            </div>
+
+                            <!-- Upload Section CTA -->
+                            <div class="flex flex-col sm:flex-row items-center justify-between p-4 rounded-xl bg-gray-900/90 border border-gray-800 gap-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center text-slate-300">
+                                        <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-semibold text-white">Entregar o Adjuntar Evidencia</h4>
+                                        <p class="text-[11px] text-gray-400">Soporta archivos directos (PDF, DOCX, ZIP, etc.) o enlaces (Google Drive / GitHub).</p>
+                                    </div>
+                                </div>
+                                <button onclick="openUploadModal()" class="w-full sm:w-auto px-5 py-2.5 silver-button text-white rounded-xl text-xs font-semibold shadow flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-plus"></i> Nuevo Trabajo
+                                </button>
+                            </div>
+
+                            <!-- Works List for this week -->
+                            <div class="space-y-3">
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 flex items-center justify-between">
+                                    <span>Trabajos y Evidencias Registradas</span>
+                                    <span id="weekWorkCount" class="text-slate-400 font-mono">0 Archivos</span>
+                                </h4>
+
+                                <div id="worksList" class="space-y-3">
+                                    <!-- JS Generated Works List -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 4: EDIT PROFILE -->
+            <section id="viewPerfil" class="hidden max-w-2xl mx-auto space-y-6">
+                <div class="glass-panel p-6 sm:p-8 rounded-2xl border border-gray-800 space-y-6">
+                    <div class="border-b border-gray-800 pb-4">
+                        <h2 class="font-cinzel text-xl font-bold text-white silver-glow">Mi Perfil UPLA</h2>
+                        <p class="text-xs text-gray-400">Actualiza tus datos académicos y credenciales de acceso.</p>
+                    </div>
+
+                    <form id="profileForm" onsubmit="handleProfileSave(event)" class="space-y-4">
+                        <div class="flex items-center space-x-4 pb-2">
+                            <img id="profilePreviewAvatar" src="https://placehold.co/100x100/1f2127/e0e0e0?text=Avatar" alt="Avatar Preview" class="w-16 h-16 rounded-2xl border border-slate-500 object-cover">
+                            <div class="flex-1">
+                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">URL Foto de Perfil</label>
+                                <input type="url" id="profAvatarUrl" placeholder="https://..." class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400" oninput="updateProfileAvatarPreview(this.value)">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Nombres</label>
+                                <input type="text" id="profNames" required class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Apellidos</label>
+                                <input type="text" id="profSurnames" required class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Código Universitario (Bloqueado)</label>
+                                <input type="text" id="profCode" readonly class="w-full px-3 py-2 bg-gray-950 border border-gray-800 rounded-lg text-sm text-gray-500 font-mono cursor-not-allowed">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Ciclo Actual</label>
+                                <select id="profCycle" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
+                                    <option value="I">Ciclo I</option>
+                                    <option value="II">Ciclo II</option>
+                                    <option value="III">Ciclo III</option>
+                                    <option value="IV">Ciclo IV</option>
+                                    <option value="V">Ciclo V</option>
+                                    <option value="VI">Ciclo VI</option>
+                                    <option value="VII">Ciclo VII</option>
+                                    <option value="VIII">Ciclo VIII</option>
+                                    <option value="IX">Ciclo IX</option>
+                                    <option value="X">Ciclo X</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Carrera Profesional</label>
+                            <input type="text" id="profCareer" required class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
+                        </div>
+
+                        <div class="pt-4 border-t border-gray-800 space-y-4">
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400">Seguridad & Cambio de Clave</h3>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Nueva Contraseña (Opcional)</label>
+                                <input type="password" id="profNewPass" placeholder="Dejar en blanco para mantener actual" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-end space-x-3 pt-4">
+                            <button type="button" onclick="navigateTo('dashboard')" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl text-xs font-semibold transition">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="px-6 py-2 silver-button text-white rounded-xl text-xs font-semibold shadow flex items-center space-x-2">
+                                <i class="fa-solid fa-floppy-disk"></i>
+                                <span>Guardar Cambios</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- VIEW 5: TEACHER REVIEW PORTAL -->
+            <section id="viewDocente" class="hidden space-y-6">
+                <div class="glass-panel p-6 rounded-2xl border border-amber-900/40 space-y-4">
+                    <div class="flex items-center space-x-3 border-b border-gray-800 pb-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-950/60 border border-amber-700 flex items-center justify-center text-amber-400">
+                            <i class="fa-solid fa-graduation-cap text-lg"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-cinzel text-xl font-bold text-amber-200">Portal de Calificación y Revisión Docente</h2>
+                            <p class="text-xs text-gray-400">Consulta los trabajos entregados por estudiantes UPLA con filtros de búsqueda.</p>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                        <div>
+                            <label class="block text-[11px] font-semibold uppercase text-gray-400 mb-1">Filtrar por Curso</label>
+                            <select id="docFilterCourse" onchange="applyDocenteFilters()" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-xs text-white">
+                                <option value="ALL">Todos los Cursos</option>
+                                <option value="1">Algoritmos y Estructura de Datos</option>
+                                <option value="2">Desarrollo de Aplicaciones I</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold uppercase text-gray-400 mb-1">Filtrar por Unidad</label>
+                            <select id="docFilterUnit" onchange="applyDocenteFilters()" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-xs text-white">
+                                <option value="ALL">Todas las Unidades</option>
+                                <option value="1">Unidad 1 (Sem 1-4)</option>
+                                <option value="2">Unidad 2 (Sem 5-8)</option>
+                                <option value="3">Unidad 3 (Sem 9-12)</option>
+                                <option value="4">Unidad 4 (Sem 13-16)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold uppercase text-gray-400 mb-1">Buscar por Código / Nombre</label>
+                            <input type="text" id="docFilterSearch" oninput="applyDocenteFilters()" placeholder="Ej. Juan o U2023..." class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-xs text-white">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teacher Results Table -->
+                <div class="glass-panel p-6 rounded-2xl border border-gray-800 space-y-4">
+                    <div class="flex items-center justify-between text-xs text-gray-400 border-b border-gray-800 pb-2">
+                        <span>Listado de Entregas Recibidas</span>
+                        <span id="docenteTotalCount" class="font-mono text-amber-400">0 Resultados</span>
+                    </div>
+
+                    <div id="docenteWorksGrid" class="space-y-3">
+                        <!-- JS Generated Teacher Works list -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- MODAL 1: Upload Work -->
+        <div id="modalUpload" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+            <div class="glass-panel max-w-lg w-full p-6 rounded-2xl border border-gray-700 space-y-4 relative">
+                <button onclick="closeUploadModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+
+                <h3 class="font-cinzel text-lg font-bold text-white silver-glow flex items-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up text-slate-300"></i> Registrar Trabajo o Evidencia
+                </h3>
+
+                <form id="uploadForm" onsubmit="handleWorkSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Título del Trabajo *</label>
+                        <input type="text" id="workTitle" required placeholder="Ej. Laboratorio 01 - Estructuras Secuenciales" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Descripción / Observaciones</label>
+                        <textarea id="workDesc" rows="2" placeholder="Detalles de la entrega, integrantes, etc." class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-xs text-white focus:outline-none focus:border-slate-400"></textarea>
+                    </div>
+
+                    <!-- Method Selection Tabs -->
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-2">Método de Adjunto</label>
+                        <div class="grid grid-cols-2 gap-2 p-1 bg-gray-900 border border-gray-800 rounded-lg">
+                            <button type="button" id="methodFileBtn" onclick="setUploadMethod('file')" class="py-1.5 text-xs font-semibold rounded bg-slate-800 text-white border border-slate-600">
+                                <i class="fa-solid fa-file-arrow-up mr-1"></i> Archivo Local
+                            </button>
+                            <button type="button" id="methodLinkBtn" onclick="setUploadMethod('link')" class="py-1.5 text-xs font-semibold rounded text-gray-400 hover:text-white">
+                                <i class="fa-solid fa-link mr-1"></i> Enlace Externo
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- File Input Field -->
+                    <div id="fieldUploadFile" class="space-y-2">
+                        <label class="block text-xs font-semibold uppercase text-gray-400">Seleccionar Archivo (PDF, DOCX, ZIP, PPT, XLS, PNG)</label>
+                        <input type="file" id="workFileInput" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-white hover:file:bg-slate-700 cursor-pointer">
+                    </div>
+
+                    <!-- Link Input Field -->
+                    <div id="fieldUploadLink" class="space-y-2 hidden">
+                        <label class="block text-xs font-semibold uppercase text-gray-400">Enlace de Google Drive / GitHub</label>
+                        <input type="url" id="workLinkInput" placeholder="https://drive.google.com/... o https://github.com/..." class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
+                    </div>
+
+                    <div class="pt-2 flex justify-end space-x-2">
+                        <button type="button" onclick="closeUploadModal()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl text-xs font-semibold">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="px-5 py-2 silver-button text-white rounded-xl text-xs font-semibold shadow flex items-center gap-1.5">
+                            <i class="fa-solid fa-check"></i> Registrar Entrega
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL 2: Edit Week Title and Description -->
+        <div id="modalEditWeek" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+            <div class="glass-panel max-w-md w-full p-6 rounded-2xl border border-gray-700 space-y-4 relative">
+                <button onclick="closeEditWeekModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+
+                <h3 class="font-cinzel text-lg font-bold text-white silver-glow">Editar Título de Semana</h3>
+
+                <form id="editWeekForm" onsubmit="handleEditWeekSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Título de la Semana</label>
+                        <input type="text" id="editWeekTitleInput" required class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Descripción / Objetivos</label>
+                        <textarea id="editWeekDescInput" rows="3" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-xs text-white focus:outline-none"></textarea>
+                    </div>
+
+                    <div class="pt-2 flex justify-end space-x-2">
+                        <button type="button" onclick="closeEditWeekModal()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl text-xs font-semibold">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="px-5 py-2 silver-button text-white rounded-xl text-xs font-semibold">
+                            Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL 3: Reset Password -->
+        <div id="modalResetPass" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+            <div class="glass-panel max-w-md w-full p-6 rounded-2xl border border-gray-700 space-y-4 relative">
+                <button onclick="closeResetPasswordModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+
+                <h3 class="font-cinzel text-lg font-bold text-white silver-glow">Recuperar Contraseña UPLA</h3>
+                <p class="text-xs text-gray-400">Ingresa tu correo universitario registrado para recibir las instrucciones de restablecimiento.</p>
+
+                <form onsubmit="handleResetPasswordSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Correo Electrónico</label>
+                        <input type="email" id="resetEmailInput" required placeholder="estudiante@upla.edu.pe" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white">
+                    </div>
+
+                    <button type="submit" class="w-full py-2.5 silver-button text-white rounded-xl text-xs font-semibold">
+                        Enviar Enlace de Recuperación
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL 4: Setup Guide & Config (Firebase, Logo UPLA, GitHub Pages) -->
+        <div id="modalConfig" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+            <div class="glass-panel max-w-3xl w-full p-6 sm:p-8 rounded-2xl border border-gray-700 max-h-[85vh] overflow-y-auto space-y-6 relative">
+                <button onclick="closeConfigModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+
+                <div>
+                    <h3 class="font-cinzel text-xl font-bold text-white silver-glow flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-slate-300"></i> Configuración UPLA & Tutorial de Despliegue
+                    </h3>
+                    <p class="text-xs text-gray-400 mt-1">Sigue esta guía paso a paso en español sencillo para conectar tu proyecto con Firebase y desplegarlo en GitHub Pages.</p>
+                </div>
+
+                <!-- Section: Custom UPLA Logo -->
+                <div class="p-4 rounded-xl bg-gray-900 border border-gray-800 space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                        <i class="fa-solid fa-image"></i> Personalizar Logo Oficial UPLA
+                    </h4>
+                    <p class="text-xs text-gray-400">Pega el enlace directo de la insignia oficial UPLA para actualizar la cabecera y el login:</p>
+                    <div class="flex gap-2">
+                        <input type="url" id="uplaLogoInput" placeholder="https://..." class="flex-1 px-3 py-2 bg-gray-950 border border-gray-700 rounded-lg text-xs text-white">
+                        <button onclick="saveUplaLogo()" class="px-4 py-2 silver-button text-white text-xs font-semibold rounded-lg">Guardar Logo</button>
+                    </div>
+                </div>
+
+                <!-- Section: Step-by-Step GitHub & Firebase Setup Guide -->
+                <div class="space-y-4 text-xs text-gray-300">
+                    <h4 class="text-sm font-bold uppercase tracking-wider text-amber-300 flex items-center gap-2">
+                        <i class="fa-solid fa-book text-amber-400"></i> Guía Paso a Paso para Desplegar en GitHub Pages
+                    </h4>
+
+                    <ol class="list-decimal list-inside space-y-3 pl-1">
+                        <li class="space-y-1">
+                            <strong class="text-white">Crear el Repositorio en GitHub:</strong>
+                            <p class="text-gray-400 pl-4">Crea un repositorio público llamado <code class="bg-gray-800 px-1 py-0.5 rounded font-mono text-slate-300">upla-trabajos-universitarios</code>. Sube este archivo renombrado a <code class="bg-gray-800 px-1 py-0.5 rounded font-mono text-slate-300">index.html</code>.</p>
+                        </li>
+
+                        <li class="space-y-1">
+                            <strong class="text-white">Crear Proyecto en Firebase Console:</strong>
+                            <p class="text-gray-400 pl-4">Ingresa a <a href="https://console.firebase.google.com/" target="_blank" class="text-slate-300 underline">Firebase Console</a>, crea un proyecto y habilita:</p>
+                            <ul class="list-disc list-inside pl-8 text-gray-400">
+                                /> Authentication (Email/Contraseña y Anónimo)</li>
+                                <li>Cloud Firestore Database (Modo producción)</li>
+                                <li>Firebase Storage</li>
+                            </ul>
+                        </li>
+
+                        <li class="space-y-1">
+                            <strong class="text-white">Reglas de Seguridad Firestore (Copiar y Pegar):</strong>
+                            <pre class="bg-gray-950 p-3 rounded border border-gray-800 font-mono text-[11px] text-emerald-400 overflow-x-auto mt-1">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /artifacts/{appId}/public/data/{document=**} {
+      allow read, write: if request.auth != null;
     }
+  }
+}</pre>
+                        </li>
 
-    // Borrar Tarea
-    async function deleteTask(courseId, weekNum) {
-      if (!confirm(`¿Eliminar la tarea entregada en la Semana ${weekNum}?`)) return;
+                        <li class="space-y-1">
+                            <strong class="text-white">Activar GitHub Pages:</strong>
+                            <p class="text-gray-400 pl-4">En tu repositorio de GitHub, ve a <em>Settings > Pages > Branch (main) > Save</em>. ¡Tu sitio estará en vivo en pocos minutos!</p>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
 
-      const data = getAcademicData();
-      const weekKey = `semana_${weekNum}`;
-      const fileMeta = data[courseId][weekKey].file;
+        <footer class="mt-auto border-t border-gray-800/80 py-4 px-6 text-center text-xs text-gray-500">
+            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+                <div>Plataforma de Evidencias - Universidad Peruana Los Andes (UPLA)</div>
+                <div class="flex items-center space-x-4 text-gray-400">
+                    <span><i class="fa-solid fa-shield-halved text-xs mr-1"></i> Firestore Active</span>
+                    <span><i class="fa-brands fa-github text-xs mr-1"></i> GitHub Pages Ready</span>
+                </div>
+            </div>
+        </footer>
+    </div>
 
-      if (fileMeta && !fileMeta.isLink) {
-        await deleteFileFromIDB(fileMeta.id);
-      }
+    <!-- Notification Toast -->
+    <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div id="toastContent" class="glass-panel px-4 py-3 rounded-xl border border-slate-400 text-white text-xs font-semibold flex items-center space-x-3 shadow-2xl">
+            <i id="toastIcon" class="fa-solid fa-circle-info text-slate-300"></i>
+            <span id="toastMessage">Notificación del sistema</span>
+        </div>
+    </div>
 
-      data[courseId][weekKey].file = null;
-      saveAcademicData(data);
-      renderAcademicContent();
-    }
-
-    /* =========================================================
-       Edición de Perfil
-       ========================================================= */
-    const profileTrigger = document.getElementById('profileTrigger');
-    const profileModal = document.getElementById('profileModal');
-    const closeProfileModal = document.getElementById('closeProfileModal');
-    const editProfileForm = document.getElementById('editProfileForm');
-
-    profileTrigger.addEventListener('click', () => {
-      if (isTeacherMode) return;
-
-      document.getElementById('editNames').value = currentUser.names;
-      document.getElementById('editCode').value = currentUser.code;
-      document.getElementById('editCareer').value = currentUser.career;
-      document.getElementById('editCycle').value = currentUser.cycle;
-
-      profileModal.classList.remove('hidden');
-    });
-
-    closeProfileModal.addEventListener('click', () => {
-      profileModal.classList.add('hidden');
-    });
-
-    editProfileForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-
-      currentUser.names = document.getElementById('editNames').value.trim();
-      currentUser.code = document.getElementById('editCode').value.trim();
-      currentUser.career = document.getElementById('editCareer').value.trim();
-      currentUser.cycle = document.getElementById('editCycle').value;
-
-      const newPass = document.getElementById('editPassword').value;
-      if (newPass) currentUser.password = newPass;
-
-      const editAvatarFile = document.getElementById('editAvatar').files[0];
-      if (editAvatarFile) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          currentUser.avatar = event.target.result;
-          saveProfileAndClose();
+    <!-- JavaScript Application Logic -->
+    <script>
+        
+        // Default Course & Week Database Data Structure (16 Weeks per Course)
+        const COURSE_DEFINITIONS = {
+            1: {
+                id: 1,
+                title: "Algoritmos y Estructura de Datos",
+                code: "SI-501",
+                units: [
+                    { id: 1, name: "Unidad 1: Fundamentos de Algoritmos", weeks: [1, 2, 3, 4] },
+                    { id: 2, name: "Unidad 2: Estructuras de Datos Lineales", weeks: [5, 6, 7, 8] },
+                    { id: 3, name: "Unidad 3: Estructuras No Lineales y Árboles", weeks: [9, 10, 11, 12] },
+                    { id: 4, name: "Unidad 4: Grafos y Complejidad Algorítmica", weeks: [13, 14, 15, 16] }
+                ]
+            },
+            2: {
+                id: 2,
+                title: "Desarrollo de Aplicaciones I",
+                code: "SI-502",
+                units: [
+                    { id: 1, name: "Unidad 1: Arquitectura Web y Front-end Moderno", weeks: [1, 2, 3, 4] },
+                    { id: 2, name: "Unidad 2: Lógica JavaScript Avanzada y APIs", weeks: [5, 6, 7, 8] },
+                    { id: 3, name: "Unidad 3: Backend con Servicios Cloud y DB", weeks: [9, 10, 11, 12] },
+                    { id: 4, name: "Unidad 4: Despliegue, GitHub Pages y CI/CD", weeks: [13, 14, 15, 16] }
+                ]
+            }
         };
-        reader.readAsDataURL(editAvatarFile);
-      } else {
-        saveProfileAndClose();
-      }
-    });
 
-    function saveProfileAndClose() {
-      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
-      showDashboard(false);
-      profileModal.classList.add('hidden');
-      alert('Perfil actualizado correctamente.');
-    }
+        // Application State
+        let currentUser = null;
+        let activeCourseId = 1;
+        let activeUnitId = 1;
+        let activeWeekNum = 1;
+        let currentUploadMethod = 'file'; // 'file' or 'link'
+        
+        // Default editable week titles store (Local & Firestore synced)
+        let weekTitlesStore = {};
+        // Works DB Store
+        let worksStore = [];
 
-    // Inicializar la App al cargar
-    document.addEventListener('DOMContentLoaded', async () => {
-      await initDB();
-      const savedUser = localStorage.getItem(STORAGE_KEY_USER);
-      if (savedUser) {
-        currentUser = JSON.parse(savedUser);
-        showDashboard(false);
-      }
-    });
-  </script>
+        // Initialize default week titles
+        for (let c = 1; c <= 2; c++) {
+            weekTitlesStore[c] = {};
+            for (let w = 1; w <= 16; w++) {
+                weekTitlesStore[c][w] = {
+                    title: `Semana ${w}: Tema General y Prácticas`,
+                    description: `Actividades académicas y guías de laboratorio correspondientes a la Semana ${w}.`
+                };
+            }
+        }
+
+        function initSmokeCanvas() {
+            const canvas = document.getElementById('smokeCanvas');
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            const particles = [];
+            const particleCount = 35;
+
+            class Particle {
+                constructor() {
+                    this.reset();
+                }
+
+                reset() {
+                    this.x = Math.random() * width;
+                    this.y = height + Math.random() * 100;
+                    this.size = Math.random() * 120 + 80;
+                    this.speedY = Math.random() * 0.4 + 0.1;
+                    this.speedX = (Math.random() - 0.5) * 0.3;
+                    this.opacity = Math.random() * 0.25 + 0.05;
+                }
+
+                update() {
+                    this.y -= this.speedY;
+                    this.x += this.speedX;
+                    if (this.y < -this.size) {
+                        this.reset();
+                    }
+                }
+
+                draw() {
+                    ctx.save();
+                    ctx.beginPath();
+                    const gradient = ctx.createRadialGradient(
+                        this.x, this.y, 0,
+                        this.x, this.y, this.size
+                    );
+                    gradient.addColorStop(0, `rgba(180, 190, 210, ${this.opacity})`);
+                    gradient.addColorStop(0.5, `rgba(60, 65, 80, ${this.opacity * 0.5})`);
+                    gradient.addColorStop(1, 'rgba(10, 10, 12, 0)');
+
+                    ctx.fillStyle = gradient;
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+            }
+
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        function navigateTo(viewName) {
+            // Guard protected views if not logged in
+            if (!currentUser && (viewName === 'dashboard' || viewName === 'cursos' || viewName === 'perfil')) {
+                showToast("Por favor, inicia sesión para acceder al panel", "error");
+                viewName = 'auth';
+            }
+
+            // Hide all views
+            ['viewAuth', 'viewDashboard', 'viewCursos', 'viewPerfil', 'viewDocente'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+
+            // Show selected view
+            const targetView = document.getElementById('view' + viewName.charAt(0).toUpperCase() + viewName.slice(1));
+            if (targetView) targetView.classList.remove('hidden');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Render view-specific data
+            if (viewName === 'cursos') {
+                renderCourseView();
+            } else if (viewName === 'perfil') {
+                populateProfileForm();
+            } else if (viewName === 'docente') {
+                renderDocenteView();
+            } else if (viewName === 'dashboard') {
+                updateDashboardStats();
+            }
+        }
+
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const loginBtn = document.getElementById('tabLoginBtn');
+            const registerBtn = document.getElementById('tabRegisterBtn');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                loginBtn.classList.add('border-slate-300', 'text-white');
+                loginBtn.classList.remove('border-transparent', 'text-gray-400');
+                registerBtn.classList.remove('border-slate-300', 'text-white');
+                registerBtn.classList.add('border-transparent', 'text-gray-400');
+            } else {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                registerBtn.classList.add('border-slate-300', 'text-white');
+                registerBtn.classList.remove('border-transparent', 'text-gray-400');
+                loginBtn.classList.remove('border-slate-300', 'text-white');
+                loginBtn.classList.add('border-transparent', 'text-gray-400');
+            }
+        }
+
+        function togglePasswordVisibility(inputId, eyeId) {
+            const input = document.getElementById(inputId);
+            const eye = document.getElementById(eyeId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                eye.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                eye.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        }
+
+        function handleLoginSubmit(event) {
+            event.preventDefault();
+            const identifier = document.getElementById('loginIdentifier').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            if (!identifier || !password) {
+                showToast("Ingresa tu código/correo y contraseña", "error");
+                return;
+            }
+
+            // Mock check or Firestore verification
+            const isDocente = identifier.toLowerCase().includes('docente');
+            
+            currentUser = {
+                uid: 'usr_' + Date.now(),
+                names: isDocente ? 'Dr. Roberto' : 'Carlos Alberto',
+                surnames: isDocente ? 'Gutiérrez Vega' : 'Mendoza Ramos',
+                code: identifier.toUpperCase().startsWith('U') ? identifier.toUpperCase() : 'U202310892',
+                email: identifier.includes('@') ? identifier : `${identifier}@upla.edu.pe`,
+                career: 'Ingeniería de Sistemas e Informática',
+                cycle: 'Ciclo V',
+                avatarUrl: isDocente ? 'https://placehold.co/120x120/1f2127/fbbf24?text=DOCENTE' : 'https://placehold.co/120x120/1f2127/e0e0e0?text=UPLA',
+                isDocente: isDocente
+            };
+
+            updateUserHeaderUI();
+            showToast(`¡Bienvenido(a), ${currentUser.names}!`, "success");
+            navigateTo('dashboard');
+        }
+
+        function handleRegisterSubmit(event) {
+            event.preventDefault();
+            const names = document.getElementById('regNames').value.trim();
+            const surnames = document.getElementById('regSurnames').value.trim();
+            const code = document.getElementById('regCode').value.trim().toUpperCase();
+            const cycle = document.getElementById('regCycle').value;
+            const career = document.getElementById('regCareer').value;
+            const email = document.getElementById('regEmail').value.trim();
+            const avatarUrl = document.getElementById('regAvatarUrl').value.trim() || 'https://placehold.co/120x120/1f2127/e0e0e0?text=UPLA';
+            const pass = document.getElementById('regPass').value;
+            const passConfirm = document.getElementById('regPassConfirm').value;
+            const isDocente = document.getElementById('regTeacherRole').checked;
+
+            if (pass !== passConfirm) {
+                showToast("Las contraseñas no coinciden", "error");
+                return;
+            }
+
+            currentUser = {
+                uid: 'usr_' + Date.now(),
+                names,
+                surnames,
+                code,
+                cycle,
+                career,
+                email,
+                avatarUrl,
+                isDocente
+            };
+
+            updateUserHeaderUI();
+            showToast("Cuenta UPLA creada exitosamente", "success");
+            navigateTo('dashboard');
+        }
+
+        function handleDocenteDirectAccess() {
+            document.getElementById('loginIdentifier').value = 'docente.upla';
+            document.getElementById('loginPassword').value = '123456';
+            showToast("Credenciales de docente cargadas", "info");
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            document.getElementById('authNav').classList.add('hidden');
+            document.getElementById('userHeaderProfile').classList.add('hidden');
+            document.getElementById('docenteNavBtn').classList.add('hidden');
+            document.getElementById('mobileDocenteNavBtn').classList.add('hidden');
+            showToast("Sesión cerrada correctamente", "info");
+            navigateTo('auth');
+        }
+
+        function updateUserHeaderUI() {
+            if (!currentUser) return;
+
+            document.getElementById('authNav').classList.remove('hidden');
+            document.getElementById('userHeaderProfile').classList.remove('hidden');
+            document.getElementById('headerAvatar').src = currentUser.avatarUrl;
+            document.getElementById('headerUserName').textContent = currentUser.names;
+            document.getElementById('headerUserRole').textContent = currentUser.code;
+
+            // Teacher role elements
+            if (currentUser.isDocente) {
+                document.getElementById('docenteNavBtn').classList.remove('hidden');
+                document.getElementById('mobileDocenteNavBtn').classList.remove('hidden');
+                document.getElementById('dashRoleBadge').textContent = 'DOCENTE';
+                document.getElementById('dashRoleBadge').classList.replace('bg-slate-800', 'bg-amber-900');
+            } else {
+                document.getElementById('docenteNavBtn').classList.add('hidden');
+                document.getElementById('mobileDocenteNavBtn').classList.add('hidden');
+                document.getElementById('dashRoleBadge').textContent = 'ESTUDIANTE';
+            }
+
+            // Update Dashboard UI
+            document.getElementById('dashAvatar').src = currentUser.avatarUrl;
+            document.getElementById('dashUserName').textContent = currentUser.names;
+            document.getElementById('dashCode').textContent = currentUser.code;
+            document.getElementById('dashCareer').textContent = currentUser.career;
+            document.getElementById('dashCycle').textContent = currentUser.cycle;
+        }
+
+        function selectCourse(courseId) {
+            activeCourseId = courseId;
+            activeUnitId = 1;
+            activeWeekNum = 1;
+
+            // Update Tab UI Buttons
+            const btn1 = document.getElementById('courseBtn1');
+            const btn2 = document.getElementById('courseBtn2');
+
+            if (courseId === 1) {
+                btn1.className = "flex-1 md:flex-none px-4 py-2.5 rounded-xl text-xs font-semibold border transition flex items-center justify-center gap-2 bg-slate-800 border-slate-400 text-white";
+                btn2.className = "flex-1 md:flex-none px-4 py-2.5 rounded-xl text-xs font-semibold border transition flex items-center justify-center gap-2 bg-gray-900 border-gray-800 text-gray-400 hover:text-white";
+            } else {
+                btn2.className = "flex-1 md:flex-none px-4 py-2.5 rounded-xl text-xs font-semibold border transition flex items-center justify-center gap-2 bg-slate-800 border-slate-400 text-white";
+                btn1.className = "flex-1 md:flex-none px-4 py-2.5 rounded-xl text-xs font-semibold border transition flex items-center justify-center gap-2 bg-gray-900 border-gray-800 text-gray-400 hover:text-white";
+            }
+
+            renderCourseView();
+        }
+
+        function selectUnit(unitId) {
+            activeUnitId = unitId;
+            const course = COURSE_DEFINITIONS[activeCourseId];
+            const unit = course.units.find(u => u.id === unitId);
+            activeWeekNum = unit.weeks[0];
+            renderCourseView();
+        }
+
+        function selectWeek(weekNum) {
+            activeWeekNum = weekNum;
+            renderCourseView();
+        }
+
+        function renderCourseView() {
+            const course = COURSE_DEFINITIONS[activeCourseId];
+
+            // Render Units List
+            const unitsContainer = document.getElementById('unitButtonsContainer');
+            unitsContainer.innerHTML = '';
+            course.units.forEach(unit => {
+                const isActive = unit.id === activeUnitId;
+                const btn = document.createElement('button');
+                btn.onclick = () => selectUnit(unit.id);
+                btn.className = `w-full text-left p-3 rounded-xl text-xs font-medium border transition flex items-center justify-between ${
+                    isActive 
+                    ? 'bg-slate-800 border-slate-400 text-white shadow-md' 
+                    : 'bg-gray-900/80 border-gray-800 text-gray-400 hover:bg-gray-800 hover:text-gray-200'
+                }`;
+                btn.innerHTML = `
+                    <span>${unit.name}</span>
+                    <i class="fa-solid fa-chevron-right text-[10px] ${isActive ? 'text-white' : 'text-gray-600'}"></i>
+                `;
+                unitsContainer.appendChild(btn);
+            });
+
+            // Render Weeks Selector for Active Unit
+            const weekTabsContainer = document.getElementById('weekTabsContainer');
+            weekTabsContainer.innerHTML = '';
+            const currentUnit = course.units.find(u => u.id === activeUnitId);
+
+            currentUnit.weeks.forEach(wNum => {
+                const isActive = wNum === activeWeekNum;
+                const tab = document.createElement('button');
+                tab.onclick = () => selectWeek(wNum);
+                tab.className = `py-2 px-3 rounded-lg text-xs font-semibold border transition ${
+                    isActive
+                    ? 'bg-slate-700 border-slate-400 text-white'
+                    : 'bg-gray-900 border-gray-800 text-gray-400 hover:text-gray-200'
+                }`;
+                tab.textContent = `Semana ${wNum}`;
+                weekTabsContainer.appendChild(tab);
+            });
+
+            // Render Active Week Details
+            const weekInfo = weekTitlesStore[activeCourseId][activeWeekNum];
+            document.getElementById('activeWeekBadge').textContent = `SEMANA ${activeWeekNum}`;
+            document.getElementById('activeWeekTitleDisplay').textContent = weekInfo.title;
+            document.getElementById('activeWeekDescDisplay').textContent = weekInfo.description;
+
+            // Render Works list for current course + week
+            renderWeekWorks();
+        }
+
+        function setUploadMethod(method) {
+            currentUploadMethod = method;
+            const fileBtn = document.getElementById('methodFileBtn');
+            const linkBtn = document.getElementById('methodLinkBtn');
+            const fileField = document.getElementById('fieldUploadFile');
+            const linkField = document.getElementById('fieldUploadLink');
+
+            if (method === 'file') {
+                fileBtn.className = "py-1.5 text-xs font-semibold rounded bg-slate-800 text-white border border-slate-600";
+                linkBtn.className = "py-1.5 text-xs font-semibold rounded text-gray-400 hover:text-white";
+                fileField.classList.remove('hidden');
+                linkField.classList.add('hidden');
+            } else {
+                linkBtn.className = "py-1.5 text-xs font-semibold rounded bg-slate-800 text-white border border-slate-600";
+                fileBtn.className = "py-1.5 text-xs font-semibold rounded text-gray-400 hover:text-white";
+                linkField.classList.remove('hidden');
+                fileField.classList.add('hidden');
+            }
+        }
+
+        function openUploadModal() {
+            document.getElementById('uploadForm').reset();
+            setUploadMethod('file');
+            document.getElementById('modalUpload').classList.remove('hidden');
+        }
+
+        function closeUploadModal() {
+            document.getElementById('modalUpload').classList.add('hidden');
+        }
+
+        function handleWorkSubmit(event) {
+            event.preventDefault();
+            const title = document.getElementById('workTitle').value.trim();
+            const desc = document.getElementById('workDesc').value.trim();
+
+            let fileData = {};
+
+            if (currentUploadMethod === 'file') {
+                const fileInput = document.getElementById('workFileInput');
+                if (!fileInput.files.length) {
+                    showToast("Por favor, selecciona un archivo local", "error");
+                    return;
+                }
+                const file = fileInput.files[0];
+                fileData = {
+                    type: 'file',
+                    fileName: file.name,
+                    size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
+                    format: file.name.split('.').pop().toUpperCase(),
+                    url: '#'
+                };
+            } else {
+                const link = document.getElementById('workLinkInput').value.trim();
+                if (!link) {
+                    showToast("Ingresa una URL válida de Google Drive o GitHub", "error");
+                    return;
+                }
+                fileData = {
+                    type: 'link',
+                    fileName: 'Enlace a Recurso Externo',
+                    size: 'N/A',
+                    format: link.includes('github') ? 'GITHUB' : 'DRIVE',
+                    url: link
+                };
+            }
+
+            const newWork = {
+                id: 'wrk_' + Date.now(),
+                courseId: activeCourseId,
+                unitId: activeUnitId,
+                weekNum: activeWeekNum,
+                title: title,
+                description: desc,
+                file: fileData,
+                uploadDate: new Date().toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                userUid: currentUser ? currentUser.uid : 'anon',
+                userName: currentUser ? `${currentUser.names} ${currentUser.surnames}` : 'Estudiante UPLA',
+                userCode: currentUser ? currentUser.code : 'U2023000'
+            };
+
+            worksStore.push(newWork);
+            closeUploadModal();
+            showToast("Trabajo registrado correctamente", "success");
+            renderWeekWorks();
+            updateDashboardStats();
+        }
+
+        function deleteWork(workId) {
+            if (!confirm("¿Estás seguro de eliminar esta evidencia académica?")) return;
+            worksStore = worksStore.filter(w => w.id !== workId);
+            showToast("Trabajo eliminado", "info");
+            renderWeekWorks();
+            updateDashboardStats();
+        }
+
+        function renderWeekWorks() {
+            const listContainer = document.getElementById('worksList');
+            const countDisplay = document.getElementById('weekWorkCount');
+
+            const filtered = worksStore.filter(w => w.courseId === activeCourseId && w.weekNum === activeWeekNum);
+            countDisplay.textContent = `${filtered.length} Archivos`;
+
+            if (filtered.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="text-center py-8 text-gray-500 border border-dashed border-gray-800 rounded-xl">
+                        <i class="fa-solid fa-folder-open text-2xl mb-2 text-gray-600"></i>
+                        <p class="text-xs">No hay trabajos ni evidencias subidas para esta semana.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listContainer.innerHTML = '';
+            filtered.forEach(work => {
+                const card = document.createElement('div');
+                card.className = "p-4 rounded-xl bg-gray-900/90 border border-gray-800 hover:border-gray-700 transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4";
+                
+                const iconClass = work.file.format === 'PDF' ? 'fa-file-pdf text-red-400' :
+                                  work.file.format === 'ZIP' || work.file.format === 'RAR' ? 'fa-file-zipper text-amber-400' :
+                                  work.file.format === 'DRIVE' ? 'fa-google-drive text-emerald-400' :
+                                  work.file.format === 'GITHUB' ? 'fa-github text-slate-300' : 'fa-file-lines text-slate-400';
+
+                card.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-lg flex-shrink-0 mt-0.5">
+                            <i class="fa-solid ${iconClass}"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-bold text-white">${work.title}</h5>
+                            ${work.description ? `<p class="text-xs text-gray-400 mb-1">${work.description}</p>` : ''}
+                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-gray-500 font-mono">
+                                <span><i class="fa-solid fa-paperclip text-[10px]"></i> ${work.file.fileName}</span>
+                                <span>• ${work.file.size}</span>
+                                <span>• ${work.uploadDate}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-2 self-end sm:self-center">
+                        <a href="${work.file.url}" target="_blank" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-semibold rounded-lg border border-gray-600 transition flex items-center gap-1">
+                            <i class="fa-solid fa-download text-[10px]"></i> Abrir
+                        </a>
+                        <button onclick="deleteWork('${work.id}')" class="p-1.5 text-red-400 hover:text-red-300 hover:bg-red-950/40 rounded-lg transition" title="Eliminar">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+
+        function openEditWeekModal() {
+            const weekInfo = weekTitlesStore[activeCourseId][activeWeekNum];
+            document.getElementById('editWeekTitleInput').value = weekInfo.title;
+            document.getElementById('editWeekDescInput').value = weekInfo.description;
+            document.getElementById('modalEditWeek').classList.remove('hidden');
+        }
+
+        function closeEditWeekModal() {
+            document.getElementById('modalEditWeek').classList.add('hidden');
+        }
+
+        function handleEditWeekSubmit(event) {
+            event.preventDefault();
+            const title = document.getElementById('editWeekTitleInput').value.trim();
+            const desc = document.getElementById('editWeekDescInput').value.trim();
+
+            weekTitlesStore[activeCourseId][activeWeekNum] = {
+                title: title,
+                description: desc
+            };
+
+            closeEditWeekModal();
+            showToast("Información de la semana actualizada", "success");
+            renderCourseView();
+        }
+
+        function populateProfileForm() {
+            if (!currentUser) return;
+            document.getElementById('profNames').value = currentUser.names;
+            document.getElementById('profSurnames').value = currentUser.surnames;
+            document.getElementById('profCode').value = currentUser.code;
+            document.getElementById('profCycle').value = currentUser.cycle;
+            document.getElementById('profCareer').value = currentUser.career;
+            document.getElementById('profAvatarUrl').value = currentUser.avatarUrl;
+            document.getElementById('profilePreviewAvatar').src = currentUser.avatarUrl;
+        }
+
+        function updateProfileAvatarPreview(url) {
+            if (url) document.getElementById('profilePreviewAvatar').src = url;
+        }
+
+        function handleProfileSave(event) {
+            event.preventDefault();
+            if (!currentUser) return;
+
+            currentUser.names = document.getElementById('profNames').value.trim();
+            currentUser.surnames = document.getElementById('profSurnames').value.trim();
+            currentUser.cycle = document.getElementById('profCycle').value;
+            currentUser.career = document.getElementById('profCareer').value.trim();
+            currentUser.avatarUrl = document.getElementById('profAvatarUrl').value.trim() || currentUser.avatarUrl;
+
+            updateUserHeaderUI();
+            showToast("Perfil actualizado correctamente", "success");
+            navigateTo('dashboard');
+        }
+
+        function renderDocenteView() {
+            applyDocenteFilters();
+        }
+
+        function applyDocenteFilters() {
+            const courseVal = document.getElementById('docFilterCourse').value;
+            const unitVal = document.getElementById('docFilterUnit').value;
+            const searchVal = document.getElementById('docFilterSearch').value.toLowerCase().trim();
+
+            let results = [...worksStore];
+
+            if (courseVal !== 'ALL') {
+                results = results.filter(w => w.courseId === parseInt(courseVal));
+            }
+
+            if (unitVal !== 'ALL') {
+                results = results.filter(w => w.unitId === parseInt(unitVal));
+            }
+
+            if (searchVal) {
+                results = results.filter(w => 
+                    w.userName.toLowerCase().includes(searchVal) ||
+                    w.userCode.toLowerCase().includes(searchVal) ||
+                    w.title.toLowerCase().includes(searchVal)
+                );
+            }
+
+            document.getElementById('docenteTotalCount').textContent = `${results.length} Resultados`;
+            const grid = document.getElementById('docenteWorksGrid');
+
+            if (results.length === 0) {
+                grid.innerHTML = `
+                    <div class="text-center py-8 text-gray-500 border border-dashed border-gray-800 rounded-xl">
+                        <i class="fa-solid fa-graduation-cap text-2xl mb-2 text-amber-500/40"></i>
+                        <p class="text-xs">No se encontraron entregas que coincidan con los filtros seleccionados.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = '';
+            results.forEach(w => {
+                const courseName = COURSE_DEFINITIONS[w.courseId].title;
+                const card = document.createElement('div');
+                card.className = "p-4 rounded-xl bg-gray-900 border border-gray-800 hover:border-amber-900/50 transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4";
+                card.innerHTML = `
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 bg-amber-950/60 border border-amber-800/60 text-amber-300 text-[10px] font-mono rounded font-semibold">${w.userCode}</span>
+                            <span class="text-xs font-bold text-white">${w.userName}</span>
+                        </div>
+                        <h5 class="text-sm font-semibold text-gray-200">${w.title}</h5>
+                        <p class="text-xs text-gray-400 font-mono">${courseName} • Semana ${w.weekNum} (${w.uploadDate})</p>
+                    </div>
+
+                    <a href="${w.file.url}" target="_blank" class="px-4 py-2 bg-amber-950/40 hover:bg-amber-900/60 text-amber-200 text-xs font-semibold rounded-lg border border-amber-700/50 transition flex items-center gap-1.5 self-end sm:self-center">
+                        <i class="fa-solid fa-eye"></i> Revisar Entrega
+                    </a>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openConfigModal() {
+            document.getElementById('modalConfig').classList.remove('hidden');
+        }
+
+        function closeConfigModal() {
+            document.getElementById('modalConfig').classList.add('hidden');
+        }
+
+        function openResetPasswordModal() {
+            document.getElementById('modalResetPass').classList.remove('hidden');
+        }
+
+        function closeResetPasswordModal() {
+            document.getElementById('modalResetPass').classList.add('hidden');
+        }
+
+        function handleResetPasswordSubmit(event) {
+            event.preventDefault();
+            closeResetPasswordModal();
+            showToast("Correo de restablecimiento enviado. Revisa tu bandeja.", "success");
+        }
+
+        function saveUplaLogo() {
+            const logoUrl = document.getElementById('uplaLogoInput').value.trim();
+            if (!logoUrl) return;
+
+            document.getElementById('uplaLogoHeader').src = logoUrl;
+            document.getElementById('uplaLogoAuth').src = logoUrl;
+            showToast("Logo de la UPLA actualizado correctamente", "success");
+            closeConfigModal();
+        }
+
+        function updateDashboardStats() {
+            document.getElementById('statTotalWorks').textContent = `${worksStore.length} Archivos`;
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toastNotification');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMessage.textContent = message;
+
+            if (type === 'success') {
+                toastIcon.className = 'fa-solid fa-circle-check text-emerald-400';
+            } else if (type === 'error') {
+                toastIcon.className = 'fa-solid fa-circle-xmark text-red-400';
+            } else {
+                toastIcon.className = 'fa-solid fa-circle-info text-slate-300';
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+
+        window.onload = function() {
+            initSmokeCanvas();
+            navigateTo('auth');
+            
+            // Seed initial sample works
+            worksStore = [
+                {
+                    id: 'wrk_1',
+                    courseId: 1,
+                    unitId: 1,
+                    weekNum: 1,
+                    title: 'Laboratorio 01 - Algoritmos Secuenciales',
+                    description: 'Resolución de problemas con diagrama de flujo y pseudocódigo.',
+                    file: { type: 'file', fileName: 'Guia_Lab01_UPLA.pdf', size: '2.4 MB', format: 'PDF', url: '#' },
+                    uploadDate: '10/03/2026 14:30',
+                    userUid: 'usr_demo',
+                    userName: 'Carlos Alberto Mendoza',
+                    userCode: 'U202310892'
+                }
+            ];
+        };
+    </script>
 </body>
 </html>
