@@ -1,0 +1,2027 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portafolio Académico - Universidad Peruana Los Andes</title>
+  <style>
+    /* ==========================================================================
+       ESTILOS GLOBALES Y PALETA DE COLORES (HUMO Y CALAVERAS)
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #0B0B0D;
+      color: #F0F0F5;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Canvas Interactivo de Fondo */
+    #smokeCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      background: radial-gradient(circle at center, #121214 0%, #0B0B0D 100%);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Botones y UI */
+    .btn {
+      padding: 10px 18px;
+      border: 1px solid #4A4A50;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #2A2A2E 0%, #1A1A1D 100%);
+      color: #F0F0F5;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn:hover {
+      background: #3A3A40;
+      border-color: #D1D1D6;
+      box-shadow: 0 0 12px rgba(240, 240, 245, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4A4A50 0%, #2A2A2E 100%);
+      border-color: #8E8E93;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border-color: #3A3A40;
+    }
+
+    .btn-teacher {
+      background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+      border-color: #818CF8;
+      color: #FFF;
+    }
+
+    .btn-download {
+      background: #1E3A8A;
+      border-color: #3B82F6;
+      color: #FFF;
+    }
+
+    .btn-delete {
+      background: #7F1D1D;
+      border-color: #EF4444;
+      color: #FFF;
+    }
+
+    .btn-small {
+      padding: 5px 10px;
+      font-size: 0.85rem;
+    }
+
+    /* ==========================================================================
+       PANTALLA DE AUTENTICACIÓN (LOGIN FIRST & REGISTRO)
+       ========================================================================== */
+    .auth-container {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .auth-card {
+      background: rgba(26, 26, 29, 0.85);
+      border: 1px solid #3A3A40;
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 35px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+      text-align: center;
+    }
+
+    .upla-logo {
+      max-width: 160px;
+      height: auto;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+    }
+
+    .auth-card h2 {
+      margin-bottom: 20px;
+      color: #F0F0F5;
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: #D1D1D6;
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      background: #121214;
+      border: 1px solid #2A2A2E;
+      border-radius: 6px;
+      color: #F0F0F5;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: #8E8E93;
+      box-shadow: 0 0 8px rgba(142, 142, 147, 0.3);
+    }
+
+    .avatar-preview-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-top: 5px;
+    }
+
+    .avatar-preview {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #3A3A40;
+    }
+
+    .divider {
+      margin: 20px 0;
+      border-bottom: 1px solid #2A2A2E;
+      position: relative;
+    }
+
+    .divider span {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1A1A1D;
+      padding: 0 10px;
+      color: #8E8E93;
+      font-size: 0.8rem;
+    }
+
+    /* ==========================================================================
+       HEADER Y SECCIÓN DE PERFIL
+       ========================================================================== */
+    header {
+      background: rgba(18, 18, 20, 0.9);
+      border-bottom: 1px solid #2A2A2E;
+      backdrop-filter: blur(8px);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-branding {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header-logo {
+      height: 45px;
+      width: auto;
+    }
+
+    .header-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .user-profile-widget {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+
+    .user-profile-widget:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .user-avatar-header {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #4A4A50;
+    }
+
+    .user-info-header {
+      text-align: right;
+    }
+
+    .user-name-header {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .user-code-header {
+      font-size: 0.8rem;
+      color: #D1D1D6;
+    }
+
+    /* Banner Profesor */
+    .teacher-banner {
+      background: #312E81;
+      color: #E0E7FF;
+      text-align: center;
+      padding: 8px;
+      font-size: 0.85rem;
+      border-bottom: 1px solid #4338CA;
+    }
+
+    /* ==========================================================================
+       DASHBOARD Y SECCIÓN ACADÉMICA
+       ========================================================================== */
+    .main-container {
+      max-width: 1300px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .course-tabs {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+      border-bottom: 2px solid #2A2A2E;
+      padding-bottom: 10px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: #D1D1D6;
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .tab-btn.active {
+      background: #2A2A2E;
+      color: #FFF;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    }
+
+    .units-container {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .unit-card {
+      background: rgba(26, 26, 29, 0.7);
+      border: 1px solid #2A2A2E;
+      border-radius: 10px;
+      padding: 20px;
+      backdrop-filter: blur(5px);
+    }
+
+    .unit-card h3 {
+      font-size: 1.2rem;
+      color: #F0F0F5;
+      margin-bottom: 15px;
+      border-left: 4px solid #8E8E93;
+      padding-left: 10px;
+    }
+
+    .weeks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 15px;
+    }
+
+    .week-card {
+      background: #121214;
+      border: 1px solid #2A2A2E;
+      border-radius: 8px;
+      padding: 15px;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .week-card:hover {
+      border-color: #8E8E93;
+      box-shadow: 0 0 15px rgba(240, 240, 245, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .week-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .week-title-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px dashed #3A3A40;
+      color: #F0F0F5;
+      width: 100%;
+      font-size: 0.9rem;
+      padding: 4px 0;
+      margin-bottom: 12px;
+      outline: none;
+    }
+
+    .week-title-input:focus {
+      border-bottom-color: #8E8E93;
+    }
+
+    .file-status {
+      background: #1A1A1D;
+      border: 1px rgba(255, 255, 255, 0.05) solid;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 0.8rem;
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .file-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    /* ==========================================================================
+       VENTANAS MODALES
+       ========================================================================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(6px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+    }
+
+    .modal-box {
+      background: #1A1A1D;
+      border: 1px solid #3A3A40;
+      border-radius: 12px;
+      padding: 25px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      font-size: 1.2rem;
+    }
+
+    .close-modal {
+      background: transparent;
+      border: none;
+      color: #D1D1D6;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .modal-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .upload-tab-btn {
+      flex: 1;
+      padding: 8px;
+      background: #121214;
+      border: 1px solid #2A2A2E;
+      color: #D1D1D6;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .upload-tab-btn.active {
+      background: #3A3A40;
+      color: #FFF;
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        gap: 15px;
+      }
+      .course-tabs {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CANVAS ANIMACIÓN DE HUMO Y CALAVERAS -->
+  <canvas id="smokeCanvas"></canvas>
+
+  <!-- ==========================================================================
+       SECCIÓN DE AUTENTICACIÓN (LOGIN FIRST / REGISTRO)
+       ========================================================================== -->
+  <div id="authSection" class="auth-container">
+    <div class="auth-card">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/2/23/Logo_UPLA.png" alt="UPLA Logo" class="upla-logo" id="uplaAuthLogo" onerror="this.src='https://via.placeholder.com/160x80/2A2A2E/F0F0F5?text=UPLA+Logo'">
+      
+      <!-- FORMULARIO DE LOGIN -->
+      <form id="loginForm">
+        <h2>PORTAFOLIO UPLA</h2>
+        <div class="form-group">
+          <label>Usuario / Código Universitario</label>
+          <input type="text" id="loginUser" class="form-control" required placeholder="Ej. 70012345">
+        </div>
+        <div class="form-group">
+          <label>Contraseña</label>
+          <input type="password" id="loginPassword" class="form-control" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Iniciar Sesión</button>
+        
+        <div class="divider"><span>O</span></div>
+        
+        <button type="button" id="btnTeacherAccess" class="btn btn-teacher" style="width: 100%; margin-bottom: 15px;">
+          👨‍🏫 Acceso Profesor / Invitado
+        </button>
+        
+        <p style="font-size: 0.85rem; color: #D1D1D6;">
+          ¿No tienes cuenta? <a href="#" id="toggleRegister" style="color: #FFF;">Registrar Cuenta</a>
+        </p>
+      </form>
+
+      <!-- FORMULARIO DE REGISTRO -->
+      <form id="registerForm" class="hidden">
+        <h2>REGISTRO DE ESTUDIANTE</h2>
+        <div class="form-group">
+          <label>Nombres y Apellidos Completos</label>
+          <input type="text" id="regNames" class="form-control" required placeholder="Juan Pérez">
+        </div>
+        <div class="form-group">
+          <label>Código Universitario</label>
+          <input type="text" id="regCode" class="form-control" required placeholder="U202012345">
+        </div>
+        <div class="form-group">
+          <label>Carrera Universitaria</label>
+          <input type="text" id="regCareer" class="form-control" required placeholder="Ingeniería de Sistemas y Computación">
+        </div>
+        <div class="form-group">
+          <label>Ciclo Académico</label>
+          <select id="regCycle" class="form-control" required>
+            <option value="I">I Ciclo</option>
+            <option value="II">II Ciclo</option>
+            <option value="III">III Ciclo</option>
+            <option value="IV">IV Ciclo</option>
+            <option value="V">V Ciclo</option>
+            <option value="VI">VI Ciclo</option>
+            <option value="VII">VII Ciclo</option>
+            <option value="VIII">VIII Ciclo</option>
+            <option value="IX">IX Ciclo</option>
+            <option value="X">X Ciclo</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Foto de Perfil</label>
+          <input type="file" id="regAvatar" class="form-control" accept="image/*">
+          <div class="avatar-preview-container">
+            <img id="avatarPreview" src="https://via.placeholder.com/60/2A2A2E/F0F0F5?text=Foto" class="avatar-preview" alt="Previsualización">
+            <small style="color: #8E8E93;">Previsualización en tiempo real</small>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Contraseña</label>
+          <input type="password" id="regPassword" class="form-control" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Crear Cuenta</button>
+        <p style="font-size: 0.85rem; color: #D1D1D6; margin-top: 15px;">
+          ¿Ya tienes cuenta? <a href="#" id="toggleLogin" style="color: #FFF;">Iniciar Sesión</a>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       DASHBOARD PRINCIPAL (CABECERA Y CURSOS)
+       ========================================================================== -->
+  <div id="dashboardSection" class="hidden">
+    <!-- Banner de Advertencia cuando accede un Profesor -->
+    <div id="teacherBanner" class="teacher-banner hidden">
+      👁️ <strong>MODO EVALUACIÓN / PROFESOR ACTIVADO:</strong> Acceso de Solo Lectura. No se permite modificar ni eliminar contenido.
+    </div>
+
+    <!-- CABECERA PRINCIPAL -->
+    <header>
+      <div class="header-branding">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/23/Logo_UPLA.png" alt="UPLA" class="header-logo" id="uplaHeaderLogo" onerror="this.src='https://via.placeholder.com/120x45/2A2A2E/F0F0F5?text=UPLA'">
+        <div class="header-title">PLATAFORMA ACADÉMICA UPLA</div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 20px;">
+        <div class="user-profile-widget" id="profileTrigger" title="Clic para editar perfil">
+          <img id="userAvatarHeader" src="" class="user-avatar-header" alt="Avatar">
+          <div class="user-info-header">
+            <div id="userNameHeader" class="user-name-header">Estudiante</div>
+            <div id="userCodeHeader" class="user-code-header">CÓDIGO</div>
+          </div>
+        </div>
+        <button id="btnLogout" class="btn btn-secondary btn-small">🔒 Cerrar Sesión</button>
+      </div>
+    </header>
+
+    <!-- CUERPO PRINCIPAL -->
+    <main class="main-container">
+      <div class="course-tabs">
+        <button class="tab-btn active" data-course="algoritmos">Algoritmos y Estructura de Datos</button>
+        <button class="tab-btn" data-course="desarrollo">Desarrollo de Aplicaciones I</button>
+      </div>
+
+      <h2 id="currentCourseTitle" style="margin-bottom: 20px; color: #F0F0F5;">Algoritmos y Estructura de Datos</h2>
+
+      <div id="unitsContainer" class="units-container">
+        <!-- Renderizado dinámico de 4 Unidades y 16 Semanas -->
+      </div>
+    </main>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL DE SUBIDA DE TAREAS (ARCHIVOS GRANDES E ENLACES NUBE)
+       ========================================================================== -->
+  <div id="uploadModal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="uploadModalTitle">Subir Tarea</h3>
+        <button class="close-modal" id="closeUploadModal">&times;</button>
+      </div>
+
+      <div class="modal-tabs">
+        <button class="upload-tab-btn active" data-type="file">📁 Archivo Local (Sin límite)</button>
+        <button class="upload-tab-btn" data-type="link">🔗 Enlace (Drive / GitHub)</button>
+      </div>
+
+      <!-- Formulario para Subir Archivo Físico -->
+      <form id="uploadFileForm">
+        <div class="form-group">
+          <label>Seleccionar Archivo (.zip, .pdf, .docx, .pptx, imágenes, etc.)</label>
+          <input type="file" id="fileInput" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Guardar Trabajo</button>
+      </form>
+
+      <!-- Formulario para Pegar Enlace Nube -->
+      <form id="uploadLinkForm" class="hidden">
+        <div class="form-group">
+          <label>Título / Nombre del Trabajo</label>
+          <input type="text" id="linkTitleInput" class="form-control" placeholder="Ej. Tarea 3 - Google Drive" required>
+        </div>
+        <div class="form-group">
+          <label>URL Pública (Google Drive, GitHub Releases, Dropbox, etc.)</label>
+          <input type="url" id="linkUrlInput" class="form-control" placeholder="https://drive.google.com/file/d/..." required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Registrar Enlace</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL DE EDICIÓN DE PERFIL
+       ========================================================================== -->
+  <div id="profileModal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Editar Perfil de Estudiante</h3>
+        <button class="close-modal" id="closeProfileModal">&times;</button>
+      </div>
+      <form id="editProfileForm">
+        <div class="form-group">
+          <label>Nombres y Apellidos</label>
+          <input type="text" id="editNames" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label>Código Universitario</label>
+          <input type="text" id="editCode" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label>Carrera</label>
+          <input type="text" id="editCareer" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label>Ciclo Académico</label>
+          <select id="editCycle" class="form-control" required>
+            <option value="I">I Ciclo</option>
+            <option value="II">II Ciclo</option>
+            <option value="III">III Ciclo</option>
+            <option value="IV">IV Ciclo</option>
+            <option value="V">V Ciclo</option>
+            <option value="VI">VI Ciclo</option>
+            <option value="VII">VII Ciclo</option>
+            <option value="VIII">VIII Ciclo</option>
+            <option value="IX">IX Ciclo</option>
+            <option value="X">X Ciclo</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Nueva Foto de Perfil (Opcional)</label>
+          <input type="file" id="editAvatar" class="form-control" accept="image/*">
+        </div>
+        <div class="form-group">
+          <label>Nueva Contraseña (Opcional)</label>
+          <input type="password" id="editPassword" class="form-control" placeholder="Dejar en blanco para conservar">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Guardar Cambios</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       LOGICA JAVASCRIPT PRINCIPAL Y CANVAS
+       ========================================================================== -->
+  <script>
+    /* --------------------------------------------------------------------------
+       1. ANIMACIÓN DE HUMO Y CALAVERAS (CANVAS 2D)
+       -------------------------------------------------------------------------- */
+    const canvas = document.getElementById('smokeCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width, height;
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    let mouse = { x: width / 2, y: height / 2 };
+    window.addEventListener('mousemove', (e) => {
+      mouse.x =Aquí tienes el código **100% completo, único y autosuficiente** en un solo archivo `index.html`. 
+
+Incluye toda la arquitectura solicitada:
+1. **Fondo Canvas 2D Interactivo:** Efecto de humo en tonos plomo y siluetas de calaveras con aura dinámica al mover el mouse.
+2. **Sistema de Autenticación Completo:** Login, Registro con carga y previsualización de foto de perfil en tiempo real, e inicio de sesión persistente.
+3. **Acceso Especial Docente / Invitado:** Botón directo para ingresar en **Modo Solo Lectura** (deshabilita edición, borrado y subida de archivos).
+4. **Perfil de Estudiante Editable:** Modal para modificar nombres, código, carrera, ciclo, foto de perfil y contraseña.
+5. **Estructura Académica de la UPLA:** 2 cursos (*Algoritmos y Estructura de Datos* y *Desarrollo de Aplicaciones I*), divididos en 4 Unidades y 16 Semanas con títulos interactivos por semana.
+6. **Subida de Archivos Sin Límites (Soporte Híbrido):** Pestañas para subir archivos pesados sin restricción de tamaño (mediante la API IndexedDB del navegador) y para adjuntar enlaces directos (Google Drive / GitHub Releases / Supabase).
+
+---
+
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portafolio Académico UPLA - Universidad Peruana Los Andes</title>
+  <style>
+    /* =========================================================
+       1. VARIABLES Y ESTILOS GLOBALES (TEMÁTICA HUMO Y CALAVERAS)
+       ========================================================= */
+    :root {
+      --bg-dark: #0B0B0D;
+      --bg-card: #121214;
+      --bg-container: #2A2A2E;
+      --bg-hover: #3A3A40;
+      --text-main: #F0F0F5;
+      --text-muted: #D1D1D6;
+      --accent-silver: #C0C0C0;
+      --accent-glow: rgba(240, 240, 245, 0.25);
+      --danger: #e74c3c;
+      --success: #2ecc71;
+      --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Fondo de Humo e Interactivo */
+    #smokeCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .app-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* =========================================================
+       2. COMPONENTES REUTILIZABLES (BOTONES, FORMULARIOS, MODALES)
+       ========================================================= */
+    .btn {
+      background: #2A2A2E;
+      color: var(--text-main);
+      border: 1px solid var(--accent-silver);
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .btn:hover {
+      background: var(--bg-hover);
+      box-shadow: 0 0 12px var(--accent-glow);
+      border-color: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: #3A3A40;
+      border-color: #ffffff;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border-color: var(--text-muted);
+    }
+
+    .btn-danger {
+      background: rgba(231, 76, 60, 0.2);
+      border-color: var(--danger);
+      color: #ff6b6b;
+    }
+
+    .btn-danger:hover {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .btn-small {
+      padding: 5px 10px;
+      font-size: 0.85rem;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--bg-container);
+      border-radius: 6px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      transition: border 0.3s ease;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent-silver);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    /* Modal Overlay */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-container);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 500px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--bg-container);
+      padding-bottom: 10px;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* =========================================================
+       3. PANTALLA DE AUTENTICACIÓN (LOGIN Y REGISTRO)
+       ========================================================= */
+    .auth-container {
+      max-width: 450px;
+      margin: 60px auto;
+      background: var(--bg-card);
+      border: 1px solid var(--bg-container);
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+    }
+
+    .upla-logo {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      margin-bottom: 15px;
+      filter: drop-shadow(0 0 8px var(--accent-glow));
+    }
+
+    .auth-header h1 {
+      font-size: 1.5rem;
+      margin-bottom: 5px;
+      letter-spacing: 1px;
+    }
+
+    .auth-header p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 25px;
+    }
+
+    .avatar-preview-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .avatar-preview {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent-silver);
+      background: var(--bg-container);
+    }
+
+    /* =========================================================
+       4. CABECERA Y DASHBOARD PRINCIPAL
+       ========================================================= */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1px solid var(--bg-container);
+      border-radius: 12px;
+      padding: 15px 25px;
+      margin-bottom: 25px;
+    }
+
+    .header-branding {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header-branding img {
+      height: 50px;
+    }
+
+    .header-branding h2 {
+      font-size: 1.1rem;
+      line-height: 1.2;
+    }
+
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+
+    .header-user:hover {
+      background: var(--bg-container);
+    }
+
+    .header-user img {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent-silver);
+    }
+
+    .user-info {
+      text-align: right;
+    }
+
+    .user-info strong {
+      display: block;
+      font-size: 0.95rem;
+    }
+
+    .user-info small {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    /* Banner Modo Profesor */
+    .teacher-banner {
+      background: rgba(231, 76, 60, 0.15);
+      border: 1px solid var(--danger);
+      color: #ff6b6b;
+      padding: 12px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Pestañas de Cursos */
+    .course-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 15px;
+      background: var(--bg-card);
+      border: 1px solid var(--bg-container);
+      color: var(--text-muted);
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .tab-btn.active {
+      background: var(--bg-container);
+      color: var(--text-main);
+      border-color: var(--accent-silver);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    /* =========================================================
+       5. ESTRUCTURA DE UNIDADES Y SEMANAS
+       ========================================================= */
+    .unit-card {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-container);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 25px;
+    }
+
+    .unit-card h3 {
+      font-size: 1.2rem;
+      color: var(--accent-silver);
+      margin-bottom: 15px;
+      border-bottom: 1px solid var(--bg-container);
+      padding-bottom: 8px;
+    }
+
+    .weeks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 15px;
+    }
+
+    .week-card {
+      background: var(--bg-container);
+      border: 1px solid #3A3A40;
+      border-radius: 8px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .week-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px var(--accent-glow);
+      border-color: var(--accent-silver);
+    }
+
+    .week-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .week-title-input {
+      background: var(--bg-dark);
+      border: 1px solid #3A3A40;
+      color: var(--text-main);
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    .week-title-input:disabled {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding-left: 0;
+    }
+
+    .file-status {
+      background: var(--bg-dark);
+      border: 1px dashed #3A3A40;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 0.85rem;
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .file-actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .margin-top {
+      margin-top: 8px;
+    }
+
+    /* Pestañas de Modal Carga */
+    .upload-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .upload-tab-btn {
+      flex: 1;
+      padding: 8px;
+      background: var(--bg-dark);
+      border: 1px solid var(--bg-container);
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .upload-tab-btn.active {
+      background: var(--bg-container);
+      color: var(--text-main);
+      border-color: var(--accent-silver);
+    }
+
+    @media (max-width: 768px) {
+      .header-bar {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+      .header-user {
+        text-align: center;
+        flex-direction: column;
+      }
+      .user-info {
+        text-align: center;
+      }
+      .course-tabs {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CANVA INTERACTIVO HUMO Y CALAVERAS -->
+  <canvas id="smokeCanvas"></canvas>
+
+  <div class="app-container">
+
+    <!-- =========================================================
+         MODULO DE AUTENTICACIÓN (LOGIN / REGISTRO)
+         ========================================================= -->
+    <section id="authSection" class="auth-container">
+      <img src="[https://upload.wikimedia.org/wikipedia/commons/2/23/Logo_UPLA.png](https://upload.wikimedia.org/wikipedia/commons/2/23/Logo_UPLA.png)" alt="UPLA Logo" class="upla-logo" id="uplaLogoAuth" onerror="this.src='[https://via.placeholder.com/120/2A2A2E/F0F0F5?text=UPLA](https://via.placeholder.com/120/2A2A2E/F0F0F5?text=UPLA)'">
+      
+      <div class="auth-header">
+        <h1>Universidad Peruana Los Andes</h1>
+        <p>Portafolio Académico Digital</p>
+      </div>
+
+      <!-- Formulario Login -->
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="loginUser">Código Universitario / Usuario</label>
+          <input type="text" id="loginUser" class="form-control" placeholder="Ej. U202012345" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Contraseña</label>
+          <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Iniciar Sesión</button>
+      </form>
+
+      <!-- Formulario Registro -->
+      <form id="registerForm" class="hidden">
+        <div class="form-group">
+          <label for="regNames">Nombres y Apellidos Completos</label>
+          <input type="text" id="regNames" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="regCode">Código Universitario</label>
+          <input type="text" id="regCode" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="regCareer">Carrera Universitaria</label>
+          <input type="text" id="regCareer" class="form-control" placeholder="Ej. Ingeniería de Sistemas y Computación" required>
+        </div>
+        <div class="form-group">
+          <label for="regCycle">Ciclo Académico</label>
+          <select id="regCycle" class="form-control" required>
+            <option value="I">I Ciclo</option>
+            <option value="II">II Ciclo</option>
+            <option value="III">III Ciclo</option>
+            <option value="IV">IV Ciclo</option>
+            <option value="V">V Ciclo</option>
+            <option value="VI">VI Ciclo</option>
+            <option value="VII">VII Ciclo</option>
+            <option value="VIII">VIII Ciclo</option>
+            <option value="IX">IX Ciclo</option>
+            <option value="X">X Ciclo</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Foto de Perfil</label>
+          <div class="avatar-preview-container">
+            <img id="avatarPreview" src="[https://via.placeholder.com/60/2A2A2E/F0F0F5?text=Foto](https://via.placeholder.com/60/2A2A2E/F0F0F5?text=Foto)" class="avatar-preview" alt="Preview">
+            <input type="file" id="regAvatar" accept="image/*" class="form-control">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="regPassword">Contraseña de Acceso</label>
+          <input type="password" id="regPassword" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Crear Cuenta</button>
+      </form>
+
+      <hr style="border-color: var(--bg-container); margin: 20px 0;">
+
+      <!-- Acceso Directo Profesor e Intercambio de Vistas -->
+      <button id="btnTeacherAccess" class="btn btn-secondary" style="width: 100%; margin-bottom: 12px;">
+        👨‍🏫 Acceso Profesor / Invitado (Solo Lectura)
+      </button>
+
+      <p id="toggleAuthMode" style="font-size: 0.85rem; color: var(--text-muted);">
+        ¿No tienes cuenta? <a href="#" id="toggleRegister" style="color: var(--text-main);">Registrar Cuenta</a>
+        <a href="#" id="toggleLogin" class="hidden" style="color: var(--text-main);">Iniciar Sesión</a>
+      </p>
+    </section>
+
+    <!-- =========================================================
+         DASHBOARD PRINCIPAL (CABECERA Y CURSOS)
+         ========================================================= -->
+    <section id="dashboardSection" class="hidden">
+      
+      <!-- Cabecera / Header -->
+      <header class="header-bar">
+        <div class="header-branding">
+          <img src="[https://upload.wikimedia.org/wikipedia/commons/2/23/Logo_UPLA.png](https://upload.wikimedia.org/wikipedia/commons/2/23/Logo_UPLA.png)" alt="UPLA" onerror="this.src='[https://via.placeholder.com/50/2A2A2E/F0F0F5?text=UPLA](https://via.placeholder.com/50/2A2A2E/F0F0F5?text=UPLA)'">
+          <div>
+            <h2>Universidad Peruana Los Andes</h2>
+            <small style="color: var(--text-muted)">Plataforma Académica Estudiantil</small>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <div class="header-user" id="profileTrigger" title="Haz clic para editar perfil">
+            <img id="userAvatarHeader" src="" alt="Avatar">
+            <div class="user-info">
+              <strong id="userNameHeader">Cargando...</strong>
+              <small id="userCodeHeader">CÓDIGO: ---</small>
+            </div>
+          </div>
+          <button id="btnLogout" class="btn btn-danger btn-small">🚪 Cerrar Sesión</button>
+        </div>
+      </header>
+
+      <!-- Banner Informativo para el Profesor -->
+      <div id="teacherBanner" class="teacher-banner hidden">
+        <span>⚠️ Modo Profesor / Invitado Activo: Tienes acceso total de lectura a las tareas entregadas por el estudiante. La edición y eliminación está bloqueada.</span>
+      </div>
+
+      <!-- Pestañas de Cursos Académicos -->
+      <div class="course-tabs">
+        <button class="tab-btn active" data-course="algoritmos">
+          📘 Algoritmos y Estructura de Datos
+        </button>
+        <button class="tab-btn" data-course="desarrollo">
+          💻 Desarrollo de Aplicaciones I
+        </button>
+      </div>
+
+      <!-- Título del Curso Activo -->
+      <h2 id="currentCourseTitle" style="margin-bottom: 20px; color: var(--text-main);">Algoritmos y Estructura de Datos</h2>
+
+      <!-- Contenedor Dinámico de Unidades y Semanas -->
+      <div id="unitsContainer"></div>
+
+    </section>
+
+  </div>
+
+  <!-- =========================================================
+       MODALES (EDICIÓN PERFIL Y CARGA DE TRABAJOS)
+       ========================================================= -->
+
+  <!-- Modal de Edición de Perfil -->
+  <div id="profileModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Editar Perfil de Estudiante</h3>
+        <button class="close-btn" id="closeProfileModal">&times;</button>
+      </div>
+      <form id="editProfileForm">
+        <div class="form-group">
+          <label>Nombres y Apellidos</label>
+          <input type="text" id="editNames" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label>Código Universitario</label>
+          <input type="text" id="editCode" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label>Carrera</label>
+          <input type="text" id="editCareer" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label>Ciclo</label>
+          <select id="editCycle" class="form-control">
+            <option value="I">I</option><option value="II">II</option><option value="III">III</option>
+            <option value="IV">IV</option><option value="V">V</option><option value="VI">VI</option>
+            <option value="VII">VII</option><option value="VIII">VIII</option><option value="IX">IX</option>
+            <option value="X">X</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Cambiar Foto de Perfil</label>
+          <input type="file" id="editAvatar" accept="image/*" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Nueva Contraseña (dejar en blanco para mantener)</label>
+          <input type="password" id="editPassword" class="form-control" placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Guardar Cambios</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Subida de Archivos -->
+  <div id="uploadModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="uploadModalTitle">Cargar Tarea</h3>
+        <button class="close-btn" id="closeUploadModal">&times;</button>
+      </div>
+
+      <!-- Conmutador de Método de Carga -->
+      <div class="upload-tabs">
+        <button class="upload-tab-btn active" data-type="file">📁 Archivo Local (Sin límite)</button>
+        <button class="upload-tab-btn" data-type="link">🔗 Enlace (Google Drive / GitHub)</button>
+      </div>
+
+      <!-- Carga de Archivo Directo -->
+      <form id="uploadFileForm">
+        <div class="form-group">
+          <label>Selecciona tu archivo (.zip, .pdf, .docx, .png, etc.)</label>
+          <input type="file" id="fileInput" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Guardar Tarea</button>
+      </form>
+
+      <!-- Carga de Enlace Directo -->
+      <form id="uploadLinkForm" class="hidden">
+        <div class="form-group">
+          <label>Título / Nombre de la Tarea</label>
+          <input type="text" id="linkTitleInput" class="form-control" placeholder="Ej. Tarea 3 - Google Drive" required>
+        </div>
+        <div class="form-group">
+          <label>URL Pública (Google Drive / GitHub / Dropbox)</label>
+          <input type="url" id="linkUrlInput" class="form-control" placeholder="[https://drive.google.com/file/d/](https://drive.google.com/file/d/)..." required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Adjuntar Enlace</button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- =========================================================
+       LÓGICA JAVASCRIPT INTEGRADA
+       ========================================================= -->
+  <script>
+    /* =========================================================
+       Efecto Canvas: Humo y Calaveras
+       ========================================================= */
+    const canvas = document.getElementById('smokeCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const mouse = { x: width / 2, y: height / 2 };
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * width;
+        this.y = height + Math.random() * 100;
+        this.vx = (Math.random() - 0.5) * 0.8;
+        this.vy = -Math.random() * 1.5 - 0.5;
+        this.size = Math.random() * 40 + 20;
+        this.alpha = Math.random() * 0.2 + 0.05;
+        this.isSkull = Math.random() < 0.15; // 15% de probabilidad de generar aura de calavera
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        // Reacción al puntero del mouse
+        const dx = mouse.x - this.x;
+        const dy = mouse.y - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120) {
+          this.x -= (dx / dist) * 1.5;
+          this.y -= (dy / dist) * 1.5;
+        }
+
+        if (this.y < -50 || this.alpha <= 0) {
+          this.reset();
+        }
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+
+        if (this.isSkull) {
+          // Dibujar silueta/aura estilizada de calavera con humo
+          ctx.fillStyle = '#D1D1D6';
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size * 0.6, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Ojos
+          ctx.fillStyle = '#0B0B0D';
+          ctx.beginPath();
+          ctx.arc(this.x - this.size * 0.2, this.y - this.size * 0.1, this.size * 0.12, 0, Math.PI * 2);
+          ctx.arc(this.x + this.size * 0.2, this.y - this.size * 0.1, this.size * 0.12, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          // Humo fluido general
+          const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+          grad.addColorStop(0, 'rgba(240, 240, 245, 0.15)');
+          grad.addColorStop(1, 'rgba(42, 42, 46, 0)');
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.restore();
+      }
+    }
+
+    const particles = Array.from({ length: 45 }, () => new Particle());
+
+    function animateSmoke() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateSmoke);
+    }
+    animateSmoke();
+
+    /* =========================================================
+       Gestión de Datos y Almacenamiento (IndexedDB + LocalStorage)
+       ========================================================= */
+    const STORAGE_KEY_USER = 'upla_user_account';
+    const STORAGE_KEY_DATA = 'upla_academic_data';
+
+    let currentUser = null;
+    let isTeacherMode = false;
+    let activeCourse = 'algoritmos';
+    let selectedWeekContext = null;
+
+    // Inicializar IndexedDB para archivos sin límite
+    let db = null;
+    function initDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open('UplaFilesDB', 1);
+        request.onupgradeneeded = (e) => {
+          const database = e.target.result;
+          if (!database.objectStoreNames.contains('files')) {
+            database.createObjectStore('files', { keyPath: 'id' });
+          }
+        };
+        request.onsuccess = (e) => {
+          db = e.target.result;
+          resolve(db);
+        };
+        request.onerror = (e) => reject(e);
+      });
+    }
+
+    function saveFileToIDB(id, blobData) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('files', 'readwrite');
+        const store = tx.objectStore('files');
+        store.put({ id: id, blob: blobData });
+        tx.oncomplete = () => resolve();
+        tx.onerror = (e) => reject(e);
+      });
+    }
+
+    function getFileFromIDB(id) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('files', 'readonly');
+        const store = tx.objectStore('files');
+        const req = store.get(id);
+        req.onsuccess = () => resolve(req.result ? req.result.blob : null);
+        req.onerror = (e) => reject(e);
+      });
+    }
+
+    function deleteFileFromIDB(id) {
+      return new Promise((resolve) => {
+        const tx = db.transaction('files', 'readwrite');
+        const store = tx.objectStore('files');
+        store.delete(id);
+        tx.oncomplete = () => resolve();
+      });
+    }
+
+    // Estructura Académica Inicial
+    function getDefaultData() {
+      const courses = ['algoritmos', 'desarrollo'];
+      const data = {};
+
+      courses.forEach((c) => {
+        data[c] = {};
+        for (let w = 1; w <= 16; w++) {
+          data[c][`semana_${w}`] = {
+            title: `Semana ${w}: Tema por definir`,
+            file: null
+          };
+        }
+      });
+
+      return data;
+    }
+
+    function getAcademicData() {
+      const raw = localStorage.getItem(STORAGE_KEY_DATA);
+      return raw ? JSON.parse(raw) : getDefaultData();
+    }
+
+    function saveAcademicData(data) {
+      localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(data));
+    }
+
+    /* =========================================================
+       Controlador de la Interfaz y Eventos
+       ========================================================= */
+    const authSection = document.getElementById('authSection');
+    const dashboardSection = document.getElementById('dashboardSection');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const toggleRegister = document.getElementById('toggleRegister');
+    const toggleLogin = document.getElementById('toggleLogin');
+    const btnTeacherAccess = document.getElementById('btnTeacherAccess');
+    const btnLogout = document.getElementById('btnLogout');
+    const teacherBanner = document.getElementById('teacherBanner');
+
+    // Previsualización de Foto de Perfil
+    const regAvatar = document.getElementById('regAvatar');
+    const avatarPreview = document.getElementById('avatarPreview');
+    let regAvatarBase64 = '[https://via.placeholder.com/60/2A2A2E/F0F0F5?text=Foto](https://via.placeholder.com/60/2A2A2E/F0F0F5?text=Foto)';
+
+    regAvatar.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          regAvatarBase64 = event.target.result;
+          avatarPreview.src = regAvatarBase64;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Cambiar vistas Login / Registro
+    toggleRegister.addEventListener('click', (e) => {
+      e.preventDefault();
+      loginForm.classList.add('hidden');
+      registerForm.classList.remove('hidden');
+      toggleRegister.classList.add('hidden');
+      toggleLogin.classList.remove('hidden');
+    });
+
+    toggleLogin.addEventListener('click', (e) => {
+      e.preventDefault();
+      registerForm.classList.add('hidden');
+      loginForm.classList.remove('hidden');
+      toggleLogin.classList.add('hidden');
+      toggleRegister.classList.remove('hidden');
+    });
+
+    // Iniciar Sesión Estudiante
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const userInput = document.getElementById('loginUser').value.trim();
+      const passInput = document.getElementById('loginPassword').value;
+
+      const savedUserRaw = localStorage.getItem(STORAGE_KEY_USER);
+      if (!savedUserRaw) {
+        alert('No existe una cuenta registrada. Por favor regístrate primero.');
+        return;
+      }
+
+      const savedUser = JSON.parse(savedUserRaw);
+      if ((userInput === savedUser.code || userInput === savedUser.names) && passInput === savedUser.password) {
+        currentUser = savedUser;
+        showDashboard(false);
+      } else {
+        alert('Credenciales incorrectas. Verifica tu código/usuario y contraseña.');
+      }
+    });
+
+    // Registrar Cuenta Estudiante
+    registerForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newAccount = {
+        names: document.getElementById('regNames').value.trim(),
+        code: document.getElementById('regCode').value.trim(),
+        career: document.getElementById('regCareer').value.trim(),
+        cycle: document.getElementById('regCycle').value,
+        avatar: regAvatarBase64,
+        password: document.getElementById('regPassword').value
+      };
+
+      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(newAccount));
+      currentUser = newAccount;
+      alert('¡Cuenta creada exitosamente!');
+      showDashboard(false);
+    });
+
+    // Modo Profesor / Invitado
+    btnTeacherAccess.addEventListener('click', () => {
+      currentUser = {
+        names: 'Docente / Evaluador',
+        code: 'DOCENTE-UPLA',
+        career: 'Facultad de Ingeniería',
+        cycle: 'I-X',
+        avatar: '[https://via.placeholder.com/50/3A3A40/F0F0F5?text=Docente](https://via.placeholder.com/50/3A3A40/F0F0F5?text=Docente)'
+      };
+      showDashboard(true);
+    });
+
+    // Cerrar Sesión
+    btnLogout.addEventListener('click', () => {
+      currentUser = null;
+      isTeacherMode = false;
+      dashboardSection.classList.add('hidden');
+      authSection.classList.remove('hidden');
+      loginForm.reset();
+      registerForm.reset();
+    });
+
+    // Mostrar Dashboard
+    function showDashboard(teacherMode = false) {
+      isTeacherMode = teacherMode;
+      authSection.classList.add('hidden');
+      dashboardSection.classList.remove('hidden');
+
+      if (isTeacherMode) {
+        teacherBanner.classList.remove('hidden');
+      } else {
+        teacherBanner.classList.add('hidden');
+      }
+
+      document.getElementById('userNameHeader').textContent = currentUser.names;
+      document.getElementById('userCodeHeader').textContent = `CÓDIGO: ${currentUser.code}`;
+      document.getElementById('userAvatarHeader').src = currentUser.avatar;
+
+      renderAcademicContent();
+    }
+
+    // Pestañas de Cursos
+    document.querySelectorAll('.tab-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
+        e.target.classList.add('active');
+        activeCourse = e.target.getAttribute('data-course');
+
+        document.getElementById('currentCourseTitle').textContent =
+          activeCourse === 'algoritmos'
+            ? 'Algoritmos y Estructura de Datos'
+            : 'Desarrollo de Aplicaciones I';
+
+        renderAcademicContent();
+      });
+    });
+
+    // Renderizar Unidades y Semanas
+    function renderAcademicContent() {
+      const container = document.getElementById('unitsContainer');
+      container.innerHTML = '';
+      const data = getAcademicData();
+      const courseData = data[activeCourse];
+
+      const unitTitles = ['Unidad I', 'Unidad II', 'Unidad III', 'Unidad IV'];
+
+      for (let u = 0; u < 4; u++) {
+        const unitCard = document.createElement('div');
+        unitCard.className = 'unit-card';
+
+        const unitHeader = document.createElement('h3');
+        unitHeader.textContent = `${unitTitles[u]} (Semanas ${u * 4 + 1} a ${u * 4 + 4})`;
+        unitCard.appendChild(unitHeader);
+
+        const weeksGrid = document.createElement('div');
+        weeksGrid.className = 'weeks-grid';
+
+        for (let w = 1; w <= 4; w++) {
+          const weekNum = u * 4 + w;
+          const weekKey = `semana_${weekNum}`;
+          const weekData = courseData[weekKey];
+
+          const weekCard = document.createElement('div');
+          weekCard.className = 'week-card';
+
+          const weekHeader = document.createElement('div');
+          weekHeader.className = 'week-header';
+          weekHeader.innerHTML = `<strong>Semana ${weekNum}</strong>`;
+
+          const titleInput = document.createElement('input');
+          titleInput.type = 'text';
+          titleInput.className = 'week-title-input';
+          titleInput.value = weekData.title;
+          titleInput.disabled = isTeacherMode;
+          titleInput.placeholder = 'Asignar título o tema...';
+
+          titleInput.addEventListener('change', (e) => {
+            const newData = getAcademicData();
+            newData[activeCourse][weekKey].title = e.target.value;
+            saveAcademicData(newData);
+          });
+
+          const fileStatus = document.createElement('div');
+          fileStatus.className = 'file-status';
+
+          if (weekData.file) {
+            fileStatus.innerHTML = `
+              <div class="file-info">
+                <span>📄</span>
+                <div>
+                  <strong>${weekData.file.name}</strong><br>
+                  <small>${weekData.file.size}</small>
+                </div>
+              </div>
+              <div class="file-actions">
+                <button class="btn btn-small btn-download" onclick="downloadTask('${activeCourse}', ${weekNum})">📥 Descargar</button>
+                ${
+                  !isTeacherMode
+                    ? `<button class="btn btn-small btn-danger" onclick="deleteTask('${activeCourse}',${weekNum})">🗑️ Borrar</button>`
+                    : ''
+                }
+              </div>
+            `;
+          } else {
+            fileStatus.innerHTML = `
+              <small style="color: var(--text-muted)">Sin tarea entregada.</small><br>
+              ${
+                !isTeacherMode
+                  ? `<button class="btn btn-small btn-secondary margin-top" onclick="openUploadModal('${activeCourse}',${weekNum})">➕ Subir Tarea</button>`
+                  : '<small style="color:#A0A0A5">Sin entrega disponible</small>'
+              }
+            `;
+          }
+
+          weekCard.appendChild(weekHeader);
+          weekCard.appendChild(titleInput);
+          weekCard.appendChild(fileStatus);
+          weeksGrid.appendChild(weekCard);
+        }
+
+        unitCard.appendChild(weeksGrid);
+        container.appendChild(unitCard);
+      }
+    }
+
+    /* =========================================================
+       Modal de Carga de Tareas
+       ========================================================= */
+    const uploadModal = document.getElementById('uploadModal');
+    const closeUploadModal = document.getElementById('closeUploadModal');
+    const uploadFileForm = document.getElementById('uploadFileForm');
+    const uploadLinkForm = document.getElementById('uploadLinkForm');
+    const uploadTabBtns = document.querySelectorAll('.upload-tab-btn');
+
+    function openUploadModal(courseId, weekNum) {
+      selectedWeekContext = { courseId, weekNum };
+      document.getElementById('uploadModalTitle').textContent = `Cargar Tarea - Semana ${weekNum}`;
+      uploadModal.classList.remove('hidden');
+    }
+
+    closeUploadModal.addEventListener('click', () => {
+      uploadModal.classList.add('hidden');
+    });
+
+    uploadTabBtns.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        uploadTabBtns.forEach((b) => b.classList.remove('active'));
+        e.target.classList.add('active');
+        const type = e.target.getAttribute('data-type');
+
+        if (type === 'file') {
+          uploadFileForm.classList.remove('hidden');
+          uploadLinkForm.classList.add('hidden');
+        } else {
+          uploadFileForm.classList.add('hidden');
+          uploadLinkForm.classList.remove('hidden');
+        }
+      });
+    });
+
+    // Guardar Archivo Directo
+    uploadFileForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      const fileId = `${selectedWeekContext.courseId}_semana_${selectedWeekContext.weekNum}_${Date.now()}`;
+      await saveFileToIDB(fileId, file);
+
+      const academicData = getAcademicData();
+      academicData[selectedWeekContext.courseId][`semana_${selectedWeekContext.weekNum}`].file = {
+        id: fileId,
+        name: file.name,
+        size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
+        type: file.type || file.name.split('.').pop(),
+        isLink: false
+      };
+
+      saveAcademicData(academicData);
+      uploadModal.classList.add('hidden');
+      uploadFileForm.reset();
+      renderAcademicContent();
+    });
+
+    // Guardar Enlace Directo
+    uploadLinkForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = document.getElementById('linkTitleInput').value.trim();
+      const url = document.getElementById('linkUrlInput').value.trim();
+
+      const academicData = getAcademicData();
+      academicData[selectedWeekContext.courseId][`semana_${selectedWeekContext.weekNum}`].file = {
+        id: 'link_' + Date.now(),
+        name: title || 'Enlace Nube / Google Drive',
+        size: 'Nube Externa',
+        type: 'link',
+        isLink: true,
+        url: url
+      };
+
+      saveAcademicData(academicData);
+      uploadModal.classList.add('hidden');
+      uploadLinkForm.reset();
+      renderAcademicContent();
+    });
+
+    // Descargar Tarea
+    async function downloadTask(courseId, weekNum) {
+      const data = getAcademicData();
+      const fileMeta = data[courseId][`semana_${weekNum}`].file;
+
+      if (!fileMeta) return;
+
+      if (fileMeta.isLink) {
+        window.open(fileMeta.url, '_blank');
+      } else {
+        const blob = await getFileFromIDB(fileMeta.id);
+        if (blob) {
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = fileMeta.name;
+          link.click();
+        } else {
+          alert('No se encontró el archivo en el almacenamiento local.');
+        }
+      }
+    }
+
+    // Borrar Tarea
+    async function deleteTask(courseId, weekNum) {
+      if (!confirm(`¿Eliminar la tarea entregada en la Semana ${weekNum}?`)) return;
+
+      const data = getAcademicData();
+      const weekKey = `semana_${weekNum}`;
+      const fileMeta = data[courseId][weekKey].file;
+
+      if (fileMeta && !fileMeta.isLink) {
+        await deleteFileFromIDB(fileMeta.id);
+      }
+
+      data[courseId][weekKey].file = null;
+      saveAcademicData(data);
+      renderAcademicContent();
+    }
+
+    /* =========================================================
+       Edición de Perfil
+       ========================================================= */
+    const profileTrigger = document.getElementById('profileTrigger');
+    const profileModal = document.getElementById('profileModal');
+    const closeProfileModal = document.getElementById('closeProfileModal');
+    const editProfileForm = document.getElementById('editProfileForm');
+
+    profileTrigger.addEventListener('click', () => {
+      if (isTeacherMode) return;
+
+      document.getElementById('editNames').value = currentUser.names;
+      document.getElementById('editCode').value = currentUser.code;
+      document.getElementById('editCareer').value = currentUser.career;
+      document.getElementById('editCycle').value = currentUser.cycle;
+
+      profileModal.classList.remove('hidden');
+    });
+
+    closeProfileModal.addEventListener('click', () => {
+      profileModal.classList.add('hidden');
+    });
+
+    editProfileForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      currentUser.names = document.getElementById('editNames').value.trim();
+      currentUser.code = document.getElementById('editCode').value.trim();
+      currentUser.career = document.getElementById('editCareer').value.trim();
+      currentUser.cycle = document.getElementById('editCycle').value;
+
+      const newPass = document.getElementById('editPassword').value;
+      if (newPass) currentUser.password = newPass;
+
+      const editAvatarFile = document.getElementById('editAvatar').files[0];
+      if (editAvatarFile) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          currentUser.avatar = event.target.result;
+          saveProfileAndClose();
+        };
+        reader.readAsDataURL(editAvatarFile);
+      } else {
+        saveProfileAndClose();
+      }
+    });
+
+    function saveProfileAndClose() {
+      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
+      showDashboard(false);
+      profileModal.classList.add('hidden');
+      alert('Perfil actualizado correctamente.');
+    }
+
+    // Inicializar la App al cargar
+    document.addEventListener('DOMContentLoaded', async () => {
+      await initDB();
+      const savedUser = localStorage.getItem(STORAGE_KEY_USER);
+      if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        showDashboard(false);
+      }
+    });
+  </script>
+</body>
+</html>
