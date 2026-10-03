@@ -6,5 +6,12 @@
     "ciclo": "4to Ciclo",
     "xp": 100
   },
-  "cursos": {}
+  "cursos": {
+    "Algoritmos y estructura de datos": {
+      "semanas": {}
+    },
+    "Desarrollo de aplicaciones I": {
+      "semanas": {}
+    }
+  }
 }
