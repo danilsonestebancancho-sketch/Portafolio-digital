@@ -1,1573 +1,1297 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es" class="h-full bg-black text-gray-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UPLA - Plataforma de Trabajos Universitarios</title>
-    <!-- Tailwind CSS -->
+    <title>Portafolio Académico Universitario - UPLA</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
                     colors: {
-                        upla: {
-                            dark: '#0a0a0c',
-                            card: '#121318',
-                            border: '#2a2d36',
-                            silver: '#c0c0c0',
-                            bright: '#e0e0e0',
-                            accent: '#4f46e5'
-                        }
+                        darkBg: '#0a0a0a',
+                        darkCard: '#121212',
+                        darkPanel: '#1a1a1a',
+                        darkBorder: '#3a3a3a',
+                        smokeText: '#f5f5f5',
+                        subText: '#d0d0d0',
+                        mutedText: '#8a8a8a'
                     }
                 }
             }
         }
     </script>
-    <!-- FontAwesome & Google Fonts -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         body {
+            background-color: #0a0a0a;
+            color: #f5f5f5;
             font-family: 'Inter', sans-serif;
-            background-color: #0a0a0c;
-            color: #e0e0e0;
             overflow-x: hidden;
         }
-        .font-cinzel {
-            font-family: 'Cinzel', serif;
+
+        /* Glassmorphism utility */
+        .glass-panel {
+            background: rgba(26, 26, 26, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
+
+        .glass-card {
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid #3a3a3a;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2a2a;
+            border-radius: 4px;
+            border: 1px solid #3a3a3a;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4a4a4a;
+        }
+
+        /* Canvas background positioning */
         #smokeCanvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: 0;
+            z-index: -1;
             pointer-events: none;
-            opacity: 0.6;
         }
-        .glass-panel {
-            background: rgba(18, 19, 24, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(192, 192, 192, 0.15);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+
+        /* Accordion transition styling */
+        .accordion-content {
+            transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
         }
-        .glass-panel-hover:hover {
-            border-color: rgba(192, 192, 192, 0.35);
-            box-shadow: 0 10px 30px rgba(192, 192, 192, 0.08);
-            transform: translateY(-2px);
-            transition: all 0.3s ease;
+        .accordion-content.open {
+            max-height: 3000px;
+            opacity: 1;
         }
-        .silver-glow {
-            text-shadow: 0 0 10px rgba(224, 224, 224, 0.4);
-        }
-        .silver-button {
-            background: linear-gradient(135deg, #3a3d46 0%, #1f2127 100%);
-            border: 1px solid #c0c0c0;
-            transition: all 0.25s ease;
-        }
-        .silver-button:hover {
-            background: linear-gradient(135deg, #4f535e 0%, #2a2d36 100%);
-            box-shadow: 0 0 15px rgba(192, 192, 192, 0.3);
-        }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0a0a0c;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #2a2d36;
-            border-radius: 4px;
-            border: 1px solid #3a3d46;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #c0c0c0;
+
+        .glow-hover:hover {
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col relative text-gray-200 antialiased selection:bg-slate-700 selection:text-white">
+<body class="min-h-screen flex flex-col justify-between relative selection:bg-gray-700 selection:text-white">
 
     <canvas id="smokeCanvas"></canvas>
 
-    <!-- App Wrapper -->
-    <div id="app" class="relative z-10 flex flex-col min-h-screen">
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-3 max-w-sm"></div>
 
-        <header id="mainHeader" class="sticky top-0 z-40 glass-panel border-b border-gray-800 px-4 lg:px-8 py-3 transition-all duration-300">
-            <div class="max-w-7xl mx-auto flex items-center justify-between">
-                <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('dashboard')">
-                    <img id="uplaLogoHeader" src="https://placehold.co/120x120/1f2127/c0c0c0?text=UPLA" alt="Logo UPLA" class="w-10 h-10 object-contain rounded-full border border-gray-600 p-0.5">
-                    <div>
-                        <h1 class="font-cinzel text-lg md:text-xl font-bold tracking-wider text-white silver-glow">UPLA TRABAJOS</h1>
-                        <p class="text-[10px] text-gray-400 font-mono tracking-widest uppercase">Universidad Peruana Los Andes</p>
-                    </div>
+    <div id="authOverlay" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="glass-panel w-full max-w-md p-6 sm:p-8 rounded-2xl shadow-2xl relative border border-gray-800">
+            <!-- Header Logo -->
+            <div class="text-center mb-6">
+                <div class="inline-block relative group cursor-pointer" onclick="openUplaLogoModal()" title="Clic para cambiar logo UPLA">
+                    <img id="authUplaLogo" src="https://upload.wikimedia.org/wikipedia/commons/2/29/Logo_UPLA.png" 
+                         onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 100 100\'><rect width=\'100\' height=\'100\' fill=\'%231a1a1a\'/><text x=\'50%\' y=\'50%\' fill=\'%23d0d0d0\' font-size=\'16\' font-weight=\'bold\' text-anchor=\'middle\' dy=\'.3em\'>UPLA</text></svg>'" 
+                         alt="UPLA Logo" class="h-20 mx-auto object-contain transition-transform group-hover:scale-105" />
+                    <span class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 bg-black/90 text-xs text-gray-400 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">Editar Logo</span>
                 </div>
-
-                <!-- Navigation Links for authenticated state -->
-                <nav id="authNav" class="hidden md:flex items-center space-x-6">
-                    <button onclick="navigateTo('dashboard')" class="text-sm font-medium hover:text-white transition flex items-center gap-2 text-gray-300">
-                        <i class="fa-solid fa-house text-xs text-gray-400"></i> Inicio
-                    </button>
-                    <button onclick="navigateTo('cursos')" class="text-sm font-medium hover:text-white transition flex items-center gap-2 text-gray-300">
-                        <i class="fa-solid fa-book-bookmark text-xs text-gray-400"></i> Cursos & Semanas
-                    </button>
-                    <button onclick="navigateTo('perfil')" class="text-sm font-medium hover:text-white transition flex items-center gap-2 text-gray-300">
-                        <i class="fa-solid fa-user-gear text-xs text-gray-400"></i> Mi Perfil
-                    </button>
-                    <button id="docenteNavBtn" onclick="navigateTo('docente')" class="text-sm font-medium text-amber-400 hover:text-amber-300 transition flex items-center gap-2 hidden">
-                        <i class="fa-solid fa-graduation-cap"></i> Portal Docente
-                    </button>
-                </nav>
-
-                <!-- User Bar / Auth Buttons -->
-                <div class="flex items-center space-x-3">
-                    <button onclick="openConfigModal()" class="p-2 text-gray-400 hover:text-white transition rounded-lg hover:bg-gray-800/60" title="Configuración de Firebase & Deploy">
-                        <i class="fa-solid fa-gear text-lg"></i>
-                    </button>
-
-                    <div id="userHeaderProfile" class="hidden flex items-center space-x-3 pl-3 border-l border-gray-800">
-                        <img id="headerAvatar" src="https://placehold.co/80x80/2a2d36/e0e0e0?text=User" alt="Avatar" class="w-9 h-9 rounded-full border border-gray-500 object-cover">
-                        <div class="hidden lg:block text-left">
-                            <div id="headerUserName" class="text-xs font-semibold text-gray-200">Estudiante</div>
-                            <div id="headerUserRole" class="text-[10px] text-gray-400 font-mono">202310000A</div>
-                        </div>
-                        <button onclick="handleLogout()" class="p-2 text-red-400 hover:text-red-300 hover:bg-red-950/40 rounded-lg transition" title="Cerrar Sesión">
-                            <i class="fa-solid fa-power-off"></i>
-                        </button>
-                    </div>
-
-                    <!-- Mobile Menu Trigger -->
-                    <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="md:hidden p-2 text-gray-400 hover:text-white">
-                        <i class="fa-solid fa-bars text-xl"></i>
-                    </button>
-                </div>
+                <h1 class="text-2xl font-bold text-gray-100 mt-3 tracking-wide">PORTAFOLIO ACADÉMICO</h1>
+                <p class="text-xs text-gray-400 uppercase tracking-widest mt-1">Universidad Peruana Los Andes</p>
             </div>
 
-            <!-- Mobile Nav Dropdown -->
-            <div id="mobileMenu" class="hidden md:hidden pt-3 pb-2 border-t border-gray-800 mt-3 flex flex-col space-y-2">
-                <button onclick="navigateTo('dashboard'); toggleMobileMenu();" class="text-left px-3 py-2 rounded text-sm text-gray-300 hover:bg-gray-800">
-                    <i class="fa-solid fa-house w-6 text-gray-400"></i> Inicio
+            <!-- Auth Tabs -->
+            <div class="flex border-b border-gray-700 mb-6">
+                <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2 text-center text-sm font-semibold border-b-2 border-white text-white transition-colors">
+                    Iniciar Sesión
                 </button>
-                <button onclick="navigateTo('cursos'); toggleMobileMenu();" class="text-left px-3 py-2 rounded text-sm text-gray-300 hover:bg-gray-800">
-                    <i class="fa-solid fa-book-bookmark w-6 text-gray-400"></i> Cursos y Semanas
-                </button>
-                <button onclick="navigateTo('perfil'); toggleMobileMenu();" class="text-left px-3 py-2 rounded text-sm text-gray-300 hover:bg-gray-800">
-                    <i class="fa-solid fa-user-gear w-6 text-gray-400"></i> Mi Perfil
-                </button>
-                <button id="mobileDocenteNavBtn" onclick="navigateTo('docente'); toggleMobileMenu();" class="text-left px-3 py-2 rounded text-sm text-amber-400 hover:bg-gray-800 hidden">
-                    <i class="fa-solid fa-graduation-cap w-6"></i> Portal Docente
+                <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-2 text-center text-sm font-semibold border-b-2 border-transparent text-gray-400 hover:text-gray-200 transition-colors">
+                    Registrarse
                 </button>
             </div>
-        </header>
 
-        <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
-
-            <!-- VIEW 1: AUTH (LOGIN & REGISTER & RECOVERY) -->
-            <section id="viewAuth" class="max-w-md mx-auto my-8 space-y-6">
-                <!-- University Logo Banner -->
-                <div class="text-center space-y-3">
-                    <div class="relative inline-block">
-                        <div class="absolute -inset-1 rounded-full bg-gradient-to-r from-gray-600 via-slate-400 to-gray-700 opacity-30 blur"></div>
-                        <img id="uplaLogoAuth" src="https://placehold.co/150x150/121318/c0c0c0?text=UPLA+ESCUDO" alt="UPLA Escudo" class="relative w-28 h-28 mx-auto object-contain rounded-full border-2 border-gray-500 p-1 bg-gray-950">
-                    </div>
-                    <h2 class="font-cinzel text-2xl font-bold text-white tracking-wide silver-glow">Portal Académico UPLA</h2>
-                    <p class="text-xs text-gray-400">Gestión de Trabajos y Evidencias Universitarias</p>
-                </div>
-
-                <!-- Tabs Login / Register -->
-                <div class="glass-panel p-6 rounded-2xl border border-gray-800">
-                    <div class="flex border-b border-gray-800 mb-6">
-                        <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2 text-sm font-semibold text-center border-b-2 border-slate-300 text-white transition">Iniciar Sesión</button>
-                        <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-2 text-sm font-semibold text-center border-b-2 border-transparent text-gray-400 hover:text-gray-200 transition">Registrarse</button>
-                    </div>
-
-                    <!-- LOGIN FORM -->
-                    <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Correo o Código Universitario</label>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                                    <i class="fa-solid fa-id-card"></i>
-                                </span>
-                                <input type="text" id="loginIdentifier" required placeholder="Ej. A12345B o usuario@upla.edu.pe" class="w-full pl-10 pr-4 py-2.5 bg-gray-900/90 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400 transition">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Contraseña</label>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                                    <i class="fa-solid fa-key"></i>
-                                </span>
-                                <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full pl-10 pr-10 py-2.5 bg-gray-900/90 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400 transition">
-                                <button type="button" onclick="togglePasswordVisibility('loginPassword', 'loginEye')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-300">
-                                    <i id="loginEye" class="fa-solid fa-eye"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between text-xs">
-                            <label class="flex items-center space-x-2 text-gray-400 cursor-pointer">
-                                <input type="checkbox" id="loginRemember" class="rounded bg-gray-900 border-gray-700 text-slate-500 focus:ring-0">
-                                <span>Recordar acceso</span>
-                            </label>
-                            <button type="button" onclick="openResetPasswordModal()" class="text-slate-400 hover:text-white underline">¿Olvidaste tu clave?</button>
-                        </div>
-
-                        <button type="submit" class="w-full py-3 silver-button rounded-xl text-white font-semibold text-sm shadow-lg flex items-center justify-center space-x-2">
-                            <i class="fa-solid fa-right-to-bracket"></i>
-                            <span>Acceder a la Plataforma</span>
-                        </button>
-
-                        <div class="pt-4 border-t border-gray-800 text-center">
-                            <button type="button" onclick="handleDocenteDirectAccess()" class="w-full py-2.5 bg-amber-950/30 hover:bg-amber-900/50 border border-amber-600/40 rounded-xl text-amber-300 font-medium text-xs transition flex items-center justify-center space-x-2">
-                                <i class="fa-solid fa-user-shield"></i>
-                                <span>Acceso Especial para Docentes</span>
-                            </button>
-                        </div>
-                    </form>
-
-                    <!-- REGISTER FORM -->
-                    <form id="registerForm" onsubmit="handleRegisterSubmit(event)" class="space-y-4 hidden">
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Nombres</label>
-                                <input type="text" id="regNames" required placeholder="Juan Carlos" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Apellidos</label>
-                                <input type="text" id="regSurnames" required placeholder="Pérez Gómez" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Código UPLA</label>
-                                <input type="text" id="regCode" required placeholder="U20231234" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400 font-mono">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Ciclo</label>
-                                <select id="regCycle" required class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
-                                    <option value="I">Ciclo I</option>
-                                    <option value="II">Ciclo II</option>
-                                    <option value="III">Ciclo III</option>
-                                    <option value="IV">Ciclo IV</option>
-                                    <option value="V" selected>Ciclo V</option>
-                                    <option value="VI">Ciclo VI</option>
-                                    <option value="VII">Ciclo VII</option>
-                                    <option value="VIII">Ciclo VIII</option>
-                                    <option value="IX">Ciclo IX</option>
-                                    <option value="X">Ciclo X</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Carrera Profesional</label>
-                            <select id="regCareer" required class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
-                                <option value="Ingeniería de Sistemas e Informática" selected>Ingeniería de Sistemas e Informática</option>
-                                <option value="Ingeniería Civil">Ingeniería Civil</option>
-                                <option value="Ingeniería Industrial">Ingeniería Industrial</option>
-                                <option value="Derecho y Ciencias Políticas">Derecho y Ciencias Políticas</option>
-                                <option value="Medicina Humana">Medicina Humana</option>
-                                <option value="Contabilidad y Finanzas">Contabilidad y Finanzas</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Correo Electrónico</label>
-                            <input type="email" id="regEmail" required placeholder="estudiante@upla.edu.pe" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">URL Foto de Perfil (Opcional)</label>
-                            <input type="url" id="regAvatarUrl" placeholder="https://..." class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Contraseña</label>
-                                <input type="password" id="regPass" required placeholder="••••••••" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Confirmar</label>
-                                <input type="password" id="regPassConfirm" required placeholder="••••••••" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
-                            </div>
-                        </div>
-
-                        <div class="flex items-center space-x-2 text-xs text-gray-400">
-                            <input type="checkbox" id="regTeacherRole" class="rounded bg-gray-900 border-gray-700 text-amber-500">
-                            <span>Registrar con permisos de Docente</span>
-                        </div>
-
-                        <button type="submit" class="w-full py-3 silver-button rounded-xl text-white font-semibold text-sm shadow-lg flex items-center justify-center space-x-2">
-                            <i class="fa-solid fa-user-plus"></i>
-                            <span>Crear Mi Cuenta UPLA</span>
-                        </button>
-                    </form>
-                </div>
-            </section>
-
-            <!-- VIEW 2: DASHBOARD -->
-            <section id="viewDashboard" class="hidden space-y-6">
-                <!-- User Welcome Card -->
-                <div class="glass-panel p-6 sm:p-8 rounded-2xl relative overflow-hidden border border-gray-800">
-                    <div class="absolute right-0 top-0 bottom-0 w-1/3 opacity-10 pointer-events-none flex items-center justify-center">
-                        <i class="fa-solid fa-skull text-9xl text-gray-200"></i>
-                    </div>
-
-                    <div class="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6 relative z-10">
-                        <div class="relative">
-                            <img id="dashAvatar" src="https://placehold.co/120x120/1f2127/e0e0e0?text=Profile" alt="Avatar" class="w-24 h-24 rounded-2xl border-2 border-slate-400 object-cover shadow-xl">
-                            <span id="dashRoleBadge" class="absolute -bottom-2 -right-2 px-2 py-0.5 bg-slate-800 border border-slate-400 text-[10px] uppercase tracking-wider text-slate-200 rounded font-semibold">ESTUDIANTE</span>
-                        </div>
-
-                        <div class="text-center sm:text-left space-y-1">
-                            <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-wide">
-                                ¡Bienvenido(a), <span id="dashUserName" class="silver-glow text-slate-200">Usuario</span>!
-                            </h2>
-                            <p class="text-sm text-gray-400 flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-1">
-                                <span><i class="fa-solid fa-id-card text-xs text-gray-500 mr-1"></i> <strong id="dashCode" class="font-mono text-gray-300">U20230000</strong></span>
-                                <span><i class="fa-solid fa-graduation-cap text-xs text-gray-500 mr-1"></i> <span id="dashCareer">Ingeniería de Sistemas</span></span>
-                                <span><i class="fa-solid fa-layer-group text-xs text-gray-500 mr-1"></i> <span id="dashCycle">Ciclo V</span></span>
-                            </p>
-                            <p class="text-xs text-gray-500 pt-2">Plataforma sincronizada para entrega de evidencias académicas.</p>
-                        </div>
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Código Universitario</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-id-card absolute left-3 top-3 text-gray-500 text-sm"></i>
+                        <input type="text" id="loginCode" required placeholder="Ej: U202110452" class="w-full bg-zinc-900/90 border border-zinc-700 rounded-lg pl-9 pr-3 py-2 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-gray-400 transition-colors">
                     </div>
                 </div>
-
-                <!-- Action Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Quick Access Courses -->
-                    <div onclick="navigateTo('cursos')" class="glass-panel glass-panel-hover p-6 rounded-2xl cursor-pointer flex flex-col justify-between group">
-                        <div>
-                            <div class="w-12 h-12 rounded-xl bg-gray-800 border border-gray-700 flex items-center justify-center text-slate-300 mb-4 group-hover:border-slate-400 group-hover:text-white transition">
-                                <i class="fa-solid fa-book-open text-xl"></i>
-                            </div>
-                            <h3 class="text-lg font-bold text-white mb-1">Mis Cursos & Semanas</h3>
-                            <p class="text-xs text-gray-400">Accede a tus 2 materias registradas, 4 unidades y 16 semanas por curso.</p>
-                        </div>
-                        <div class="mt-6 flex items-center text-xs font-semibold text-slate-300 group-hover:text-white">
-                            <span>Explorar Trabajos</span> <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
-                        </div>
-                    </div>
-
-                    <!-- Profile Management -->
-                    <div onclick="navigateTo('perfil')" class="glass-panel glass-panel-hover p-6 rounded-2xl cursor-pointer flex flex-col justify-between group">
-                        <div>
-                            <div class="w-12 h-12 rounded-xl bg-gray-800 border border-gray-700 flex items-center justify-center text-slate-300 mb-4 group-hover:border-slate-400 group-hover:text-white transition">
-                                <i class="fa-solid fa-user-pen text-xl"></i>
-                            </div>
-                            <h3 class="text-lg font-bold text-white mb-1">Mi Perfil Académico</h3>
-                            <p class="text-xs text-gray-400">Actualiza tus nombres, ciclo, carrera, foto e historial de seguridad.</p>
-                        </div>
-                        <div class="mt-6 flex items-center text-xs font-semibold text-slate-300 group-hover:text-white">
-                            <span>Editar Información</span> <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
-                        </div>
-                    </div>
-
-                    <!-- Teacher Portal Access -->
-                    <div onclick="navigateTo('docente')" class="glass-panel glass-panel-hover p-6 rounded-2xl cursor-pointer flex flex-col justify-between group border-amber-900/30">
-                        <div>
-                            <div class="w-12 h-12 rounded-xl bg-amber-950/40 border border-amber-700/50 flex items-center justify-center text-amber-400 mb-4 group-hover:border-amber-400 transition">
-                                <i class="fa-solid fa-graduation-cap text-xl"></i>
-                            </div>
-                            <h3 class="text-lg font-bold text-amber-200 mb-1">Revisión Docente</h3>
-                            <p class="text-xs text-gray-400">Portal para docentes calificados. Filtra trabajos enviados por alumnos.</p>
-                        </div>
-                        <div class="mt-6 flex items-center text-xs font-semibold text-amber-400 group-hover:text-amber-300">
-                            <span>Ingresar al Portal</span> <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recent Activities / Quick Stats -->
-                <div class="glass-panel p-6 rounded-2xl border border-gray-800">
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-gray-400 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-clock-rotate-left text-slate-400"></i> Estado General de Entregas
-                    </h3>
-                    <div id="quickStatsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        <div class="bg-gray-900/80 p-4 rounded-xl border border-gray-800">
-                            <div class="text-xs text-gray-400">Cursos Activos</div>
-                            <div class="text-xl font-bold text-white mt-1">2 Materias</div>
-                        </div>
-                        <div class="bg-gray-900/80 p-4 rounded-xl border border-gray-800">
-                            <div class="text-xs text-gray-400">Total Semanas</div>
-                            <div class="text-xl font-bold text-white mt-1">32 Semanas</div>
-                        </div>
-                        <div class="bg-gray-900/80 p-4 rounded-xl border border-gray-800">
-                            <div class="text-xs text-gray-400">Trabajos Subidos</div>
-                            <div id="statTotalWorks" class="text-xl font-bold text-slate-300 mt-1">0 Archivos</div>
-                        </div>
-                        <div class="bg-gray-900/80 p-4 rounded-xl border border-gray-800">
-                            <div class="text-xs text-gray-400">Modalidad</div>
-                            <div class="text-xl font-bold text-emerald-400 mt-1">Sincronizado</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- VIEW 3: COURSES & WEEKS MANAGEMENT -->
-            <section id="viewCursos" class="hidden space-y-6">
-                <!-- Course Selector Header -->
-                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 glass-panel p-6 rounded-2xl border border-gray-800">
-                    <div>
-                        <h2 class="font-cinzel text-xl font-bold text-white silver-glow">Cursos y Asignaturas</h2>
-                        <p class="text-xs text-gray-400">Selecciona una materia para gestionar las 4 Unidades e insumos de las 16 Semanas.</p>
-                    </div>
-
-                    <div class="flex items-center space-x-2 w-full md:w-auto">
-                        <button onclick="selectCourse(1)" id="courseBtn1" class="flex-1 md:flex-none px-4 py-2.5 rounded-xl text-xs font-semibold border transition flex items-center justify-center gap-2 bg-slate-800 border-slate-400 text-white">
-                            <i class="fa-solid fa-code"></i> Algoritmos y Estr. Datos
-                        </button>
-                        <button onclick="selectCourse(2)" id="courseBtn2" class="flex-1 md:flex-none px-4 py-2.5 rounded-xl text-xs font-semibold border transition flex items-center justify-center gap-2 bg-gray-900 border-gray-800 text-gray-400 hover:text-white">
-                            <i class="fa-solid fa-laptop-code"></i> Des. Aplicaciones I
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Units & Weeks Accordion Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                    <!-- Unit Selector Sidebar -->
-                    <div class="space-y-3">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 px-1">Unidades Didácticas</h3>
-                        <div id="unitButtonsContainer" class="space-y-2">
-                            <!-- JS Generated Unit Buttons -->
-                        </div>
-                    </div>
-
-                    <!-- Weeks & Details Content -->
-                    <div class="lg:col-span-3 space-y-6">
-                        <!-- Weeks Selector Header -->
-                        <div class="glass-panel p-4 rounded-xl border border-gray-800">
-                            <div id="weekTabsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                <!-- JS Generated Week Tabs -->
-                            </div>
-                        </div>
-
-                        <!-- Active Week Card details & Upload trigger -->
-                        <div id="weekDetailsCard" class="glass-panel p-6 rounded-2xl border border-gray-800 space-y-6">
-                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-800 pb-4">
-                                <div>
-                                    <div class="flex items-center gap-2">
-                                        <span id="activeWeekBadge" class="px-2.5 py-1 bg-slate-800 border border-slate-600 text-slate-200 text-xs font-mono rounded-md font-bold">SEMANA 1</span>
-                                        <h3 id="activeWeekTitleDisplay" class="text-lg font-bold text-white">Introducción a la Asignatura</h3>
-                                    </div>
-                                    <p id="activeWeekDescDisplay" class="text-xs text-gray-400 mt-1">Definición de conceptos base y requerimientos del proyecto final.</p>
-                                </div>
-
-                                <button onclick="openEditWeekModal()" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-medium rounded-lg border border-gray-600 transition flex items-center gap-1.5">
-                                    <i class="fa-solid fa-pen-to-square text-xs"></i> Editar Semana
-                                </button>
-                            </div>
-
-                            <!-- Upload Section CTA -->
-                            <div class="flex flex-col sm:flex-row items-center justify-between p-4 rounded-xl bg-gray-900/90 border border-gray-800 gap-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center text-slate-300">
-                                        <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="text-sm font-semibold text-white">Entregar o Adjuntar Evidencia</h4>
-                                        <p class="text-[11px] text-gray-400">Soporta archivos directos (PDF, DOCX, ZIP, etc.) o enlaces (Google Drive / GitHub).</p>
-                                    </div>
-                                </div>
-                                <button onclick="openUploadModal()" class="w-full sm:w-auto px-5 py-2.5 silver-button text-white rounded-xl text-xs font-semibold shadow flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-plus"></i> Nuevo Trabajo
-                                </button>
-                            </div>
-
-                            <!-- Works List for this week -->
-                            <div class="space-y-3">
-                                <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 flex items-center justify-between">
-                                    <span>Trabajos y Evidencias Registradas</span>
-                                    <span id="weekWorkCount" class="text-slate-400 font-mono">0 Archivos</span>
-                                </h4>
-
-                                <div id="worksList" class="space-y-3">
-                                    <!-- JS Generated Works List -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- VIEW 4: EDIT PROFILE -->
-            <section id="viewPerfil" class="hidden max-w-2xl mx-auto space-y-6">
-                <div class="glass-panel p-6 sm:p-8 rounded-2xl border border-gray-800 space-y-6">
-                    <div class="border-b border-gray-800 pb-4">
-                        <h2 class="font-cinzel text-xl font-bold text-white silver-glow">Mi Perfil UPLA</h2>
-                        <p class="text-xs text-gray-400">Actualiza tus datos académicos y credenciales de acceso.</p>
-                    </div>
-
-                    <form id="profileForm" onsubmit="handleProfileSave(event)" class="space-y-4">
-                        <div class="flex items-center space-x-4 pb-2">
-                            <img id="profilePreviewAvatar" src="https://placehold.co/100x100/1f2127/e0e0e0?text=Avatar" alt="Avatar Preview" class="w-16 h-16 rounded-2xl border border-slate-500 object-cover">
-                            <div class="flex-1">
-                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">URL Foto de Perfil</label>
-                                <input type="url" id="profAvatarUrl" placeholder="https://..." class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400" oninput="updateProfileAvatarPreview(this.value)">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Nombres</label>
-                                <input type="text" id="profNames" required class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Apellidos</label>
-                                <input type="text" id="profSurnames" required class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Código Universitario (Bloqueado)</label>
-                                <input type="text" id="profCode" readonly class="w-full px-3 py-2 bg-gray-950 border border-gray-800 rounded-lg text-sm text-gray-500 font-mono cursor-not-allowed">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Ciclo Actual</label>
-                                <select id="profCycle" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
-                                    <option value="I">Ciclo I</option>
-                                    <option value="II">Ciclo II</option>
-                                    <option value="III">Ciclo III</option>
-                                    <option value="IV">Ciclo IV</option>
-                                    <option value="V">Ciclo V</option>
-                                    <option value="VI">Ciclo VI</option>
-                                    <option value="VII">Ciclo VII</option>
-                                    <option value="VIII">Ciclo VIII</option>
-                                    <option value="IX">Ciclo IX</option>
-                                    <option value="X">Ciclo X</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Carrera Profesional</label>
-                            <input type="text" id="profCareer" required class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
-                        </div>
-
-                        <div class="pt-4 border-t border-gray-800 space-y-4">
-                            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400">Seguridad & Cambio de Clave</h3>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Nueva Contraseña (Opcional)</label>
-                                <input type="password" id="profNewPass" placeholder="Dejar en blanco para mantener actual" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-end space-x-3 pt-4">
-                            <button type="button" onclick="navigateTo('dashboard')" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl text-xs font-semibold transition">
-                                Cancelar
-                            </button>
-                            <button type="submit" class="px-6 py-2 silver-button text-white rounded-xl text-xs font-semibold shadow flex items-center space-x-2">
-                                <i class="fa-solid fa-floppy-disk"></i>
-                                <span>Guardar Cambios</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </section>
-
-            <!-- VIEW 5: TEACHER REVIEW PORTAL -->
-            <section id="viewDocente" class="hidden space-y-6">
-                <div class="glass-panel p-6 rounded-2xl border border-amber-900/40 space-y-4">
-                    <div class="flex items-center space-x-3 border-b border-gray-800 pb-3">
-                        <div class="w-10 h-10 rounded-xl bg-amber-950/60 border border-amber-700 flex items-center justify-center text-amber-400">
-                            <i class="fa-solid fa-graduation-cap text-lg"></i>
-                        </div>
-                        <div>
-                            <h2 class="font-cinzel text-xl font-bold text-amber-200">Portal de Calificación y Revisión Docente</h2>
-                            <p class="text-xs text-gray-400">Consulta los trabajos entregados por estudiantes UPLA con filtros de búsqueda.</p>
-                        </div>
-                    </div>
-
-                    <!-- Filters -->
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                        <div>
-                            <label class="block text-[11px] font-semibold uppercase text-gray-400 mb-1">Filtrar por Curso</label>
-                            <select id="docFilterCourse" onchange="applyDocenteFilters()" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-xs text-white">
-                                <option value="ALL">Todos los Cursos</option>
-                                <option value="1">Algoritmos y Estructura de Datos</option>
-                                <option value="2">Desarrollo de Aplicaciones I</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-semibold uppercase text-gray-400 mb-1">Filtrar por Unidad</label>
-                            <select id="docFilterUnit" onchange="applyDocenteFilters()" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-xs text-white">
-                                <option value="ALL">Todas las Unidades</option>
-                                <option value="1">Unidad 1 (Sem 1-4)</option>
-                                <option value="2">Unidad 2 (Sem 5-8)</option>
-                                <option value="3">Unidad 3 (Sem 9-12)</option>
-                                <option value="4">Unidad 4 (Sem 13-16)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-semibold uppercase text-gray-400 mb-1">Buscar por Código / Nombre</label>
-                            <input type="text" id="docFilterSearch" oninput="applyDocenteFilters()" placeholder="Ej. Juan o U2023..." class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-xs text-white">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Teacher Results Table -->
-                <div class="glass-panel p-6 rounded-2xl border border-gray-800 space-y-4">
-                    <div class="flex items-center justify-between text-xs text-gray-400 border-b border-gray-800 pb-2">
-                        <span>Listado de Entregas Recibidas</span>
-                        <span id="docenteTotalCount" class="font-mono text-amber-400">0 Resultados</span>
-                    </div>
-
-                    <div id="docenteWorksGrid" class="space-y-3">
-                        <!-- JS Generated Teacher Works list -->
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <!-- MODAL 1: Upload Work -->
-        <div id="modalUpload" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-            <div class="glass-panel max-w-lg w-full p-6 rounded-2xl border border-gray-700 space-y-4 relative">
-                <button onclick="closeUploadModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-
-                <h3 class="font-cinzel text-lg font-bold text-white silver-glow flex items-center gap-2">
-                    <i class="fa-solid fa-cloud-arrow-up text-slate-300"></i> Registrar Trabajo o Evidencia
-                </h3>
-
-                <form id="uploadForm" onsubmit="handleWorkSubmit(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Título del Trabajo *</label>
-                        <input type="text" id="workTitle" required placeholder="Ej. Laboratorio 01 - Estructuras Secuenciales" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Descripción / Observaciones</label>
-                        <textarea id="workDesc" rows="2" placeholder="Detalles de la entrega, integrantes, etc." class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-xs text-white focus:outline-none focus:border-slate-400"></textarea>
-                    </div>
-
-                    <!-- Method Selection Tabs -->
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-2">Método de Adjunto</label>
-                        <div class="grid grid-cols-2 gap-2 p-1 bg-gray-900 border border-gray-800 rounded-lg">
-                            <button type="button" id="methodFileBtn" onclick="setUploadMethod('file')" class="py-1.5 text-xs font-semibold rounded bg-slate-800 text-white border border-slate-600">
-                                <i class="fa-solid fa-file-arrow-up mr-1"></i> Archivo Local
-                            </button>
-                            <button type="button" id="methodLinkBtn" onclick="setUploadMethod('link')" class="py-1.5 text-xs font-semibold rounded text-gray-400 hover:text-white">
-                                <i class="fa-solid fa-link mr-1"></i> Enlace Externo
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- File Input Field -->
-                    <div id="fieldUploadFile" class="space-y-2">
-                        <label class="block text-xs font-semibold uppercase text-gray-400">Seleccionar Archivo (PDF, DOCX, ZIP, PPT, XLS, PNG)</label>
-                        <input type="file" id="workFileInput" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-white hover:file:bg-slate-700 cursor-pointer">
-                    </div>
-
-                    <!-- Link Input Field -->
-                    <div id="fieldUploadLink" class="space-y-2 hidden">
-                        <label class="block text-xs font-semibold uppercase text-gray-400">Enlace de Google Drive / GitHub</label>
-                        <input type="url" id="workLinkInput" placeholder="https://drive.google.com/... o https://github.com/..." class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-slate-400">
-                    </div>
-
-                    <div class="pt-2 flex justify-end space-x-2">
-                        <button type="button" onclick="closeUploadModal()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl text-xs font-semibold">
-                            Cancelar
-                        </button>
-                        <button type="submit" class="px-5 py-2 silver-button text-white rounded-xl text-xs font-semibold shadow flex items-center gap-1.5">
-                            <i class="fa-solid fa-check"></i> Registrar Entrega
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- MODAL 2: Edit Week Title and Description -->
-        <div id="modalEditWeek" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-            <div class="glass-panel max-w-md w-full p-6 rounded-2xl border border-gray-700 space-y-4 relative">
-                <button onclick="closeEditWeekModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-
-                <h3 class="font-cinzel text-lg font-bold text-white silver-glow">Editar Título de Semana</h3>
-
-                <form id="editWeekForm" onsubmit="handleEditWeekSubmit(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Título de la Semana</label>
-                        <input type="text" id="editWeekTitleInput" required class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Descripción / Objetivos</label>
-                        <textarea id="editWeekDescInput" rows="3" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-xs text-white focus:outline-none"></textarea>
-                    </div>
-
-                    <div class="pt-2 flex justify-end space-x-2">
-                        <button type="button" onclick="closeEditWeekModal()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl text-xs font-semibold">
-                            Cancelar
-                        </button>
-                        <button type="submit" class="px-5 py-2 silver-button text-white rounded-xl text-xs font-semibold">
-                            Guardar Cambios
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- MODAL 3: Reset Password -->
-        <div id="modalResetPass" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-            <div class="glass-panel max-w-md w-full p-6 rounded-2xl border border-gray-700 space-y-4 relative">
-                <button onclick="closeResetPasswordModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-
-                <h3 class="font-cinzel text-lg font-bold text-white silver-glow">Recuperar Contraseña UPLA</h3>
-                <p class="text-xs text-gray-400">Ingresa tu correo universitario registrado para recibir las instrucciones de restablecimiento.</p>
-
-                <form onsubmit="handleResetPasswordSubmit(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Correo Electrónico</label>
-                        <input type="email" id="resetEmailInput" required placeholder="estudiante@upla.edu.pe" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white">
-                    </div>
-
-                    <button type="submit" class="w-full py-2.5 silver-button text-white rounded-xl text-xs font-semibold">
-                        Enviar Enlace de Recuperación
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- MODAL 4: Setup Guide & Config (Firebase, Logo UPLA, GitHub Pages) -->
-        <div id="modalConfig" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
-            <div class="glass-panel max-w-3xl w-full p-6 sm:p-8 rounded-2xl border border-gray-700 max-h-[85vh] overflow-y-auto space-y-6 relative">
-                <button onclick="closeConfigModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
 
                 <div>
-                    <h3 class="font-cinzel text-xl font-bold text-white silver-glow flex items-center gap-2">
-                        <i class="fa-solid fa-sliders text-slate-300"></i> Configuración UPLA & Tutorial de Despliegue
-                    </h3>
-                    <p class="text-xs text-gray-400 mt-1">Sigue esta guía paso a paso en español sencillo para conectar tu proyecto con Firebase y desplegarlo en GitHub Pages.</p>
-                </div>
-
-                <!-- Section: Custom UPLA Logo -->
-                <div class="p-4 rounded-xl bg-gray-900 border border-gray-800 space-y-3">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-                        <i class="fa-solid fa-image"></i> Personalizar Logo Oficial UPLA
-                    </h4>
-                    <p class="text-xs text-gray-400">Pega el enlace directo de la insignia oficial UPLA para actualizar la cabecera y el login:</p>
-                    <div class="flex gap-2">
-                        <input type="url" id="uplaLogoInput" placeholder="https://..." class="flex-1 px-3 py-2 bg-gray-950 border border-gray-700 rounded-lg text-xs text-white">
-                        <button onclick="saveUplaLogo()" class="px-4 py-2 silver-button text-white text-xs font-semibold rounded-lg">Guardar Logo</button>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Contraseña</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-lock absolute left-3 top-3 text-gray-500 text-sm"></i>
+                        <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full bg-zinc-900/90 border border-zinc-700 rounded-lg pl-9 pr-3 py-2 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-gray-400 transition-colors">
                     </div>
                 </div>
 
-                <!-- Section: Step-by-Step GitHub & Firebase Setup Guide -->
-                <div class="space-y-4 text-xs text-gray-300">
-                    <h4 class="text-sm font-bold uppercase tracking-wider text-amber-300 flex items-center gap-2">
-                        <i class="fa-solid fa-book text-amber-400"></i> Guía Paso a Paso para Desplegar en GitHub Pages
+                <button type="submit" class="w-full bg-zinc-100 hover:bg-white text-black font-semibold py-2.5 rounded-lg text-sm transition-all transform active:scale-95 shadow-lg">
+                    <i class="fa-solid fa-right-to-bracket mr-2"></i> Iniciar Sesión
+                </button>
+
+                <div class="relative my-4 flex items-center justify-center">
+                    <div class="border-t border-zinc-800 w-full"></div>
+                    <span class="bg-zinc-900 px-3 text-xs text-gray-500 absolute">O</span>
+                </div>
+
+                <button type="button" onclick="handleTeacherAccess()" class="w-full bg-zinc-800/90 hover:bg-zinc-700 text-zinc-200 border border-zinc-600 font-medium py-2.5 rounded-lg text-sm transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-user-graduate text-gray-400"></i> Acceso Directo Docente / Profesor
+                </button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3 hidden">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Nombres y Apellidos</label>
+                        <input type="text" id="regName" required placeholder="Ej: Juan Pérez" class="w-full bg-zinc-900/90 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-gray-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Código Universitario</label>
+                        <input type="text" id="regCode" required placeholder="Ej: U202110452" class="w-full bg-zinc-900/90 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-gray-400">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Carrera Profesional</label>
+                        <select id="regCareer" class="w-full bg-zinc-900/90 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-gray-100 focus:outline-none focus:border-gray-400">
+                            <option value="Ingeniería de Sistemas">Ingeniería de Sistemas</option>
+                            <option value="Ingeniería Civil">Ingeniería Civil</option>
+                            <option value="Ingeniería Industrial">Ingeniería Industrial</option>
+                            <option value="Medicina Humana">Medicina Humana</option>
+                            <option value="Derecho">Derecho</option>
+                            <option value="Administración y Sistemas">Administración y Sistemas</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Ciclo Cursando</label>
+                        <select id="regCycle" class="w-full bg-zinc-900/90 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-gray-100 focus:outline-none focus:border-gray-400">
+                            <option value="1er Ciclo">1er Ciclo</option>
+                            <option value="2do Ciclo">2do Ciclo</option>
+                            <option value="3er Ciclo" selected>3er Ciclo</option>
+                            <option value="4to Ciclo">4to Ciclo</option>
+                            <option value="5to Ciclo">5to Ciclo</option>
+                            <option value="6to Ciclo">6to Ciclo</option>
+                            <option value="7mo Ciclo">7mo Ciclo</option>
+                            <option value="8vo Ciclo">8vo Ciclo</option>
+                            <option value="9no Ciclo">9no Ciclo</option>
+                            <option value="10mo Ciclo">10mo Ciclo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Foto de Perfil</label>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden flex-shrink-0">
+                            <img id="regPhotoPreview" src="" class="w-full h-full object-cover hidden">
+                            <i id="regPhotoIcon" class="fa-solid fa-user text-gray-500 text-sm"></i>
+                        </div>
+                        <input type="file" id="regPhotoInput" accept="image/*" onchange="previewRegPhoto(event)" class="text-xs text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-zinc-800 file:text-gray-200 hover:file:bg-zinc-700">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Contraseña</label>
+                    <input type="password" id="regPassword" required placeholder="••••••••" class="w-full bg-zinc-900/90 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-gray-400">
+                </div>
+
+                <button type="submit" class="w-full bg-zinc-100 hover:bg-white text-black font-semibold py-2.5 rounded-lg text-sm transition-all transform active:scale-95 shadow-lg mt-2">
+                    <i class="fa-solid fa-user-plus mr-2"></i> Registrar Cuenta
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <header id="mainHeader" class="glass-panel sticky top-0 z-30 border-b border-zinc-800 px-4 lg:px-8 py-3">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            
+            <!-- Logo Brand -->
+            <div class="flex items-center gap-3 cursor-pointer group" onclick="openUplaLogoModal()" title="Cambiar Logo UPLA">
+                <img id="headerUplaLogo" src="https://upload.wikimedia.org/wikipedia/commons/2/29/Logo_UPLA.png" 
+                     onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 80 80\'><rect width=\'80\' height=\'80\' fill=\'%231a1a1a\'/><text x=\'50%\' y=\'50%\' fill=\'%23d0d0d0\' font-size=\'14\' font-weight=\'bold\' text-anchor=\'middle\' dy=\'.3em\'>UPLA</text></svg>'" 
+                     alt="UPLA Logo" class="h-10 w-auto object-contain group-hover:scale-105 transition-transform">
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold tracking-wider text-gray-100 flex items-center gap-2">
+                        PORTAFOLIO UPLA 
+                        <span id="roleBadge" class="text-xs bg-zinc-800 border border-zinc-700 text-gray-300 px-2 py-0.5 rounded-full font-normal">Estudiante</span>
+                    </h1>
+                    <p class="text-xs text-gray-400 hidden sm:block">Facultad de Ingeniería - Universidad Peruana Los Andes</p>
+                </div>
+            </div>
+
+            <!-- Profile Badge & Logout -->
+            <div class="flex items-center gap-3">
+                <button onclick="openProfileModal()" class="flex items-center gap-3 glass-card px-3 py-1.5 rounded-xl border border-zinc-700 hover:border-zinc-500 transition-all group">
+                    <div class="w-9 h-9 rounded-full bg-zinc-800 border border-zinc-600 flex items-center justify-center overflow-hidden flex-shrink-0">
+                        <img id="headerAvatar" src="" class="w-full h-full object-cover hidden">
+                        <i id="headerAvatarIcon" class="fa-solid fa-user text-gray-400 text-sm"></i>
+                    </div>
+                    <div class="text-left hidden md:block">
+                        <div id="headerUserName" class="text-xs font-semibold text-gray-200 group-hover:text-white transition-colors">Cargando...</div>
+                        <div id="headerUserSub" class="text-[10px] text-gray-400">Sistemas • 3er Ciclo</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down text-xs text-gray-400 group-hover:text-gray-200 ml-1"></i>
+                </button>
+
+                <button onclick="handleLogout()" title="Cerrar Sesión" class="p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-gray-400 hover:text-red-400 hover:border-red-900/50 transition-all">
+                    <i class="fa-solid fa-power-off text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+        <!-- Banner Summary -->
+        <div class="glass-panel rounded-2xl p-6 border border-zinc-800 mb-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+            <div class="relative z-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-800/80 border border-zinc-700 text-xs text-gray-300 mb-3">
+                    <i class="fa-solid fa-graduation-cap text-gray-400"></i> Periodo Académico 2026 - I
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">Gestión de Cursos y Evidencias</h2>
+                <p class="text-sm text-gray-400 mt-1 max-w-2xl">
+                    Portafolio universitario estructurado en 4 Unidades y 16 Semanas lectivas completas. Carga y gestiona tus proyectos vía archivos locales o almacenamiento directo en la nube.
+                </p>
+            </div>
+            
+            <div class="flex items-center gap-3 w-full md:w-auto relative z-10">
+                <div class="glass-card px-4 py-3 rounded-xl border border-zinc-800 text-center flex-1 md:flex-none">
+                    <span class="block text-2xl font-extrabold text-white">2</span>
+                    <span class="text-[11px] text-gray-400 uppercase tracking-wider">Cursos</span>
+                </div>
+                <div class="glass-card px-4 py-3 rounded-xl border border-zinc-800 text-center flex-1 md:flex-none">
+                    <span class="block text-2xl font-extrabold text-white">32</span>
+                    <span class="text-[11px] text-gray-400 uppercase tracking-wider">Semanas</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guide Banner for Cloud Uploads -->
+        <div class="glass-card p-4 rounded-xl border border-zinc-800 mb-8 flex items-start gap-4 text-xs text-gray-300">
+            <div class="p-2 rounded-lg bg-zinc-800 text-zinc-300 flex-shrink-0">
+                <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+            </div>
+            <div class="flex-1">
+                <span class="font-bold text-white text-sm block mb-0.5">¿Archivos pesados? Usa almacenamiento Cloud</span>
+                <p class="text-gray-400 mb-2">Sube archivos ZIP, PDFs grandes o ejecutables a Google Drive o GitHub Releases y pega su enlace público de acceso directo.</p>
+                <button onclick="openCloudGuideModal()" class="text-xs text-zinc-300 underline font-medium hover:text-white transition-colors">
+                    <i class="fa-solid fa-circle-info mr-1"></i> Ver Guía para compartir enlaces en la nube
+                </button>
+            </div>
+        </div>
+
+        <!-- Courses Accordion Container -->
+        <div id="coursesContainer" class="space-y-6">
+            <!-- Dynamic Javascript Courses & 16 Weeks Rendered Here -->
+        </div>
+    </main>
+
+    <div id="profileModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
+        <div class="glass-panel w-full max-w-lg p-6 rounded-2xl border border-zinc-800 relative max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6 border-b border-zinc-800 pb-3">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-user-gear text-gray-400"></i> Editar Mi Perfil Académico
+                </h3>
+                <button onclick="closeProfileModal()" class="text-gray-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleProfileUpdate(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Nombres y Apellidos</label>
+                    <input type="text" id="editName" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-gray-100 focus:outline-none focus:border-gray-400">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Carrera Profesional</label>
+                        <input type="text" id="editCareer" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-gray-100 focus:outline-none focus:border-gray-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Ciclo Cursando</label>
+                        <select id="editCycle" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-gray-100 focus:outline-none focus:border-gray-400">
+                            <option value="1er Ciclo">1er Ciclo</option>
+                            <option value="2do Ciclo">2do Ciclo</option>
+                            <option value="3er Ciclo">3er Ciclo</option>
+                            <option value="4to Ciclo">4to Ciclo</option>
+                            <option value="5to Ciclo">5to Ciclo</option>
+                            <option value="6to Ciclo">6to Ciclo</option>
+                            <option value="7mo Ciclo">7mo Ciclo</option>
+                            <option value="8vo Ciclo">8vo Ciclo</option>
+                            <option value="9no Ciclo">9no Ciclo</option>
+                            <option value="10mo Ciclo">10mo Ciclo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Actualizar Foto de Perfil</label>
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden flex-shrink-0">
+                            <img id="editPhotoPreview" src="" class="w-full h-full object-cover hidden">
+                            <i id="editPhotoIcon" class="fa-solid fa-user text-gray-500"></i>
+                        </div>
+                        <input type="file" id="editPhotoInput" accept="image/*" onchange="previewEditPhoto(event)" class="text-xs text-gray-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-zinc-800 file:text-gray-200 hover:file:bg-zinc-700">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Nueva Contraseña (Dejar en blanco para conservar)</label>
+                    <input type="password" id="editPassword" placeholder="••••••••" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-gray-100 placeholder-gray-600 focus:outline-none focus:border-gray-400">
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-zinc-800">
+                    <button type="button" onclick="closeProfileModal()" class="px-4 py-2 rounded-lg text-xs font-medium bg-zinc-800 text-gray-300 hover:bg-zinc-700">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-5 py-2 rounded-lg text-xs font-semibold bg-white text-black hover:bg-gray-200 transition-all">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="uplaLogoModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
+        <div class="glass-panel w-full max-w-md p-6 rounded-2xl border border-zinc-800 relative">
+            <div class="flex justify-between items-center mb-4 border-b border-zinc-800 pb-3">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-image text-gray-400"></i> Cambiar Logo Institucional UPLA
+                </h3>
+                <button onclick="closeUplaLogoModal()" class="text-gray-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">URL del Logo de la Universidad</label>
+                    <input type="url" id="uplaLogoUrlInput" placeholder="https://ejemplo.com/logo-upla.png" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-gray-100 placeholder-gray-600 focus:outline-none focus:border-gray-400">
+                </div>
+                
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="resetUplaLogo()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-800 text-gray-400 hover:text-white">
+                        Restaurar Predeterminado
+                    </button>
+                    <button type="button" onclick="saveUplaLogo()" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-white text-black hover:bg-gray-200">
+                        Actualizar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cloudGuideModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
+        <div class="glass-panel w-full max-w-2xl p-6 rounded-2xl border border-zinc-800 relative max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 border-b border-zinc-800 pb-3">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-cloud text-gray-400"></i> Guía: Cómo Compartir Enlaces Públicos en la Nube
+                </h3>
+                <button onclick="closeCloudGuideModal()" class="text-gray-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="space-y-6 text-sm text-gray-300">
+                <!-- Google Drive Step -->
+                <div class="glass-card p-4 rounded-xl border border-zinc-800">
+                    <h4 class="font-bold text-white text-base mb-2 flex items-center gap-2">
+                        <i class="fa-brands fa-google-drive text-amber-500"></i> Opción 1: Google Drive
                     </h4>
+                    <ol class="list-decimal list-inside space-y-1.5 text-xs text-gray-300">
+                        <li>Suba su archivo pesado (.zip, .pdf, .docx, etc.) a su unidad de Google Drive.</li>
+                        <li>Haga clic derecho sobre el archivo y seleccione <strong class="text-white">Compartir &gt; Compartir</strong>.</li>
+                        <li>En <strong class="text-white">Acceso general</strong>, cambie la opción de "Restringido" a <strong class="text-white font-semibold text-emerald-400">"Cualquier persona con el enlace"</strong>.</li>
+                        <li>Haga clic en <strong class="text-white">Copiar enlace</strong> y péguelo en la semana correspondiente de este portafolio.</li>
+                    </ol>
+                </div>
 
-                    <ol class="list-decimal list-inside space-y-3 pl-1">
-                        <li class="space-y-1">
-                            <strong class="text-white">Crear el Repositorio en GitHub:</strong>
-                            <p class="text-gray-400 pl-4">Crea un repositorio público llamado <code class="bg-gray-800 px-1 py-0.5 rounded font-mono text-slate-300">upla-trabajos-universitarios</code>. Sube este archivo renombrado a <code class="bg-gray-800 px-1 py-0.5 rounded font-mono text-slate-300">index.html</code>.</p>
-                        </li>
-
-                        <li class="space-y-1">
-                            <strong class="text-white">Crear Proyecto en Firebase Console:</strong>
-                            <p class="text-gray-400 pl-4">Ingresa a <a href="https://console.firebase.google.com/" target="_blank" class="text-slate-300 underline">Firebase Console</a>, crea un proyecto y habilita:</p>
-                            <ul class="list-disc list-inside pl-8 text-gray-400">
-                                /> Authentication (Email/Contraseña y Anónimo)</li>
-                                <li>Cloud Firestore Database (Modo producción)</li>
-                                <li>Firebase Storage</li>
-                            </ul>
-                        </li>
-
-                        <li class="space-y-1">
-                            <strong class="text-white">Reglas de Seguridad Firestore (Copiar y Pegar):</strong>
-                            <pre class="bg-gray-950 p-3 rounded border border-gray-800 font-mono text-[11px] text-emerald-400 overflow-x-auto mt-1">rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /artifacts/{appId}/public/data/{document=**} {
-      allow read, write: if request.auth != null;
-    }
-  }
-}</pre>
-                        </li>
-
-                        <li class="space-y-1">
-                            <strong class="text-white">Activar GitHub Pages:</strong>
-                            <p class="text-gray-400 pl-4">En tu repositorio de GitHub, ve a <em>Settings > Pages > Branch (main) > Save</em>. ¡Tu sitio estará en vivo en pocos minutos!</p>
-                        </li>
+                <!-- GitHub Releases Step -->
+                <div class="glass-card p-4 rounded-xl border border-zinc-800">
+                    <h4 class="font-bold text-white text-base mb-2 flex items-center gap-2">
+                        <i class="fa-brands fa-github text-gray-200"></i> Opción 2: GitHub Releases / Repository
+                    </h4>
+                    <ol class="list-decimal list-inside space-y-1.5 text-xs text-gray-300">
+                        <li>Suba los archivos o código a su repositorio público en GitHub.</li>
+                        <li>En la sección <strong class="text-white">Releases</strong>, adjunte el paquete zip ejecutable o proyecto compilado.</li>
+                        <li>Copie la URL pública del asset o del repositorio y péguela en la entrada de la tarea correspondiente.</li>
                     </ol>
                 </div>
             </div>
-        </div>
 
-        <footer class="mt-auto border-t border-gray-800/80 py-4 px-6 text-center text-xs text-gray-500">
-            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-                <div>Plataforma de Evidencias - Universidad Peruana Los Andes (UPLA)</div>
-                <div class="flex items-center space-x-4 text-gray-400">
-                    <span><i class="fa-solid fa-shield-halved text-xs mr-1"></i> Firestore Active</span>
-                    <span><i class="fa-brands fa-github text-xs mr-1"></i> GitHub Pages Ready</span>
-                </div>
+            <div class="mt-6 flex justify-end">
+                <button onclick="closeCloudGuideModal()" class="px-5 py-2 rounded-lg text-xs font-semibold bg-white text-black hover:bg-gray-200">
+                    Entendido
+                </button>
             </div>
-        </footer>
-    </div>
-
-    <!-- Notification Toast -->
-    <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-        <div id="toastContent" class="glass-panel px-4 py-3 rounded-xl border border-slate-400 text-white text-xs font-semibold flex items-center space-x-3 shadow-2xl">
-            <i id="toastIcon" class="fa-solid fa-circle-info text-slate-300"></i>
-            <span id="toastMessage">Notificación del sistema</span>
         </div>
     </div>
 
-    <!-- JavaScript Application Logic -->
+    <footer class="glass-panel border-t border-zinc-800 py-6 mt-12 text-center text-xs text-gray-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>© 2026 Universidad Peruana Los Andes (UPLA) - Sistema de Portafolio Académico Digital</p>
+            <p class="mt-1 text-gray-600">Optimizando la entrega de evidencias de aprendizaje en la Facultad de Ingeniería</p>
+        </div>
+    </footer>
+
     <script>
-        
-        // Default Course & Week Database Data Structure (16 Weeks per Course)
-        const COURSE_DEFINITIONS = {
-            1: {
-                id: 1,
-                title: "Algoritmos y Estructura de Datos",
-                code: "SI-501",
-                units: [
-                    { id: 1, name: "Unidad 1: Fundamentos de Algoritmos", weeks: [1, 2, 3, 4] },
-                    { id: 2, name: "Unidad 2: Estructuras de Datos Lineales", weeks: [5, 6, 7, 8] },
-                    { id: 3, name: "Unidad 3: Estructuras No Lineales y Árboles", weeks: [9, 10, 11, 12] },
-                    { id: 4, name: "Unidad 4: Grafos y Complejidad Algorítmica", weeks: [13, 14, 15, 16] }
-                ]
-            },
-            2: {
-                id: 2,
-                title: "Desarrollo de Aplicaciones I",
-                code: "SI-502",
-                units: [
-                    { id: 1, name: "Unidad 1: Arquitectura Web y Front-end Moderno", weeks: [1, 2, 3, 4] },
-                    { id: 2, name: "Unidad 2: Lógica JavaScript Avanzada y APIs", weeks: [5, 6, 7, 8] },
-                    { id: 3, name: "Unidad 3: Backend con Servicios Cloud y DB", weeks: [9, 10, 11, 12] },
-                    { id: 4, name: "Unidad 4: Despliegue, GitHub Pages y CI/CD", weeks: [13, 14, 15, 16] }
-                ]
+        /* Interactive 2D Smoke Canvas with Ethereal Spectral Aura Effects */
+        const canvas = document.getElementById('smokeCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            initSkulls();
+        });
+
+        // Mouse Tracker
+        const mouse = { x: width / 2, y: height / 2, active: false };
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            mouse.active = true;
+        });
+
+        // Smoke Particle Class
+        class Particle {
+            constructor() {
+                this.reset();
             }
-        };
 
-        // Application State
-        let currentUser = null;
-        let activeCourseId = 1;
-        let activeUnitId = 1;
-        let activeWeekNum = 1;
-        let currentUploadMethod = 'file'; // 'file' or 'link'
-        
-        // Default editable week titles store (Local & Firestore synced)
-        let weekTitlesStore = {};
-        // Works DB Store
-        let worksStore = [];
-
-        // Initialize default week titles
-        for (let c = 1; c <= 2; c++) {
-            weekTitlesStore[c] = {};
-            for (let w = 1; w <= 16; w++) {
-                weekTitlesStore[c][w] = {
-                    title: `Semana ${w}: Tema General y Prácticas`,
-                    description: `Actividades académicas y guías de laboratorio correspondientes a la Semana ${w}.`
-                };
+            reset() {
+                this.x = Math.random() * width;
+                this.y = height + Math.random() * 100;
+                this.vx = (Math.random() - 0.5) * 0.6;
+                this.vy = -Math.random() * 1.2 - 0.4;
+                this.radius = Math.random() * 40 + 20;
+                this.maxRadius = this.radius * (Math.random() * 1.5 + 1.2);
+                this.alpha = Math.random() * 0.25 + 0.05;
+                this.decay = Math.random() * 0.001 + 0.0005;
+                this.grey = Math.floor(Math.random() * 60 + 180); // White-smoke tones
             }
-        }
 
-        function initSmokeCanvas() {
-            const canvas = document.getElementById('smokeCanvas');
-            const ctx = canvas.getContext('2d');
-            let width = canvas.width = window.innerWidth;
-            let height = canvas.height = window.innerHeight;
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
 
-            window.addEventListener('resize', () => {
-                width = canvas.width = window.innerWidth;
-                height = canvas.height = window.innerHeight;
-            });
-
-            const particles = [];
-            const particleCount = 35;
-
-            class Particle {
-                constructor() {
-                    this.reset();
+                if (this.radius < this.maxRadius) {
+                    this.radius += 0.1;
                 }
 
-                reset() {
-                    this.x = Math.random() * width;
-                    this.y = height + Math.random() * 100;
-                    this.size = Math.random() * 120 + 80;
-                    this.speedY = Math.random() * 0.4 + 0.1;
-                    this.speedX = (Math.random() - 0.5) * 0.3;
-                    this.opacity = Math.random() * 0.25 + 0.05;
-                }
+                this.alpha -= this.decay;
 
-                update() {
-                    this.y -= this.speedY;
-                    this.x += this.speedX;
-                    if (this.y < -this.size) {
-                        this.reset();
+                // Mouse influence aura interaction
+                if (mouse.active) {
+                    const dx = mouse.x - this.x;
+                    const dy = mouse.y - this.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 150) {
+                        const force = (150 - dist) / 150;
+                        this.x -= (dx / dist) * force * 1.5;
+                        this.y -= (dy / dist) * force * 1.5;
                     }
                 }
 
-                draw() {
-                    ctx.save();
-                    ctx.beginPath();
-                    const gradient = ctx.createRadialGradient(
-                        this.x, this.y, 0,
-                        this.x, this.y, this.size
-                    );
-                    gradient.addColorStop(0, `rgba(180, 190, 210, ${this.opacity})`);
-                    gradient.addColorStop(0.5, `rgba(60, 65, 80, ${this.opacity * 0.5})`);
-                    gradient.addColorStop(1, 'rgba(10, 10, 12, 0)');
-
-                    ctx.fillStyle = gradient;
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.restore();
+                if (this.alpha <= 0 || this.y < -100) {
+                    this.reset();
                 }
             }
 
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new Particle());
+            draw() {
+                ctx.save();
+                ctx.beginPath();
+                const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
+                gradient.addColorStop(0, `rgba(${this.grey}, ${this.grey}, ${this.grey}, ${this.alpha})`);
+                gradient.addColorStop(0.6, `rgba(${this.grey - 40}, ${this.grey - 40}, ${this.grey - 40}, ${this.alpha * 0.4})`);
+                gradient.addColorStop(1, 'rgba(10, 10, 10, 0)');
+                ctx.fillStyle = gradient;
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
             }
-
-            function animate() {
-                ctx.clearRect(0, 0, width, height);
-                particles.forEach(p => {
-                    p.update();
-                    p.draw();
-                });
-                requestAnimationFrame(animate);
-            }
-            animate();
         }
 
-        function navigateTo(viewName) {
-            // Guard protected views if not logged in
-            if (!currentUser && (viewName === 'dashboard' || viewName === 'cursos' || viewName === 'perfil')) {
-                showToast("Por favor, inicia sesión para acceder al panel", "error");
-                viewName = 'auth';
+        // Floating Skull Spectral Silhouette Object
+        class SpectralSkull {
+            constructor() {
+                this.reset();
             }
 
-            // Hide all views
-            ['viewAuth', 'viewDashboard', 'viewCursos', 'viewPerfil', 'viewDocente'].forEach(id => {
-                document.getElementById(id).classList.add('hidden');
+            reset() {
+                this.x = Math.random() * width;
+                this.y = height + 100;
+                this.vy = -Math.random() * 0.4 - 0.2;
+                this.scale = Math.random() * 0.4 + 0.3;
+                this.alpha = 0;
+                this.maxAlpha = Math.random() * 0.12 + 0.03; // Subtle ethereal look
+                this.phase = 'fadeIn';
+            }
+
+            update() {
+                this.y += this.vy;
+                if (this.phase === 'fadeIn') {
+                    this.alpha += 0.002;
+                    if (this.alpha >= this.maxAlpha) this.phase = 'hold';
+                } else if (this.phase === 'hold') {
+                    if (this.y < height * 0.3) this.phase = 'fadeOut';
+                } else if (this.phase === 'fadeOut') {
+                    this.alpha -= 0.002;
+                }
+
+                if (this.alpha <= 0 || this.y < -150) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.scale(this.scale, this.scale);
+                ctx.strokeStyle = `rgba(220, 220, 220, ${this.alpha})`;
+                ctx.fillStyle = `rgba(180, 180, 180, ${this.alpha * 0.3})`;
+                ctx.lineWidth = 1.5;
+
+                // Stylized Ethereal Skull Path
+                ctx.beginPath();
+                // Cranium
+                ctx.arc(0, -20, 30, Math.PI * 0.85, Math.PI * 2.15);
+                // Jaw line
+                ctx.lineTo(15, 20);
+                ctx.lineTo(10, 30);
+                ctx.lineTo(-10, 30);
+                ctx.lineTo(-15, 20);
+                ctx.closePath();
+                ctx.stroke();
+
+                // Eye Sockets
+                ctx.beginPath();
+                ctx.ellipse(-12, -15, 8, 10, 0, 0, Math.PI * 2);
+                ctx.ellipse(12, -15, 8, 10, 0, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.fill();
+
+                // Nose Cavity
+                ctx.beginPath();
+                ctx.moveTo(0, -5);
+                ctx.lineTo(-4, 4);
+                ctx.lineTo(4, 4);
+                ctx.closePath();
+                ctx.stroke();
+
+                // Teeth lines
+                ctx.beginPath();
+                ctx.moveTo(-8, 20); ctx.lineTo(-8, 30);
+                ctx.moveTo(0, 20);  ctx.lineTo(0, 30);
+                ctx.moveTo(8, 20);  ctx.lineTo(8, 30);
+                ctx.stroke();
+
+                ctx.restore();
+            }
+        }
+
+        // Initialize Particles and Skulls
+        const particles = Array.from({ length: 65 }, () => new Particle());
+        let skulls = [];
+
+        function initSkulls() {
+            skulls = Array.from({ length: 5 }, () => new SpectralSkull());
+        }
+        initSkulls();
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw floating smoke clouds
+            particles.forEach(p => {
+                p.update();
+                p.draw();
             });
 
-            // Show selected view
-            const targetView = document.getElementById('view' + viewName.charAt(0).toUpperCase() + viewName.slice(1));
-            if (targetView) targetView.classList.remove('hidden');
+            // Draw floating spectral skulls
+            skulls.forEach(s => {
+                s.update();
+                s.draw();
+            });
 
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            // Render view-specific data
-            if (viewName === 'cursos') {
-                renderCourseView();
-            } else if (viewName === 'perfil') {
-                populateProfileForm();
-            } else if (viewName === 'docente') {
-                renderDocenteView();
-            } else if (viewName === 'dashboard') {
-                updateDashboardStats();
-            }
+            requestAnimationFrame(animateCanvas);
         }
 
+        window.onload = function() {
+            animateCanvas();
+        };
+    </script>
+
+    <script>
+        /* STATE & PERSISTENCE MANAGEMENT */
+        const DEFAULT_UPLA_LOGO = "https://upload.wikimedia.org/wikipedia/commons/2/29/Logo_UPLA.png";
+        
+        let currentUser = null;
+        let isTeacherMode = false;
+        let userPhotoBase64 = "";
+        let editPhotoBase64 = "";
+
+        // Default Academic Courses Structure (2 Courses, 4 Units, 16 Weeks each)
+        const DEFAULT_COURSES = [
+            {
+                id: "course_1",
+                name: "Algoritmos y Estructura de Datos",
+                code: "SI-301",
+                professor: "Ing. Mario Ramírez",
+                units: [
+                    { id: "c1_u1", title: "Unidad I: Fundamentos y Complejidad Algorítmica", weeks: [1, 2, 3, 4] },
+                    { id: "c1_u2", title: "Unidad II: Estructuras de Datos Lineales", weeks: [5, 6, 7, 8] },
+                    { id: "c1_u3", title: "Unidad III: Estructuras No Lineales (Árboles y Grafos)", weeks: [9, 10, 11, 12] },
+                    { id: "c1_u4", title: "Unidad IV: Algoritmos de Ordenamiento y Búsqueda Avanzada", weeks: [13, 14, 15, 16] }
+                ]
+            },
+            {
+                id: "course_2",
+                name: "Desarrollo de Aplicaciones I",
+                code: "SI-302",
+                professor: "Ing. Sofía Mendoza",
+                units: [
+                    { id: "c2_u1", title: "Unidad I: Arquitectura Web Frontend & Estándares", weeks: [1, 2, 3, 4] },
+                    { id: "c2_u2", title: "Unidad II: JavaScript ES6+ & Programación Asíncrona", weeks: [5, 6, 7, 8] },
+                    { id: "c2_u3", title: "Unidad III: Frameworks de UI & Manejo de Estado", weeks: [9, 10, 11, 12] },
+                    { id: "c2_u4", title: "Unidad IV: Integración API REST & Despliegue Cloud", weeks: [13, 14, 15, 16] }
+                ]
+            }
+        ];
+
+        // Storage Keys
+        const STORAGE_USER_KEY = "upla_portfolio_user";
+        const STORAGE_DATA_KEY = "upla_portfolio_data";
+        const STORAGE_LOGO_KEY = "upla_portfolio_logo";
+
+        // Initialize App State
+        document.addEventListener("DOMContentLoaded", () => {
+            loadUplaLogo();
+            checkAuthStatus();
+        });
+
+        /* TOAST NOTIFICATION SYSTEM */
+        function showToast(message, type = "info") {
+            const container = document.getElementById("toastContainer");
+            const toast = document.createElement("div");
+            const bgClass = type === "success" ? "bg-emerald-950 border-emerald-700 text-emerald-200" :
+                           type === "error" ? "bg-red-950 border-red-700 text-red-200" :
+                           "bg-zinc-900 border-zinc-700 text-zinc-200";
+
+            toast.className = `p-3 rounded-xl border ${bgClass} shadow-xl text-xs flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0`;
+            toast.innerHTML = `
+                <i class="fa-solid ${type === 'success' ? 'fa-circle-check' : type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-info'} text-sm"></i>
+                <span>${message}</span>
+            `;
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove("translate-y-2", "opacity-0");
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add("opacity-0");
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        /* LOGO MANAGEMENT */
+        function loadUplaLogo() {
+            const savedLogo = localStorage.getItem(STORAGE_LOGO_KEY) || DEFAULT_UPLA_LOGO;
+            document.getElementById("authUplaLogo").src = savedLogo;
+            document.getElementById("headerUplaLogo").src = savedLogo;
+        }
+
+        function openUplaLogoModal() {
+            document.getElementById("uplaLogoUrlInput").value = localStorage.getItem(STORAGE_LOGO_KEY) || "";
+            document.getElementById("uplaLogoModal").classList.remove("hidden");
+        }
+
+        function closeUplaLogoModal() {
+            document.getElementById("uplaLogoModal").classList.add("hidden");
+        }
+
+        function saveUplaLogo() {
+            const newUrl = document.getElementById("uplaLogoUrlInput").value.trim();
+            if (newUrl) {
+                localStorage.setItem(STORAGE_LOGO_KEY, newUrl);
+                loadUplaLogo();
+                showToast("Logo institucional UPLA actualizado", "success");
+            }
+            closeUplaLogoModal();
+        }
+
+        function resetUplaLogo() {
+            localStorage.removeItem(STORAGE_LOGO_KEY);
+            loadUplaLogo();
+            showToast("Logo restaurado al valor por defecto", "info");
+            closeUplaLogoModal();
+        }
+
+        /* AUTHENTICATION & TABS */
         function switchAuthTab(tab) {
-            const loginForm = document.getElementById('loginForm');
-            const registerForm = document.getElementById('registerForm');
-            const loginBtn = document.getElementById('tabLoginBtn');
-            const registerBtn = document.getElementById('tabRegisterBtn');
+            const loginForm = document.getElementById("loginForm");
+            const regForm = document.getElementById("registerForm");
+            const tabLoginBtn = document.getElementById("tabLoginBtn");
+            const tabRegisterBtn = document.getElementById("tabRegisterBtn");
 
             if (tab === 'login') {
-                loginForm.classList.remove('hidden');
-                registerForm.classList.add('hidden');
-                loginBtn.classList.add('border-slate-300', 'text-white');
-                loginBtn.classList.remove('border-transparent', 'text-gray-400');
-                registerBtn.classList.remove('border-slate-300', 'text-white');
-                registerBtn.classList.add('border-transparent', 'text-gray-400');
+                loginForm.classList.remove("hidden");
+                regForm.classList.add("hidden");
+                tabLoginBtn.className = "flex-1 py-2 text-center text-sm font-semibold border-b-2 border-white text-white transition-colors";
+                tabRegisterBtn.className = "flex-1 py-2 text-center text-sm font-semibold border-b-2 border-transparent text-gray-400 hover:text-gray-200 transition-colors";
             } else {
-                loginForm.classList.add('hidden');
-                registerForm.classList.remove('hidden');
-                registerBtn.classList.add('border-slate-300', 'text-white');
-                registerBtn.classList.remove('border-transparent', 'text-gray-400');
-                loginBtn.classList.remove('border-slate-300', 'text-white');
-                loginBtn.classList.add('border-transparent', 'text-gray-400');
+                loginForm.classList.add("hidden");
+                regForm.classList.remove("hidden");
+                tabRegisterBtn.className = "flex-1 py-2 text-center text-sm font-semibold border-b-2 border-white text-white transition-colors";
+                tabLoginBtn.className = "flex-1 py-2 text-center text-sm font-semibold border-b-2 border-transparent text-gray-400 hover:text-gray-200 transition-colors";
             }
         }
 
-        function togglePasswordVisibility(inputId, eyeId) {
-            const input = document.getElementById(inputId);
-            const eye = document.getElementById(eyeId);
-            if (input.type === 'password') {
-                input.type = 'text';
-                eye.classList.replace('fa-eye', 'fa-eye-slash');
+        function checkAuthStatus() {
+            const savedUser = localStorage.getItem(STORAGE_USER_KEY);
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                isTeacherMode = false;
+                showDashboard();
             } else {
-                input.type = 'password';
-                eye.classList.replace('fa-eye-slash', 'fa-eye');
+                showAuthOverlay();
             }
         }
 
-        function toggleMobileMenu() {
-            document.getElementById('mobileMenu').classList.toggle('hidden');
+        function showAuthOverlay() {
+            document.getElementById("authOverlay").classList.remove("hidden");
         }
 
-        function handleLoginSubmit(event) {
-            event.preventDefault();
-            const identifier = document.getElementById('loginIdentifier').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
-
-            if (!identifier || !password) {
-                showToast("Ingresa tu código/correo y contraseña", "error");
-                return;
-            }
-
-            // Mock check or Firestore verification
-            const isDocente = identifier.toLowerCase().includes('docente');
-            
-            currentUser = {
-                uid: 'usr_' + Date.now(),
-                names: isDocente ? 'Dr. Roberto' : 'Carlos Alberto',
-                surnames: isDocente ? 'Gutiérrez Vega' : 'Mendoza Ramos',
-                code: identifier.toUpperCase().startsWith('U') ? identifier.toUpperCase() : 'U202310892',
-                email: identifier.includes('@') ? identifier : `${identifier}@upla.edu.pe`,
-                career: 'Ingeniería de Sistemas e Informática',
-                cycle: 'Ciclo V',
-                avatarUrl: isDocente ? 'https://placehold.co/120x120/1f2127/fbbf24?text=DOCENTE' : 'https://placehold.co/120x120/1f2127/e0e0e0?text=UPLA',
-                isDocente: isDocente
-            };
-
-            updateUserHeaderUI();
-            showToast(`¡Bienvenido(a), ${currentUser.names}!`, "success");
-            navigateTo('dashboard');
+        function hideAuthOverlay() {
+            document.getElementById("authOverlay").classList.add("hidden");
         }
 
-        function handleRegisterSubmit(event) {
-            event.preventDefault();
-            const names = document.getElementById('regNames').value.trim();
-            const surnames = document.getElementById('regSurnames').value.trim();
-            const code = document.getElementById('regCode').value.trim().toUpperCase();
-            const cycle = document.getElementById('regCycle').value;
-            const career = document.getElementById('regCareer').value;
-            const email = document.getElementById('regEmail').value.trim();
-            const avatarUrl = document.getElementById('regAvatarUrl').value.trim() || 'https://placehold.co/120x120/1f2127/e0e0e0?text=UPLA';
-            const pass = document.getElementById('regPass').value;
-            const passConfirm = document.getElementById('regPassConfirm').value;
-            const isDocente = document.getElementById('regTeacherRole').checked;
-
-            if (pass !== passConfirm) {
-                showToast("Las contraseñas no coinciden", "error");
-                return;
+        function previewRegPhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    userPhotoBase64 = e.target.result;
+                    const img = document.getElementById("regPhotoPreview");
+                    img.src = userPhotoBase64;
+                    img.classList.remove("hidden");
+                    document.getElementById("regPhotoIcon").classList.add("hidden");
+                };
+                reader.readAsDataURL(file);
             }
+        }
 
-            currentUser = {
-                uid: 'usr_' + Date.now(),
-                names,
-                surnames,
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById("regName").value.trim();
+            const code = document.getElementById("regCode").value.trim();
+            const career = document.getElementById("regCareer").value;
+            const cycle = document.getElementById("regCycle").value;
+            const password = document.getElementById("regPassword").value;
+
+            const user = {
+                name,
                 code,
-                cycle,
                 career,
-                email,
-                avatarUrl,
-                isDocente
+                cycle,
+                password,
+                photo: userPhotoBase64
             };
 
-            updateUserHeaderUI();
-            showToast("Cuenta UPLA creada exitosamente", "success");
-            navigateTo('dashboard');
+            localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(user));
+            currentUser = user;
+            isTeacherMode = false;
+
+            showToast("¡Cuenta creada exitosamente! Bienvenido.", "success");
+            showDashboard();
         }
 
-        function handleDocenteDirectAccess() {
-            document.getElementById('loginIdentifier').value = 'docente.upla';
-            document.getElementById('loginPassword').value = '123456';
-            showToast("Credenciales de docente cargadas", "info");
+        function handleLogin(e) {
+            e.preventDefault();
+            const code = document.getElementById("loginCode").value.trim();
+            const password = document.getElementById("loginPassword").value;
+
+            const savedUser = localStorage.getItem(STORAGE_USER_KEY);
+            if (!savedUser) {
+                showToast("No se encontró cuenta registrada. Por favor regístrese.", "error");
+                switchAuthTab('register');
+                return;
+            }
+
+            const user = JSON.parse(savedUser);
+            if (user.code === code && user.password === password) {
+                currentUser = user;
+                isTeacherMode = false;
+                showToast("Inicio de sesión correcto", "success");
+                showDashboard();
+            } else {
+                showToast("Código o contraseña incorrectos", "error");
+            }
+        }
+
+        function handleTeacherAccess() {
+            isTeacherMode = true;
+            currentUser = {
+                name: "Docente Evaluador / Profesor",
+                code: "DOCENTE-UPLA",
+                career: "Revisión Académica",
+                cycle: "Modo Lectura",
+                photo: ""
+            };
+            showToast("Acceso Directo Docente activado (Modo Lectura)", "info");
+            showDashboard();
         }
 
         function handleLogout() {
             currentUser = null;
-            document.getElementById('authNav').classList.add('hidden');
-            document.getElementById('userHeaderProfile').classList.add('hidden');
-            document.getElementById('docenteNavBtn').classList.add('hidden');
-            document.getElementById('mobileDocenteNavBtn').classList.add('hidden');
-            showToast("Sesión cerrada correctamente", "info");
-            navigateTo('auth');
+            isTeacherMode = false;
+            showAuthOverlay();
+            showToast("Sesión cerrada", "info");
         }
 
-        function updateUserHeaderUI() {
-            if (!currentUser) return;
+        /* DASHBOARD & RENDER UI */
+        function showDashboard() {
+            hideAuthOverlay();
 
-            document.getElementById('authNav').classList.remove('hidden');
-            document.getElementById('userHeaderProfile').classList.remove('hidden');
-            document.getElementById('headerAvatar').src = currentUser.avatarUrl;
-            document.getElementById('headerUserName').textContent = currentUser.names;
-            document.getElementById('headerUserRole').textContent = currentUser.code;
-
-            // Teacher role elements
-            if (currentUser.isDocente) {
-                document.getElementById('docenteNavBtn').classList.remove('hidden');
-                document.getElementById('mobileDocenteNavBtn').classList.remove('hidden');
-                document.getElementById('dashRoleBadge').textContent = 'DOCENTE';
-                document.getElementById('dashRoleBadge').classList.replace('bg-slate-800', 'bg-amber-900');
+            // Update Header Profile Badge
+            document.getElementById("headerUserName").innerText = currentUser.name;
+            document.getElementById("headerUserSub").innerText = `${currentUser.career} • ${currentUser.cycle}`;
+            
+            const badge = document.getElementById("roleBadge");
+            if (isTeacherMode) {
+                badge.innerText = "Modo Docente";
+                badge.className = "text-xs bg-amber-950 border border-amber-700 text-amber-200 px-2 py-0.5 rounded-full font-normal";
             } else {
-                document.getElementById('docenteNavBtn').classList.add('hidden');
-                document.getElementById('mobileDocenteNavBtn').classList.add('hidden');
-                document.getElementById('dashRoleBadge').textContent = 'ESTUDIANTE';
+                badge.innerText = "Estudiante";
+                badge.className = "text-xs bg-zinc-800 border border-zinc-700 text-gray-300 px-2 py-0.5 rounded-full font-normal";
             }
 
-            // Update Dashboard UI
-            document.getElementById('dashAvatar').src = currentUser.avatarUrl;
-            document.getElementById('dashUserName').textContent = currentUser.names;
-            document.getElementById('dashCode').textContent = currentUser.code;
-            document.getElementById('dashCareer').textContent = currentUser.career;
-            document.getElementById('dashCycle').textContent = currentUser.cycle;
-        }
-
-        function selectCourse(courseId) {
-            activeCourseId = courseId;
-            activeUnitId = 1;
-            activeWeekNum = 1;
-
-            // Update Tab UI Buttons
-            const btn1 = document.getElementById('courseBtn1');
-            const btn2 = document.getElementById('courseBtn2');
-
-            if (courseId === 1) {
-                btn1.className = "flex-1 md:flex-none px-4 py-2.5 rounded-xl text-xs font-semibold border transition flex items-center justify-center gap-2 bg-slate-800 border-slate-400 text-white";
-                btn2.className = "flex-1 md:flex-none px-4 py-2.5 rounded-xl text-xs font-semibold border transition flex items-center justify-center gap-2 bg-gray-900 border-gray-800 text-gray-400 hover:text-white";
+            const avatarImg = document.getElementById("headerAvatar");
+            const avatarIcon = document.getElementById("headerAvatarIcon");
+            if (currentUser.photo) {
+                avatarImg.src = currentUser.photo;
+                avatarImg.classList.remove("hidden");
+                avatarIcon.classList.add("hidden");
             } else {
-                btn2.className = "flex-1 md:flex-none px-4 py-2.5 rounded-xl text-xs font-semibold border transition flex items-center justify-center gap-2 bg-slate-800 border-slate-400 text-white";
-                btn1.className = "flex-1 md:flex-none px-4 py-2.5 rounded-xl text-xs font-semibold border transition flex items-center justify-center gap-2 bg-gray-900 border-gray-800 text-gray-400 hover:text-white";
+                avatarImg.classList.add("hidden");
+                avatarIcon.classList.remove("hidden");
             }
 
-            renderCourseView();
+            renderCourses();
         }
 
-        function selectUnit(unitId) {
-            activeUnitId = unitId;
-            const course = COURSE_DEFINITIONS[activeCourseId];
-            const unit = course.units.find(u => u.id === unitId);
-            activeWeekNum = unit.weeks[0];
-            renderCourseView();
-        }
-
-        function selectWeek(weekNum) {
-            activeWeekNum = weekNum;
-            renderCourseView();
-        }
-
-        function renderCourseView() {
-            const course = COURSE_DEFINITIONS[activeCourseId];
-
-            // Render Units List
-            const unitsContainer = document.getElementById('unitButtonsContainer');
-            unitsContainer.innerHTML = '';
-            course.units.forEach(unit => {
-                const isActive = unit.id === activeUnitId;
-                const btn = document.createElement('button');
-                btn.onclick = () => selectUnit(unit.id);
-                btn.className = `w-full text-left p-3 rounded-xl text-xs font-medium border transition flex items-center justify-between ${
-                    isActive 
-                    ? 'bg-slate-800 border-slate-400 text-white shadow-md' 
-                    : 'bg-gray-900/80 border-gray-800 text-gray-400 hover:bg-gray-800 hover:text-gray-200'
-                }`;
-                btn.innerHTML = `
-                    <span>${unit.name}</span>
-                    <i class="fa-solid fa-chevron-right text-[10px] ${isActive ? 'text-white' : 'text-gray-600'}"></i>
-                `;
-                unitsContainer.appendChild(btn);
-            });
-
-            // Render Weeks Selector for Active Unit
-            const weekTabsContainer = document.getElementById('weekTabsContainer');
-            weekTabsContainer.innerHTML = '';
-            const currentUnit = course.units.find(u => u.id === activeUnitId);
-
-            currentUnit.weeks.forEach(wNum => {
-                const isActive = wNum === activeWeekNum;
-                const tab = document.createElement('button');
-                tab.onclick = () => selectWeek(wNum);
-                tab.className = `py-2 px-3 rounded-lg text-xs font-semibold border transition ${
-                    isActive
-                    ? 'bg-slate-700 border-slate-400 text-white'
-                    : 'bg-gray-900 border-gray-800 text-gray-400 hover:text-gray-200'
-                }`;
-                tab.textContent = `Semana ${wNum}`;
-                weekTabsContainer.appendChild(tab);
-            });
-
-            // Render Active Week Details
-            const weekInfo = weekTitlesStore[activeCourseId][activeWeekNum];
-            document.getElementById('activeWeekBadge').textContent = `SEMANA ${activeWeekNum}`;
-            document.getElementById('activeWeekTitleDisplay').textContent = weekInfo.title;
-            document.getElementById('activeWeekDescDisplay').textContent = weekInfo.description;
-
-            // Render Works list for current course + week
-            renderWeekWorks();
-        }
-
-        function setUploadMethod(method) {
-            currentUploadMethod = method;
-            const fileBtn = document.getElementById('methodFileBtn');
-            const linkBtn = document.getElementById('methodLinkBtn');
-            const fileField = document.getElementById('fieldUploadFile');
-            const linkField = document.getElementById('fieldUploadLink');
-
-            if (method === 'file') {
-                fileBtn.className = "py-1.5 text-xs font-semibold rounded bg-slate-800 text-white border border-slate-600";
-                linkBtn.className = "py-1.5 text-xs font-semibold rounded text-gray-400 hover:text-white";
-                fileField.classList.remove('hidden');
-                linkField.classList.add('hidden');
-            } else {
-                linkBtn.className = "py-1.5 text-xs font-semibold rounded bg-slate-800 text-white border border-slate-600";
-                fileBtn.className = "py-1.5 text-xs font-semibold rounded text-gray-400 hover:text-white";
-                linkField.classList.remove('hidden');
-                fileField.classList.add('hidden');
+        /* ACADEMIC COURSES & 16 WEEKS DATA MANAGEMENT */
+        function getPortfolioData() {
+            const data = localStorage.getItem(STORAGE_DATA_KEY);
+            if (data) {
+                return JSON.parse(data);
             }
-        }
-
-        function openUploadModal() {
-            document.getElementById('uploadForm').reset();
-            setUploadMethod('file');
-            document.getElementById('modalUpload').classList.remove('hidden');
-        }
-
-        function closeUploadModal() {
-            document.getElementById('modalUpload').classList.add('hidden');
-        }
-
-        function handleWorkSubmit(event) {
-            event.preventDefault();
-            const title = document.getElementById('workTitle').value.trim();
-            const desc = document.getElementById('workDesc').value.trim();
-
-            let fileData = {};
-
-            if (currentUploadMethod === 'file') {
-                const fileInput = document.getElementById('workFileInput');
-                if (!fileInput.files.length) {
-                    showToast("Por favor, selecciona un archivo local", "error");
-                    return;
+            // Initialize default structure
+            const initialData = {};
+            DEFAULT_COURSES.forEach(course => {
+                initialData[course.id] = {};
+                for (let week = 1; week <= 16; week++) {
+                    initialData[course.id][`week_${week}`] = {
+                        title: `Semana ${week}: Tema y Actividades Lectivas`,
+                        task: null
+                    };
                 }
-                const file = fileInput.files[0];
-                fileData = {
-                    type: 'file',
-                    fileName: file.name,
-                    size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
-                    format: file.name.split('.').pop().toUpperCase(),
-                    url: '#'
-                };
-            } else {
-                const link = document.getElementById('workLinkInput').value.trim();
-                if (!link) {
-                    showToast("Ingresa una URL válida de Google Drive o GitHub", "error");
-                    return;
-                }
-                fileData = {
-                    type: 'link',
-                    fileName: 'Enlace a Recurso Externo',
-                    size: 'N/A',
-                    format: link.includes('github') ? 'GITHUB' : 'DRIVE',
-                    url: link
-                };
-            }
-
-            const newWork = {
-                id: 'wrk_' + Date.now(),
-                courseId: activeCourseId,
-                unitId: activeUnitId,
-                weekNum: activeWeekNum,
-                title: title,
-                description: desc,
-                file: fileData,
-                uploadDate: new Date().toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
-                userUid: currentUser ? currentUser.uid : 'anon',
-                userName: currentUser ? `${currentUser.names} ${currentUser.surnames}` : 'Estudiante UPLA',
-                userCode: currentUser ? currentUser.code : 'U2023000'
-            };
-
-            worksStore.push(newWork);
-            closeUploadModal();
-            showToast("Trabajo registrado correctamente", "success");
-            renderWeekWorks();
-            updateDashboardStats();
+            });
+            localStorage.setItem(STORAGE_DATA_KEY, JSON.stringify(initialData));
+            return initialData;
         }
 
-        function deleteWork(workId) {
-            if (!confirm("¿Estás seguro de eliminar esta evidencia académica?")) return;
-            worksStore = worksStore.filter(w => w.id !== workId);
-            showToast("Trabajo eliminado", "info");
-            renderWeekWorks();
-            updateDashboardStats();
+        function savePortfolioData(data) {
+            localStorage.setItem(STORAGE_DATA_KEY, JSON.stringify(data));
         }
 
-        function renderWeekWorks() {
-            const listContainer = document.getElementById('worksList');
-            const countDisplay = document.getElementById('weekWorkCount');
+        function renderCourses() {
+            const container = document.getElementById("coursesContainer");
+            container.innerHTML = "";
 
-            const filtered = worksStore.filter(w => w.courseId === activeCourseId && w.weekNum === activeWeekNum);
-            countDisplay.textContent = `${filtered.length} Archivos`;
+            const portfolioData = getPortfolioData();
 
-            if (filtered.length === 0) {
-                listContainer.innerHTML = `
-                    <div class="text-center py-8 text-gray-500 border border-dashed border-gray-800 rounded-xl">
-                        <i class="fa-solid fa-folder-open text-2xl mb-2 text-gray-600"></i>
-                        <p class="text-xs">No hay trabajos ni evidencias subidas para esta semana.</p>
-                    </div>
-                `;
-                return;
-            }
+            DEFAULT_COURSES.forEach((course) => {
+                const courseCard = document.createElement("div");
+                courseCard.className = "glass-panel rounded-2xl border border-zinc-800 overflow-hidden";
 
-            listContainer.innerHTML = '';
-            filtered.forEach(work => {
-                const card = document.createElement('div');
-                card.className = "p-4 rounded-xl bg-gray-900/90 border border-gray-800 hover:border-gray-700 transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4";
-                
-                const iconClass = work.file.format === 'PDF' ? 'fa-file-pdf text-red-400' :
-                                  work.file.format === 'ZIP' || work.file.format === 'RAR' ? 'fa-file-zipper text-amber-400' :
-                                  work.file.format === 'DRIVE' ? 'fa-google-drive text-emerald-400' :
-                                  work.file.format === 'GITHUB' ? 'fa-github text-slate-300' : 'fa-file-lines text-slate-400';
+                let unitsHTML = "";
 
-                card.innerHTML = `
-                    <div class="flex items-start gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-lg flex-shrink-0 mt-0.5">
-                            <i class="fa-solid ${iconClass}"></i>
-                        </div>
-                        <div>
-                            <h5 class="text-sm font-bold text-white">${work.title}</h5>
-                            ${work.description ? `<p class="text-xs text-gray-400 mb-1">${work.description}</p>` : ''}
-                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-gray-500 font-mono">
-                                <span><i class="fa-solid fa-paperclip text-[10px]"></i> ${work.file.fileName}</span>
-                                <span>• ${work.file.size}</span>
-                                <span>• ${work.uploadDate}</span>
+                course.units.forEach((unit) => {
+                    let weeksHTML = "";
+
+                    unit.weeks.forEach((weekNum) => {
+                        const weekKey = `week_${weekNum}`;
+                        const weekData = portfolioData[course.id]?.[weekKey] || {
+                            title: `Semana ${weekNum}: Tema de clase`,
+                            task: null
+                        };
+
+                        const hasTask = !!weekData.task;
+                        const task = weekData.task;
+
+                        weeksHTML += `
+                            <div class="glass-card p-4 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-all">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 border-b border-zinc-800/80 pb-2">
+                                    <div class="flex-1">
+                                        <span class="text-[10px] uppercase font-bold tracking-wider text-zinc-400 block mb-0.5">Semana ${weekNum}</span>
+                                        <div class="flex items-center gap-2">
+                                            <input type="text" value="${escapeHtml(weekData.title)}" 
+                                                   onchange="updateWeekTitle('${course.id}', '${weekKey}', this.value)"
+                                                   ${isTeacherMode ? 'disabled' : ''}
+                                                   class="bg-transparent font-semibold text-sm text-gray-100 hover:bg-zinc-900/60 focus:bg-zinc-900 px-2 py-1 rounded border border-transparent focus:border-zinc-700 focus:outline-none w-full transition-colors ${isTeacherMode ? 'cursor-default' : ''}">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        ${hasTask ? 
+                                            `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-950/80 text-emerald-300 border border-emerald-800/60">
+                                                <i class="fa-solid fa-circle-check text-[10px]"></i> Tarea Entregada
+                                             </span>` : 
+                                            `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-zinc-800/80 text-gray-400 border border-zinc-700/60">
+                                                <i class="fa-solid fa-clock text-[10px]"></i> Pendiente
+                                             </span>`
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- Task Details or Upload Options -->
+                                ${hasTask ? `
+                                    <div class="p-3 rounded-lg bg-zinc-900/90 border border-zinc-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                                        <div class="flex items-center gap-3 overflow-hidden w-full sm:w-auto">
+                                            <div class="p-2.5 rounded-lg bg-zinc-800 text-zinc-300 flex-shrink-0">
+                                                <i class="fa-solid ${task.type === 'cloud' ? 'fa-cloud' : 'fa-file-lines'} text-base"></i>
+                                            </div>
+                                            <div class="truncate">
+                                                <div class="text-xs font-medium text-white truncate" title="${escapeHtml(task.name)}">${escapeHtml(task.name)}</div>
+                                                <div class="text-[10px] text-gray-400 flex items-center gap-2 mt-0.5">
+                                                    <span>${task.size}</span>
+                                                    <span>•</span>
+                                                    <span>${task.date}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                                            <button onclick="downloadOrOpenTask('${course.id}', '${weekKey}')" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs text-white border border-zinc-700 transition-colors flex items-center gap-1.5">
+                                                <i class="fa-solid ${task.type === 'cloud' ? 'fa-arrow-up-right-from-square' : 'fa-download'}"></i>
+                                                <span>${task.type === 'cloud' ? 'Abrir Enlace' : 'Descargar'}</span>
+                                            </button>
+                                            
+                                            ${!isTeacherMode ? `
+                                                <button onclick="deleteTask('${course.id}', '${weekKey}')" title="Eliminar Tarea" class="p-1.5 rounded-lg bg-zinc-900 hover:bg-red-950 text-gray-400 hover:text-red-300 border border-zinc-800 hover:border-red-800/50 transition-colors">
+                                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                                </button>
+                                            ` : ''}
+                                        </div>
+                                    </div>
+                                ` : !isTeacherMode ? `
+                                    <!-- Upload Options Box -->
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+                                        <!-- Direct File Upload -->
+                                        <div class="p-3 rounded-lg border border-dashed border-zinc-700 bg-zinc-900/40 hover:bg-zinc-900/80 transition-colors">
+                                            <label class="block text-[11px] font-semibold text-gray-300 mb-1">
+                                                <i class="fa-solid fa-paperclip mr-1"></i> Opción A: Archivo Local (PDF, ZIP, DOCX)
+                                            </label>
+                                            <input type="file" onchange="uploadLocalTask(event, '${course.id}', '${weekKey}')" class="w-full text-[11px] text-gray-400 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-[11px] file:font-semibold file:bg-zinc-800 file:text-gray-200 hover:file:bg-zinc-700 cursor-pointer">
+                                        </div>
+
+                                        <!-- Cloud URL Submission -->
+                                        <div class="p-3 rounded-lg border border-dashed border-zinc-700 bg-zinc-900/40 hover:bg-zinc-900/80 transition-colors flex flex-col justify-between">
+                                            <label class="block text-[11px] font-semibold text-gray-300 mb-1">
+                                                <i class="fa-solid fa-link mr-1"></i> Opción B: Enlace de Nube (Drive / GitHub)
+                                            </label>
+                                            <div class="flex items-center gap-1.5">
+                                                <input type="url" id="cloud_input_${course.id}_${weekKey}" placeholder="https://drive.google.com/..." class="w-full bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-gray-100 placeholder-gray-600 focus:outline-none focus:border-zinc-500">
+                                                <button onclick="submitCloudTask('${course.id}', '${weekKey}')" class="px-2.5 py-1 bg-zinc-100 hover:bg-white text-black font-semibold text-xs rounded transition-colors flex-shrink-0">
+                                                    Pegar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ` : `
+                                    <div class="text-xs text-gray-500 italic p-2 rounded bg-zinc-900/40 border border-zinc-800/60">
+                                        Sin evidencias entregadas por el estudiante en esta semana.
+                                    </div>
+                                `}
+                            </div>
+                        `;
+                    });
+
+                    unitsHTML += `
+                        <div class="border-b border-zinc-800 last:border-0">
+                            <button onclick="toggleAccordion('unit_content_${course.id}_${unit.id}')" class="w-full px-5 py-3.5 bg-zinc-900/50 hover:bg-zinc-900 text-left flex items-center justify-between transition-colors">
+                                <span class="font-bold text-sm text-gray-200 flex items-center gap-2">
+                                    <i class="fa-solid fa-layer-group text-xs text-gray-500"></i>
+                                    ${escapeHtml(unit.title)}
+                                </span>
+                                <i class="fa-solid fa-chevron-down text-xs text-gray-500 transition-transform duration-200"></i>
+                            </button>
+
+                            <div id="unit_content_${course.id}_${unit.id}" class="accordion-content px-5 py-4 space-y-3 bg-zinc-950/40">
+                                ${weeksHTML}
                             </div>
                         </div>
-                    </div>
+                    `;
+                });
 
-                    <div class="flex items-center space-x-2 self-end sm:self-center">
-                        <a href="${work.file.url}" target="_blank" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-semibold rounded-lg border border-gray-600 transition flex items-center gap-1">
-                            <i class="fa-solid fa-download text-[10px]"></i> Abrir
-                        </a>
-                        <button onclick="deleteWork('${work.id}')" class="p-1.5 text-red-400 hover:text-red-300 hover:bg-red-950/40 rounded-lg transition" title="Eliminar">
-                            <i class="fa-solid fa-trash-can text-xs"></i>
+                courseCard.innerHTML = `
+                    <!-- Course Header -->
+                    <div class="p-6 bg-zinc-900/80 border-b border-zinc-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-xs font-bold px-2.5 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700">${course.code}</span>
+                                <span class="text-xs text-gray-400">Prof. ${course.professor}</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white tracking-tight">${course.name}</h3>
+                        </div>
+
+                        <button onclick="toggleAccordion('course_body_${course.id}')" class="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-xs font-semibold text-gray-200 transition-all flex items-center gap-2 self-start md:self-auto">
+                            <span>Ver Unidades y Semanas</span>
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
                         </button>
                     </div>
+
+                    <!-- Course Units Accordion Body -->
+                    <div id="course_body_${course.id}" class="accordion-content open">
+                        ${unitsHTML}
+                    </div>
                 `;
-                listContainer.appendChild(card);
+
+                container.appendChild(courseCard);
             });
         }
 
-        function openEditWeekModal() {
-            const weekInfo = weekTitlesStore[activeCourseId][activeWeekNum];
-            document.getElementById('editWeekTitleInput').value = weekInfo.title;
-            document.getElementById('editWeekDescInput').value = weekInfo.description;
-            document.getElementById('modalEditWeek').classList.remove('hidden');
-        }
-
-        function closeEditWeekModal() {
-            document.getElementById('modalEditWeek').classList.add('hidden');
-        }
-
-        function handleEditWeekSubmit(event) {
-            event.preventDefault();
-            const title = document.getElementById('editWeekTitleInput').value.trim();
-            const desc = document.getElementById('editWeekDescInput').value.trim();
-
-            weekTitlesStore[activeCourseId][activeWeekNum] = {
-                title: title,
-                description: desc
-            };
-
-            closeEditWeekModal();
-            showToast("Información de la semana actualizada", "success");
-            renderCourseView();
-        }
-
-        function populateProfileForm() {
-            if (!currentUser) return;
-            document.getElementById('profNames').value = currentUser.names;
-            document.getElementById('profSurnames').value = currentUser.surnames;
-            document.getElementById('profCode').value = currentUser.code;
-            document.getElementById('profCycle').value = currentUser.cycle;
-            document.getElementById('profCareer').value = currentUser.career;
-            document.getElementById('profAvatarUrl').value = currentUser.avatarUrl;
-            document.getElementById('profilePreviewAvatar').src = currentUser.avatarUrl;
-        }
-
-        function updateProfileAvatarPreview(url) {
-            if (url) document.getElementById('profilePreviewAvatar').src = url;
-        }
-
-        function handleProfileSave(event) {
-            event.preventDefault();
-            if (!currentUser) return;
-
-            currentUser.names = document.getElementById('profNames').value.trim();
-            currentUser.surnames = document.getElementById('profSurnames').value.trim();
-            currentUser.cycle = document.getElementById('profCycle').value;
-            currentUser.career = document.getElementById('profCareer').value.trim();
-            currentUser.avatarUrl = document.getElementById('profAvatarUrl').value.trim() || currentUser.avatarUrl;
-
-            updateUserHeaderUI();
-            showToast("Perfil actualizado correctamente", "success");
-            navigateTo('dashboard');
-        }
-
-        function renderDocenteView() {
-            applyDocenteFilters();
-        }
-
-        function applyDocenteFilters() {
-            const courseVal = document.getElementById('docFilterCourse').value;
-            const unitVal = document.getElementById('docFilterUnit').value;
-            const searchVal = document.getElementById('docFilterSearch').value.toLowerCase().trim();
-
-            let results = [...worksStore];
-
-            if (courseVal !== 'ALL') {
-                results = results.filter(w => w.courseId === parseInt(courseVal));
+        /* ACCORDION TOGGLES */
+        function toggleAccordion(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.toggle("open");
             }
+        }
 
-            if (unitVal !== 'ALL') {
-                results = results.filter(w => w.unitId === parseInt(unitVal));
+        /* TASK INTERACTIONS */
+        function updateWeekTitle(courseId, weekKey, newTitle) {
+            const data = getPortfolioData();
+            if (data[courseId] && data[courseId][weekKey]) {
+                data[courseId][weekKey].title = newTitle;
+                savePortfolioData(data);
+                showToast("Título de la semana actualizado", "info");
             }
+        }
 
-            if (searchVal) {
-                results = results.filter(w => 
-                    w.userName.toLowerCase().includes(searchVal) ||
-                    w.userCode.toLowerCase().includes(searchVal) ||
-                    w.title.toLowerCase().includes(searchVal)
-                );
-            }
+        function uploadLocalTask(event, courseId, weekKey) {
+            const file = event.target.files[0];
+            if (!file) return;
 
-            document.getElementById('docenteTotalCount').textContent = `${results.length} Resultados`;
-            const grid = document.getElementById('docenteWorksGrid');
-
-            if (results.length === 0) {
-                grid.innerHTML = `
-                    <div class="text-center py-8 text-gray-500 border border-dashed border-gray-800 rounded-xl">
-                        <i class="fa-solid fa-graduation-cap text-2xl mb-2 text-amber-500/40"></i>
-                        <p class="text-xs">No se encontraron entregas que coincidan con los filtros seleccionados.</p>
-                    </div>
-                `;
+            // Size guardrail (~8MB)
+            if (file.size > 8 * 1024 * 1024) {
+                showToast("El archivo supera los 8MB. Se recomienda usar enlace de Nube (Drive/GitHub).", "error");
                 return;
             }
 
-            grid.innerHTML = '';
-            results.forEach(w => {
-                const courseName = COURSE_DEFINITIONS[w.courseId].title;
-                const card = document.createElement('div');
-                card.className = "p-4 rounded-xl bg-gray-900 border border-gray-800 hover:border-amber-900/50 transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4";
-                card.innerHTML = `
-                    <div class="space-y-1">
-                        <div class="flex items-center gap-2">
-                            <span class="px-2 py-0.5 bg-amber-950/60 border border-amber-800/60 text-amber-300 text-[10px] font-mono rounded font-semibold">${w.userCode}</span>
-                            <span class="text-xs font-bold text-white">${w.userName}</span>
-                        </div>
-                        <h5 class="text-sm font-semibold text-gray-200">${w.title}</h5>
-                        <p class="text-xs text-gray-400 font-mono">${courseName} • Semana ${w.weekNum} (${w.uploadDate})</p>
-                    </div>
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Data = e.target.result;
+                const data = getPortfolioData();
 
-                    <a href="${w.file.url}" target="_blank" class="px-4 py-2 bg-amber-950/40 hover:bg-amber-900/60 text-amber-200 text-xs font-semibold rounded-lg border border-amber-700/50 transition flex items-center gap-1.5 self-end sm:self-center">
-                        <i class="fa-solid fa-eye"></i> Revisar Entrega
-                    </a>
-                `;
-                grid.appendChild(card);
-            });
+                data[courseId][weekKey].task = {
+                    name: file.name,
+                    size: formatBytes(file.size),
+                    date: new Date().toLocaleString("es-PE", { dateStyle: "short", timeStyle: "short" }),
+                    type: "local",
+                    content: base64Data
+                };
+
+                savePortfolioData(data);
+                showToast("Tarea adjuntada localmente con éxito", "success");
+                renderCourses();
+            };
+            reader.readAsDataURL(file);
         }
 
-        function openConfigModal() {
-            document.getElementById('modalConfig').classList.remove('hidden');
-        }
+        function submitCloudTask(courseId, weekKey) {
+            const input = document.getElementById(`cloud_input_${courseId}_${weekKey}`);
+            const url = input ? input.value.trim() : "";
 
-        function closeConfigModal() {
-            document.getElementById('modalConfig').classList.add('hidden');
-        }
-
-        function openResetPasswordModal() {
-            document.getElementById('modalResetPass').classList.remove('hidden');
-        }
-
-        function closeResetPasswordModal() {
-            document.getElementById('modalResetPass').classList.add('hidden');
-        }
-
-        function handleResetPasswordSubmit(event) {
-            event.preventDefault();
-            closeResetPasswordModal();
-            showToast("Correo de restablecimiento enviado. Revisa tu bandeja.", "success");
-        }
-
-        function saveUplaLogo() {
-            const logoUrl = document.getElementById('uplaLogoInput').value.trim();
-            if (!logoUrl) return;
-
-            document.getElementById('uplaLogoHeader').src = logoUrl;
-            document.getElementById('uplaLogoAuth').src = logoUrl;
-            showToast("Logo de la UPLA actualizado correctamente", "success");
-            closeConfigModal();
-        }
-
-        function updateDashboardStats() {
-            document.getElementById('statTotalWorks').textContent = `${worksStore.length} Archivos`;
-        }
-
-        function showToast(message, type = 'info') {
-            const toast = document.getElementById('toastNotification');
-            const toastMessage = document.getElementById('toastMessage');
-            const toastIcon = document.getElementById('toastIcon');
-
-            toastMessage.textContent = message;
-
-            if (type === 'success') {
-                toastIcon.className = 'fa-solid fa-circle-check text-emerald-400';
-            } else if (type === 'error') {
-                toastIcon.className = 'fa-solid fa-circle-xmark text-red-400';
-            } else {
-                toastIcon.className = 'fa-solid fa-circle-info text-slate-300';
+            if (!url) {
+                showToast("Por favor Ingrese una URL válida de Nube", "error");
+                return;
             }
 
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
+            const data = getPortfolioData();
+            let linkName = "Enlace de Almacenamiento Nube";
+            if (url.includes("drive.google.com")) linkName = "Google Drive Document";
+            else if (url.includes("github.com")) linkName = "GitHub Release / Repository";
 
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3500);
+            data[courseId][weekKey].task = {
+                name: linkName,
+                size: "Almacenamiento Cloud",
+                date: new Date().toLocaleString("es-PE", { dateStyle: "short", timeStyle: "short" }),
+                type: "cloud",
+                content: url
+            };
+
+            savePortfolioData(data);
+            showToast("Enlace de tarea registrado con éxito", "success");
+            renderCourses();
         }
 
-        window.onload = function() {
-            initSmokeCanvas();
-            navigateTo('auth');
-            
-            // Seed initial sample works
-            worksStore = [
-                {
-                    id: 'wrk_1',
-                    courseId: 1,
-                    unitId: 1,
-                    weekNum: 1,
-                    title: 'Laboratorio 01 - Algoritmos Secuenciales',
-                    description: 'Resolución de problemas con diagrama de flujo y pseudocódigo.',
-                    file: { type: 'file', fileName: 'Guia_Lab01_UPLA.pdf', size: '2.4 MB', format: 'PDF', url: '#' },
-                    uploadDate: '10/03/2026 14:30',
-                    userUid: 'usr_demo',
-                    userName: 'Carlos Alberto Mendoza',
-                    userCode: 'U202310892'
+        function downloadOrOpenTask(courseId, weekKey) {
+            const data = getPortfolioData();
+            const task = data[courseId]?.[weekKey]?.task;
+
+            if (!task) return;
+
+            if (task.type === "cloud") {
+                window.open(task.content, "_blank");
+            } else {
+                // Blob Download for local files
+                const a = document.createElement("a");
+                a.href = task.content;
+                a.download = task.name;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        }
+
+        function deleteTask(courseId, weekKey) {
+            if (confirm("¿Está seguro de que desea eliminar la tarea entregada en esta semana?")) {
+                const data = getPortfolioData();
+                if (data[courseId] && data[courseId][weekKey]) {
+                    data[courseId][weekKey].task = null;
+                    savePortfolioData(data);
+                    showToast("Tarea eliminada correctamente", "info");
+                    renderCourses();
                 }
-            ];
-        };
+            }
+        }
+
+        /* PROFILE MODAL HANDLERS */
+        function openProfileModal() {
+            if (isTeacherMode) {
+                showToast("Modo Lectura Docente: No se puede modificar la cuenta del alumno", "info");
+                return;
+            }
+            if (!currentUser) return;
+
+            document.getElementById("editName").value = currentUser.name || "";
+            document.getElementById("editCareer").value = currentUser.career || "";
+            document.getElementById("editCycle").value = currentUser.cycle || "3er Ciclo";
+            document.getElementById("editPassword").value = "";
+
+            const img = document.getElementById("editPhotoPreview");
+            const icon = document.getElementById("editPhotoIcon");
+            if (currentUser.photo) {
+                img.src = currentUser.photo;
+                img.classList.remove("hidden");
+                icon.classList.add("hidden");
+                editPhotoBase64 = currentUser.photo;
+            } else {
+                img.classList.add("hidden");
+                icon.classList.remove("hidden");
+                editPhotoBase64 = "";
+            }
+
+            document.getElementById("profileModal").classList.remove("hidden");
+        }
+
+        function closeProfileModal() {
+            document.getElementById("profileModal").classList.add("hidden");
+        }
+
+        function previewEditPhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    editPhotoBase64 = e.target.result;
+                    const img = document.getElementById("editPhotoPreview");
+                    img.src = editPhotoBase64;
+                    img.classList.remove("hidden");
+                    document.getElementById("editPhotoIcon").classList.add("hidden");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleProfileUpdate(e) {
+            e.preventDefault();
+            if (isTeacherMode) return;
+
+            const name = document.getElementById("editName").value.trim();
+            const career = document.getElementById("editCareer").value.trim();
+            const cycle = document.getElementById("editCycle").value;
+            const newPassword = document.getElementById("editPassword").value;
+
+            currentUser.name = name;
+            currentUser.career = career;
+            currentUser.cycle = cycle;
+            if (editPhotoBase64) currentUser.photo = editPhotoBase64;
+            if (newPassword) currentUser.password = newPassword;
+
+            localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(currentUser));
+            showToast("Perfil actualizado correctamente", "success");
+            closeProfileModal();
+            showDashboard();
+        }
+
+        /* CLOUD GUIDE MODAL HANDLERS */
+        function openCloudGuideModal() {
+            document.getElementById("cloudGuideModal").classList.remove("hidden");
+        }
+
+        function closeCloudGuideModal() {
+            document.getElementById("cloudGuideModal").classList.add("hidden");
+        }
+
+        /* HELPER UTILITIES */
+        function formatBytes(bytes, decimals = 2) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;")
+                      .replace(/</g, "&lt;")
+                      .replace(/>/g, "&gt;")
+                      .replace(/"/g, "&quot;")
+                      .replace(/'/g, "&#039;");
+        }
     </script>
 </body>
 </html>
