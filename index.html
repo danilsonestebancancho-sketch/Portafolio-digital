@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Portafolio Académico UPLA - Edición Cloud GitHub</title>
+    <title>Sistema de Portafolio Académico UPLA - Edición Calaveras Tenebrosas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -41,7 +41,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0a0a0a;
+            background-color: #050505;
             color: #f5f5f5;
             overflow-x: hidden;
         }
@@ -57,20 +57,11 @@
         }
 
         .glass-panel {
-            background: rgba(18, 18, 18, 0.75);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            background: rgba(14, 14, 14, 0.82);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
-        }
-
-        .glass-panel-hover {
-            transition: all 0.25s ease;
-        }
-        .glass-panel-hover:hover {
-            border-color: rgba(245, 245, 245, 0.3);
-            box-shadow: 0 0 20px rgba(245, 245, 245, 0.1);
-            transform: translateY(-2px);
+            box-shadow: 0 10px 35px 0 rgba(0, 0, 0, 0.8);
         }
 
         ::-webkit-scrollbar {
@@ -78,7 +69,7 @@
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: rgba(10, 10, 10, 0.9);
+            background: rgba(5, 5, 5, 0.9);
         }
         ::-webkit-scrollbar-thumb {
             background: rgba(138, 138, 138, 0.4);
@@ -116,7 +107,7 @@
     <canvas id="click-sparks"></canvas>
 
     <!-- MÓDULO DE AUTENTICACIÓN Y REGISTRO -->
-    <div id="auth-overlay" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 overflow-y-auto">
+    <div id="auth-overlay" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 overflow-y-auto">
         <div class="glass-panel max-w-md w-full p-6 sm:p-8 rounded-3xl border border-neutral-700/60 relative my-auto">
             <div class="text-center mb-6">
                 <div class="relative group inline-block mb-3">
@@ -131,7 +122,7 @@
                 <p class="text-xs text-neutral-400 mt-1">Sistema Web de Portafolio Académico</p>
             </div>
 
-            <div class="grid grid-cols-2 gap-1 bg-neutral-900/90 p-1 rounded-xl border border-neutral-800 mb-6">
+            <div class="grid grid-cols-2 gap-1 bg-neutral-950 p-1 rounded-xl border border-neutral-800 mb-6">
                 <button onclick="switchAuthTab('login')" id="tab-login-btn" class="py-2 text-xs font-bold rounded-lg bg-neutral-800 text-white transition">Iniciar Sesión</button>
                 <button onclick="switchAuthTab('register')" id="tab-register-btn" class="py-2 text-xs font-bold rounded-lg text-neutral-400 hover:text-white transition">Registrar Cuenta</button>
             </div>
@@ -434,9 +425,8 @@
         </div>
     </div>
 
-    <!-- SCRIPT DE GITHUB REST API Y LÓGICA DE PERSISTENCIA GLOBAL -->
+    <!-- SCRIPT DE GITHUB REST API Y ANIMACIÓN DE HUMO TENEBROSO CON CALAVERAS Y AURA -->
     <script>
-        // --- CONFIGURACIÓN DE TU CONEXIÓN A GITHUB (ESPACIO INFINITO) ---
         const CONFIG_GITHUB = {
           usuario: "danilsonestebancancho-sketch",
           repositorio: "Portafolio-digital",
@@ -512,7 +502,7 @@
             icon.className = AppState.audioEnabled ? 'fa-solid fa-volume-high text-white' : 'fa-solid fa-volume-xmark text-neutral-500';
         }
 
-        /* HUMO Y CALAVERAS FLOTANTES EN CANVAS 2D (CON AURA ESPECTRAL) */
+        /* MOTOR DE CALAVERAS DE HUMO TENEBROSO CON AURA Y EFECTO ESPECTRAL */
         function initSmokeCanvas() {
             const canvas = document.getElementById('smoke-canvas');
             const ctx = canvas.getContext('2d');
@@ -524,16 +514,19 @@
                 height = canvas.height = window.innerHeight;
             });
 
-            const particles = [];
-            for (let i = 0; i < 40; i++) {
-                particles.push({
+            // Partículas de humo espeso ascendente y calaveras con aura
+            const elements = [];
+            for (let i = 0; i < 45; i++) {
+                elements.push({
                     x: Math.random() * width,
                     y: Math.random() * height,
-                    radius: Math.random() * 110 + 50,
-                    vx: (Math.random() - 0.5) * 0.35,
-                    vy: (Math.random() - 0.5) * 0.35,
-                    alpha: Math.random() * 0.09 + 0.02,
-                    isSkull: Math.random() > 0.65
+                    radius: Math.random() * 130 + 60,
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: -Math.random() * 0.6 - 0.2, // Movimiento ascendente como humo real
+                    alpha: Math.random() * 0.12 + 0.03,
+                    wobble: Math.random() * Math.PI * 2,
+                    wobbleSpeed: Math.random() * 0.02 + 0.01,
+                    isSkull: Math.random() > 0.6
                 });
             }
 
@@ -541,26 +534,42 @@
                 ctx.save();
                 ctx.translate(x, y);
                 
-                // Aura luminosa alrededor de la calavera
-                const aura = ctx.createRadialGradient(0, 0, 5, 0, 0, size * 1.2);
-                aura.addColorStop(0, `rgba(245, 245, 245, ${alpha * 0.4})`);
+                // Aura luminosa tenebrosa / penumbra
+                const aura = ctx.createRadialGradient(0, 0, 5, 0, 0, size * 1.5);
+                aura.addColorStop(0, `rgba(220, 220, 220, ${alpha * 0.5})`);
+                aura.addColorStop(0.5, `rgba(120, 120, 120, ${alpha * 0.2})`);
                 aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
                 ctx.fillStyle = aura;
                 ctx.beginPath();
-                ctx.arc(0, 0, size * 1.2, 0, Math.PI * 2);
+                ctx.arc(0, 0, size * 1.5, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Cabeza de la calavera
-                ctx.fillStyle = `rgba(230, 230, 230, ${alpha * 0.9})`;
+                // Silueta de la calavera de humo
+                ctx.fillStyle = `rgba(240, 240, 240, ${alpha * 0.85})`;
                 ctx.beginPath();
-                ctx.arc(0, 0, size * 0.4, 0, Math.PI * 2);
+                // Bóveda craneal superior
+                ctx.arc(0, -size * 0.1, size * 0.45, Math.PI, Math.PI * 2);
+                // Mandíbula y estructura inferior
+                ctx.lineTo(size * 0.35, size * 0.3);
+                ctx.lineTo(size * 0.15, size * 0.45);
+                ctx.lineTo(-size * 0.15, size * 0.45);
+                ctx.lineTo(-size * 0.35, size * 0.3);
+                ctx.closePath();
                 ctx.fill();
 
-                // Cuencas oculares
-                ctx.fillStyle = 'rgba(10, 10, 10, 0.95)';
+                // Cuencas oculares oscuras (efecto calavera siniestra)
+                ctx.fillStyle = 'rgba(5, 5, 5, 0.95)';
                 ctx.beginPath();
-                ctx.arc(-size * 0.15, -size * 0.05, size * 0.08, 0, Math.PI * 2);
-                ctx.arc(size * 0.15, -size * 0.05, size * 0.08, 0, Math.PI * 2);
+                ctx.arc(-size * 0.16, -size * 0.08, size * 0.1, 0, Math.PI * 2);
+                ctx.arc(size * 0.16, -size * 0.08, size * 0.1, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Cavidad nasal
+                ctx.beginPath();
+                ctx.moveTo(0, size * 0.02);
+                ctx.lineTo(-size * 0.04, size * 0.14);
+                ctx.lineTo(size * 0.04, size * 0.14);
+                ctx.closePath();
                 ctx.fill();
 
                 ctx.restore();
@@ -569,25 +578,31 @@
             function render() {
                 ctx.clearRect(0, 0, width, height);
 
-                particles.forEach(p => {
-                    p.x += p.vx;
-                    p.y += p.vy;
+                elements.forEach(el => {
+                    el.wobble += el.wobbleSpeed;
+                    el.x += el.vx + Math.sin(el.wobble) * 0.4;
+                    el.y += el.vy;
 
-                    if (p.x < -p.radius) p.x = width + p.radius;
-                    if (p.x > width + p.radius) p.x = -p.radius;
-                    if (p.y < -p.radius) p.y = height + p.radius;
-                    if (p.y > height + p.radius) p.y = -p.radius;
+                    // Reiniciar posición por abajo cuando el humo sube y desaparece
+                    if (el.y < -el.radius) {
+                        el.y = height + el.radius;
+                        el.x = Math.random() * width;
+                    }
+                    if (el.x < -el.radius) el.x = width + el.radius;
+                    if (el.x > width + el.radius) el.x = -el.radius;
 
-                    if (p.isSkull) {
-                        drawSkullWithAura(p.x, p.y, p.radius * 0.5, p.alpha);
+                    if (el.isSkull) {
+                        drawSkullWithAura(el.x, el.y, el.radius * 0.6, el.alpha);
                     } else {
-                        const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
-                        gradient.addColorStop(0, `rgba(180, 180, 180, ${p.alpha})`);
+                        // Nubes de humo denso ambiental
+                        const gradient = ctx.createRadialGradient(el.x, el.y, 0, el.x, el.y, el.radius);
+                        gradient.addColorStop(0, `rgba(190, 190, 190, ${el.alpha * 0.8})`);
+                        gradient.addColorStop(0.6, `rgba(90, 90, 90, ${el.alpha * 0.3})`);
                         gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
                         ctx.fillStyle = gradient;
                         ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                        ctx.arc(el.x, el.y, el.radius, 0, Math.PI * 2);
                         ctx.fill();
                     }
                 });
@@ -611,13 +626,13 @@
 
             window.addEventListener('click', (e) => {
                 AudioFX.playClick();
-                for (let i = 0; i < 9; i++) {
+                for (let i = 0; i < 10; i++) {
                     sparks.push({
                         x: e.clientX,
                         y: e.clientY,
-                        vx: (Math.random() - 0.5) * 7,
-                        vy: (Math.random() - 0.5) * 7,
-                        radius: Math.random() * 3 + 1,
+                        vx: (Math.random() - 0.5) * 8,
+                        vy: (Math.random() - 0.5) * 8,
+                        radius: Math.random() * 3.5 + 1,
                         alpha: 1
                     });
                 }
@@ -628,7 +643,7 @@
                 sparks.forEach((s, index) => {
                     s.x += s.vx;
                     s.y += s.vy;
-                    s.alpha -= 0.04;
+                    s.alpha -= 0.035;
                     if (s.alpha <= 0) {
                         sparks.splice(index, 1);
                     } else {
@@ -643,7 +658,7 @@
             animateSparks();
         }
 
-        /* CONEXIÓN A GITHUB REST API PARA PERSISTENCIA EN NUBE (`data.json`) */
+        /* CONEXIÓN A GITHUB REST API */
         let githubFileSha = null;
 
         async function initData() {
@@ -668,7 +683,7 @@
                     await saveToGitHub();
                 }
             } catch(e) {
-                console.error("Error conectando con GitHub, cargando respaldo local:", e);
+                console.error("Error conectando con GitHub:", e);
                 initializeDefaultWeeks();
             }
 
@@ -716,9 +731,8 @@
                 };
 
                 const contentEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(dataPayload, null, 2))));
-
                 const bodyData = {
-                    message: "Actualización automática de portafolio UPLA (Espacio Infinito)",
+                    message: "Actualización de portafolio UPLA (Calaveras y Humo)",
                     content: contentEncoded
                 };
 
@@ -747,7 +761,6 @@
         function handleLogoUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 AppState.uplaLogo = e.target.result;
@@ -814,7 +827,6 @@
             renderWeekDeliverables();
             renderCourseProgress();
             updateUserProfileUI();
-
             event.target.value = '';
         }
 
@@ -843,7 +855,6 @@
             renderWeekDeliverables();
             renderCourseProgress();
             updateUserProfileUI();
-
             input.value = '';
         }
 
