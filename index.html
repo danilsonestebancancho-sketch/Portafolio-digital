@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Portafolio Académico UPLA - Edición Ultra Simplificada</title>
+    <title>Sistema de Portafolio Académico UPLA - Edición Cloud GitHub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -46,7 +46,6 @@
             overflow-x: hidden;
         }
 
-        /* Canvas de Humo y Calaveras en Fondo */
         #smoke-canvas {
             position: fixed;
             top: 0;
@@ -57,7 +56,6 @@
             pointer-events: none;
         }
 
-        /* Glassmorphism Estilo Carbono */
         .glass-panel {
             background: rgba(18, 18, 18, 0.75);
             backdrop-filter: blur(14px);
@@ -75,7 +73,6 @@
             transform: translateY(-2px);
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -91,7 +88,6 @@
             background: rgba(245, 245, 245, 0.8);
         }
 
-        /* Spark Effect Canvas Container */
         #click-sparks {
             position: fixed;
             top: 0;
@@ -119,10 +115,9 @@
     <canvas id="smoke-canvas"></canvas>
     <canvas id="click-sparks"></canvas>
 
-    <!-- MÓDULO DE AUTENTICACIÓN Y REGISTRO (BLOQUEA EL DASHBOARD HASTA INICIAR SESIÓN) -->
+    <!-- MÓDULO DE AUTENTICACIÓN Y REGISTRO -->
     <div id="auth-overlay" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 overflow-y-auto">
         <div class="glass-panel max-w-md w-full p-6 sm:p-8 rounded-3xl border border-neutral-700/60 relative my-auto">
-            <!-- Header Auth con Logo UPLA de carga directa -->
             <div class="text-center mb-6">
                 <div class="relative group inline-block mb-3">
                     <img id="auth-logo-preview" src="https://placehold.co/120x120/1a1a1a/f5f5f5?text=UPLA" alt="Logo UPLA" class="w-24 h-24 object-contain rounded-2xl mx-auto border border-neutral-700 bg-black/50 p-2 shadow-2xl">
@@ -136,17 +131,15 @@
                 <p class="text-xs text-neutral-400 mt-1">Sistema Web de Portafolio Académico</p>
             </div>
 
-            <!-- Pestañas Login / Registro -->
             <div class="grid grid-cols-2 gap-1 bg-neutral-900/90 p-1 rounded-xl border border-neutral-800 mb-6">
                 <button onclick="switchAuthTab('login')" id="tab-login-btn" class="py-2 text-xs font-bold rounded-lg bg-neutral-800 text-white transition">Iniciar Sesión</button>
                 <button onclick="switchAuthTab('register')" id="tab-register-btn" class="py-2 text-xs font-bold rounded-lg text-neutral-400 hover:text-white transition">Registrar Cuenta</button>
             </div>
 
-            <!-- Formulario de Login -->
             <form id="form-login" onsubmit="handleLoginSubmit(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-neutral-300 mb-1">Código Universitario</label>
-                    <input type="text" id="login-code" required placeholder="Ej. U202110481" class="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-neutral-400">
+                    <input type="text" id="login-code" required placeholder="Ej. U00053D" class="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-neutral-400">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-neutral-300 mb-1">Contraseña</label>
@@ -164,16 +157,15 @@
                 </div>
             </form>
 
-            <!-- Formulario de Registro -->
             <form id="form-register" onsubmit="handleRegisterSubmit(event)" class="space-y-3 hidden">
                 <div>
                     <label class="block text-xs font-bold text-neutral-300 mb-1">Nombres y Apellidos *</label>
-                    <input type="text" id="reg-name" required placeholder="Ej. María Alejandra Torres" class="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-neutral-400">
+                    <input type="text" id="reg-name" required placeholder="Ej. Danilson Esteban Cancho" class="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-neutral-400">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-xs font-bold text-neutral-300 mb-1">Código UPLA *</label>
-                        <input type="text" id="reg-code" required placeholder="U202110481" class="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-neutral-400">
+                        <input type="text" id="reg-code" required placeholder="U00053D" class="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-neutral-400">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-neutral-300 mb-1">Ciclo *</label>
@@ -189,7 +181,6 @@
                     <input type="text" id="reg-career" required value="Ingeniería de Sistemas y Computación" class="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
                 </div>
                 
-                <!-- Foto de Perfil Directa desde Archivo Local -->
                 <div>
                     <label class="block text-xs font-bold text-neutral-300 mb-1">Foto de Perfil (Archivo Local) *</label>
                     <div class="flex items-center gap-3 bg-neutral-900 p-2 rounded-xl border border-neutral-700">
@@ -214,9 +205,8 @@
     <header class="sticky top-0 z-40 glass-panel border-b border-neutral-800/80 px-4 lg:px-8 py-3">
         <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
             
-            <!-- Logo Editable de la UPLA -->
             <div class="flex items-center gap-3">
-                <div class="relative group cursor-pointer" title="Haga clic para cambiar el logo de la UPLA desde un archivo local">
+                <div class="relative group cursor-pointer" title="Haga clic para cambiar el logo de la UPLA">
                     <img id="nav-logo-img" src="https://placehold.co/120x120/1a1a1a/f5f5f5?text=UPLA" alt="Logo UPLA" class="w-10 h-10 object-contain rounded-xl border border-neutral-700 bg-black/60 p-1">
                     <label for="header-logo-input" class="absolute inset-0 bg-black/70 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition">
                         <i class="fa-solid fa-pen-to-square text-xs text-white"></i>
@@ -231,42 +221,36 @@
                 </div>
             </div>
 
-            <!-- Docente Readonly Banner (Se muestra solo al entrar como docente) -->
             <div id="teacher-mode-banner" class="hidden bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs px-3 py-1 rounded-xl font-semibold flex items-center gap-2">
                 <i class="fa-solid fa-eye"></i> MODO LECTURA DOCENTE
             </div>
 
-            <!-- Gamificación e Información de Perfil -->
             <div class="flex items-center gap-3">
-                <!-- Botón de Audio -->
                 <button onclick="toggleAudio()" id="audio-btn" title="Alternar Sonidos" class="p-2.5 rounded-xl glass-panel text-neutral-300 hover:text-white transition">
                     <i class="fa-solid fa-volume-high" id="audio-icon"></i>
                 </button>
 
-                <!-- Status XP -->
                 <div class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-neutral-900/90 border border-neutral-800">
                     <i class="fa-solid fa-skull text-neutral-300"></i>
                     <div class="text-xs">
                         <div class="flex justify-between font-bold text-slate-200 gap-2">
                             <span id="user-rank-title">Estudiante</span>
-                            <span class="text-neutral-400 font-mono" id="user-xp-display">0 XP</span>
+                            <span class="text-neutral-400 font-mono" id="user-xp-display">100 XP</span>
                         </div>
                         <div class="w-20 bg-neutral-800 h-1.5 rounded-full overflow-hidden mt-0.5">
-                            <div id="user-xp-bar" class="animated-xp-bar h-full w-0 transition-all duration-500"></div>
+                            <div id="user-xp-bar" class="animated-xp-bar h-full w-[15%] transition-all duration-500"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tarjeta de Perfil -->
                 <button onclick="openProfileModal()" class="flex items-center gap-2.5 p-1.5 pr-3 rounded-xl glass-panel hover:border-neutral-500 transition">
                     <img id="nav-avatar" src="https://placehold.co/80x80/242424/f5f5f5?text=User" alt="Avatar" class="w-9 h-9 rounded-lg object-cover border border-neutral-700">
                     <div class="text-left hidden sm:block">
-                        <div class="text-xs font-bold text-neutral-200 leading-tight" id="nav-user-name">Estudiante UPLA</div>
-                        <div class="text-[10px] text-neutral-400 font-mono" id="nav-user-code">U202110481</div>
+                        <div class="text-xs font-bold text-neutral-200 leading-tight" id="nav-user-name">Danilson Esteban Cancho</div>
+                        <div class="text-[10px] text-neutral-400 font-mono" id="nav-user-code">U00053D</div>
                     </div>
                 </button>
 
-                <!-- Botón Cerrar Sesión -->
                 <button onclick="logout()" title="Cerrar Sesión" class="p-2.5 rounded-xl glass-panel text-neutral-400 hover:text-rose-400 hover:border-rose-500/40 transition">
                     <i class="fa-solid fa-power-off"></i>
                 </button>
@@ -277,7 +261,6 @@
     <!-- MAIN CONTENT DASHBOARD -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        <!-- SIDEBAR DE CURSOS (4 Cols) -->
         <aside class="lg:col-span-4 flex flex-col gap-6">
             <div class="glass-panel p-5 rounded-2xl">
                 <h2 class="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-3 flex items-center justify-between">
@@ -286,7 +269,6 @@
                 </h2>
 
                 <div class="space-y-3" id="course-list">
-                    <!-- Curso 1 -->
                     <button onclick="switchCourse('algoritmos')" id="btn-course-algoritmos" class="w-full text-left p-3.5 rounded-xl border border-neutral-400/50 bg-neutral-800/60 transition-all flex items-center justify-between group">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-lg bg-neutral-800 border border-neutral-600 flex items-center justify-center text-white font-bold group-hover:scale-105 transition">
@@ -300,7 +282,6 @@
                         <span class="text-xs font-bold font-mono text-neutral-300" id="prog-algoritmos-text">0%</span>
                     </button>
 
-                    <!-- Curso 2 -->
                     <button onclick="switchCourse('desarrollo')" id="btn-course-desarrollo" class="w-full text-left p-3.5 rounded-xl border border-neutral-800 bg-neutral-900/50 hover:border-neutral-700 transition-all flex items-center justify-between group">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-lg bg-neutral-800 border border-neutral-700 flex items-center justify-center text-neutral-400 group-hover:scale-105 transition">
@@ -316,37 +297,32 @@
                 </div>
             </div>
 
-            <!-- Panel de Información Didáctica -->
             <div class="glass-panel p-5 rounded-2xl border-neutral-800">
                 <h3 class="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                     <i class="fa-solid fa-circle-info text-neutral-200"></i> Guía de Uso Simplificado
                 </h3>
                 <ul class="text-xs text-neutral-300 space-y-2 leading-relaxed list-disc list-inside">
                     <li>Haz clic en el ícono de lápiz en el título de la semana para **editar el tema** en tiempo real.</li>
-                    <li>Subida directa: haz clic en **"Seleccionar Archivo Local"** y se adjuntará **inmediatamente** sin llenar ningún formulario.</li>
-                    <li>Sube **ilimitados** archivos por semana.</li>
+                    <li>Subida directa: haz clic en **"Seleccionar Archivo Local"** y se adjuntará **inmediatamente**.</li>
+                    <li>Sube archivos ilimitados sincronizados directamente a tu base de datos en GitHub.</li>
                 </ul>
             </div>
         </aside>
 
-        <!-- ÁREA PRINCIPAL: SEMANAS Y SUBIDA ULTRASIMPLIFICADA DE TAREAS (8 Cols) -->
         <section class="lg:col-span-8 flex flex-col gap-6">
 
-            <!-- CONTENEDOR DE UNIDADES Y TÍTULO EDITABLE DE SEMANA -->
             <div class="glass-panel p-5 rounded-2xl">
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
                     <div class="w-full sm:w-auto">
                         <span class="text-xs font-mono text-neutral-400 uppercase tracking-widest font-semibold" id="current-course-badge">Algoritmos y Estructura de Datos</span>
                         
-                        <!-- TÍTULO EDITABLE EN TIEMPO REAL -->
                         <div class="flex items-center gap-2 mt-1">
-                            <h2 class="text-lg lg:text-xl font-black text-white" id="current-week-title">Semana 1: Tema Por Defecto</h2>
+                            <h2 class="text-lg lg:text-xl font-black text-white" id="current-week-title">Semana 1: Algoritmos y Complejidad O(n)</h2>
                             <button onclick="enableWeekTitleEdit()" id="btn-edit-week-title" class="p-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-xs transition" title="Editar Título de esta Semana">
                                 <i class="fa-solid fa-pencil"></i>
                             </button>
                         </div>
 
-                        <!-- Input oculto para edición in-situ -->
                         <div id="week-title-edit-box" class="hidden mt-2 flex items-center gap-2">
                             <input type="text" id="week-title-input" class="bg-neutral-900 border border-neutral-500 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none w-full sm:w-80">
                             <button onclick="saveWeekTitle()" class="px-3 py-1.5 bg-neutral-200 text-black font-bold text-xs rounded-xl hover:bg-white transition">Guardar</button>
@@ -354,7 +330,6 @@
                     </div>
                 </div>
 
-                <!-- Tabs de Unidades -->
                 <div class="grid grid-cols-4 gap-1.5 bg-neutral-950 p-1.5 rounded-xl border border-neutral-800/80 mb-4" id="unit-tabs">
                     <button onclick="selectUnit(1)" id="unit-tab-1" class="py-2 text-center text-xs font-bold rounded-lg bg-neutral-200 text-black transition">Unidad I</button>
                     <button onclick="selectUnit(2)" id="unit-tab-2" class="py-2 text-center text-xs font-bold rounded-lg text-neutral-400 hover:text-white transition">Unidad II</button>
@@ -362,30 +337,24 @@
                     <button onclick="selectUnit(4)" id="unit-tab-4" class="py-2 text-center text-xs font-bold rounded-lg text-neutral-400 hover:text-white transition">Unidad IV</button>
                 </div>
 
-                <!-- Botones de las 4 Semanas del Bloque -->
-                <div class="grid grid-cols-4 gap-2" id="week-buttons-container">
-                    <!-- Renderizado dinámico -->
-                </div>
+                <div class="grid grid-cols-4 gap-2" id="week-buttons-container"></div>
             </div>
 
-            <!-- CAJA DE SUBIDA DE ARCHIVOS Y TAREAS ULTRASIMPLIFICADA -->
             <div class="glass-panel p-6 rounded-2xl relative">
                 <div class="mb-5 pb-4 border-b border-neutral-800">
                     <h3 class="text-lg font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-cloud-arrow-up text-neutral-300"></i> Subir Entregables (Sin Límites)
                     </h3>
-                    <p class="text-xs text-neutral-400 mt-0.5">Selecciona tu archivo y se agregará inmediatamente a esta semana.</p>
+                    <p class="text-xs text-neutral-400 mt-0.5">Selecciona tu archivo y se sincronizará automáticamente con GitHub.</p>
                 </div>
 
-                <!-- CONTROLES DE SUBIDA ULTRA DIRECTOS (SIN FORMULARIO) -->
                 <div id="upload-actions-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <!-- OPCIÓN A: Carga Directa por Archivo Local -->
                     <div class="p-4 rounded-xl bg-neutral-900/90 border border-neutral-700/80 flex flex-col justify-between hover:border-neutral-500 transition">
                         <div>
                             <div class="flex items-center gap-2 mb-2 text-xs font-bold text-white">
                                 <i class="fa-solid fa-file-arrow-up text-neutral-300"></i> Archivo Local (ZIP, PDF, DOCX, Code)
                             </div>
-                            <p class="text-[11px] text-neutral-400 mb-3">Se adjunta con 1 solo clic sin solicitar datos adicionales.</p>
+                            <p class="text-[11px] text-neutral-400 mb-3">Se adjunta con 1 solo clic y se guarda en la nube.</p>
                         </div>
                         <label class="w-full py-2.5 px-4 bg-neutral-200 hover:bg-white text-black font-extrabold text-xs rounded-xl transition cursor-pointer text-center block">
                             <i class="fa-solid fa-plus mr-1"></i> Seleccionar Archivo Local
@@ -393,7 +362,6 @@
                         </label>
                     </div>
 
-                    <!-- OPCIÓN B: Pegar Enlace Directo (Google Drive / GitHub) -->
                     <div class="p-4 rounded-xl bg-neutral-900/90 border border-neutral-700/80 flex flex-col justify-between hover:border-neutral-500 transition">
                         <div>
                             <div class="flex items-center gap-2 mb-2 text-xs font-bold text-white">
@@ -408,12 +376,9 @@
                     </div>
                 </div>
 
-                <!-- LISTA DE ENTREGABLES SUBIDOS EN LA SEMANA -->
                 <div>
                     <h4 class="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-3">Entregables de esta Semana:</h4>
-                    <div id="deliverables-list" class="space-y-2.5">
-                        <!-- Renderizado de Archivos -->
-                    </div>
+                    <div id="deliverables-list" class="space-y-2.5"></div>
                 </div>
             </div>
 
@@ -421,7 +386,7 @@
 
     </main>
 
-    <!-- MODAL PERFIL DE USUARIO CON CAMBIO DE FOTO POR ARCHIVO LOCAL -->
+    <!-- MODAL PERFIL -->
     <div id="modal-profile" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="glass-panel max-w-md w-full p-6 rounded-2xl relative border-neutral-700">
             <button onclick="closeModal('modal-profile')" class="absolute top-4 right-4 text-neutral-400 hover:text-white">
@@ -430,14 +395,13 @@
             <h3 class="text-base font-extrabold text-white mb-4">Editar Perfil Estudiantil</h3>
 
             <div class="space-y-4">
-                <!-- Foto de Perfil Directa desde Archivo -->
                 <div>
                     <label class="block text-xs font-bold text-neutral-300 mb-1">Foto de Perfil (Archivo Local)</label>
                     <div class="flex items-center gap-3 bg-neutral-900 p-2.5 rounded-xl border border-neutral-700">
                         <img id="edit-avatar-preview" src="https://placehold.co/80x80/242424/f5f5f5?text=Foto" class="w-12 h-12 rounded-xl object-cover border border-neutral-700">
                         <div>
                             <input type="file" id="edit-avatar-file" accept="image/*" onchange="handleProfileAvatarUpload(event)" class="text-[11px] text-neutral-400 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-neutral-800 file:text-white cursor-pointer">
-                            <p class="text-[10px] text-neutral-400 mt-1">Sin requerir URLs. Carga directa.</p>
+                            <p class="text-[10px] text-neutral-400 mt-1">Carga directa en Base64.</p>
                         </div>
                     </div>
                 </div>
@@ -470,48 +434,38 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC & CORE APP CODE -->
+    <!-- SCRIPT DE GITHUB REST API Y LÓGICA DE PERSISTENCIA GLOBAL -->
     <script>
-        /* ==========================================================================
-           1. ESTADO GLOBAL DE LA APLICACIÓN
-           ========================================================================== */
+        // --- CONFIGURACIÓN DE TU CONEXIÓN A GITHUB (ESPACIO INFINITO) ---
+        const CONFIG_GITHUB = {
+          usuario: "danilsonestebancancho-sketch",
+          repositorio: "Portafolio-digital",
+          archivo: "data.json",
+          token: "github_pat_11B3WIDYY0ZseKTYNWenTd_p4b1hpuA88jyUid0o29917yZrIBDaoQWSER90c2fpJLEGUFV64rGyZrRx"
+        };
+
         const AppState = {
             authenticated: false,
             isTeacherMode: false,
-            currentCourse: 'algoritmos', // 'algoritmos' | 'desarrollo'
+            currentCourse: 'algoritmos',
             currentUnit: 1,
             currentWeek: 1,
             audioEnabled: true,
             userXP: 100,
-
-            // Configuración del Logo UPLA (Base64 guardado en localStorage)
             uplaLogo: 'https://placehold.co/120x120/1a1a1a/f5f5f5?text=UPLA',
-
-            // Usuario
             user: {
-                name: 'María Alejandra Torres',
-                code: 'U202110481',
+                name: 'Danilson Esteban Cancho',
+                code: 'U00053D',
                 career: 'Ingeniería de Sistemas y Computación',
                 cycle: '4to Ciclo',
                 avatar: 'https://placehold.co/80x80/242424/f5f5f5?text=UPLA'
             },
-
-            // Asignaturas y 16 Semanas por Asignatura
             courses: {
-                algoritmos: {
-                    name: "Algoritmos y Estructura de Datos",
-                    weeks: {}
-                },
-                desarrollo: {
-                    name: "Desarrollo de Aplicaciones I",
-                    weeks: {}
-                }
+                algoritmos: { name: "Algoritmos y Estructura de Datos", weeks: {} },
+                desarrollo: { name: "Desarrollo de Aplicaciones I", weeks: {} }
             }
         };
 
-        /* ==========================================================================
-           2. SINTETIZADOR DE AUDIO Y EFECTOS ESPECIALES (WEB AUDIO API)
-           ========================================================================== */
         const AudioFX = {
             ctx: null,
             init() {
@@ -558,9 +512,7 @@
             icon.className = AppState.audioEnabled ? 'fa-solid fa-volume-high text-white' : 'fa-solid fa-volume-xmark text-neutral-500';
         }
 
-        /* ==========================================================================
-           3. HUMO Y CALAVERAS FLOTANTES EN CANVAS 2D
-           ========================================================================== */
+        /* HUMO Y CALAVERAS FLOTANTES EN CANVAS 2D (CON AURA ESPECTRAL) */
         function initSmokeCanvas() {
             const canvas = document.getElementById('smoke-canvas');
             const ctx = canvas.getContext('2d');
@@ -572,40 +524,40 @@
                 height = canvas.height = window.innerHeight;
             });
 
-            // Partículas de Humo y Siluetas Espectrales
             const particles = [];
-            for (let i = 0; i < 35; i++) {
+            for (let i = 0; i < 40; i++) {
                 particles.push({
                     x: Math.random() * width,
                     y: Math.random() * height,
-                    radius: Math.random() * 100 + 60,
-                    vx: (Math.random() - 0.5) * 0.3,
-                    vy: (Math.random() - 0.5) * 0.3,
-                    alpha: Math.random() * 0.08 + 0.02,
-                    isSkull: Math.random() > 0.7
+                    radius: Math.random() * 110 + 50,
+                    vx: (Math.random() - 0.5) * 0.35,
+                    vy: (Math.random() - 0.5) * 0.35,
+                    alpha: Math.random() * 0.09 + 0.02,
+                    isSkull: Math.random() > 0.65
                 });
             }
 
-            let mouseX = width / 2;
-            let mouseY = height / 2;
-
-            window.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-            });
-
-            function drawSkull(x, y, size, alpha) {
+            function drawSkullWithAura(x, y, size, alpha) {
                 ctx.save();
                 ctx.translate(x, y);
-                ctx.fillStyle = `rgba(225, 225, 225, ${alpha * 0.8})`;
                 
-                // Cabeza
+                // Aura luminosa alrededor de la calavera
+                const aura = ctx.createRadialGradient(0, 0, 5, 0, 0, size * 1.2);
+                aura.addColorStop(0, `rgba(245, 245, 245, ${alpha * 0.4})`);
+                aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = aura;
+                ctx.beginPath();
+                ctx.arc(0, 0, size * 1.2, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Cabeza de la calavera
+                ctx.fillStyle = `rgba(230, 230, 230, ${alpha * 0.9})`;
                 ctx.beginPath();
                 ctx.arc(0, 0, size * 0.4, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Ojos
-                ctx.fillStyle = 'rgba(10, 10, 10, 0.9)';
+                // Cuencas oculares
+                ctx.fillStyle = 'rgba(10, 10, 10, 0.95)';
                 ctx.beginPath();
                 ctx.arc(-size * 0.15, -size * 0.05, size * 0.08, 0, Math.PI * 2);
                 ctx.arc(size * 0.15, -size * 0.05, size * 0.08, 0, Math.PI * 2);
@@ -627,7 +579,7 @@
                     if (p.y > height + p.radius) p.y = -p.radius;
 
                     if (p.isSkull) {
-                        drawSkull(p.x, p.y, p.radius * 0.5, p.alpha);
+                        drawSkullWithAura(p.x, p.y, p.radius * 0.5, p.alpha);
                     } else {
                         const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
                         gradient.addColorStop(0, `rgba(180, 180, 180, ${p.alpha})`);
@@ -650,7 +602,6 @@
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-
             let sparks = [];
 
             window.addEventListener('resize', () => {
@@ -660,13 +611,13 @@
 
             window.addEventListener('click', (e) => {
                 AudioFX.playClick();
-                for (let i = 0; i < 8; i++) {
+                for (let i = 0; i < 9; i++) {
                     sparks.push({
                         x: e.clientX,
                         y: e.clientY,
-                        vx: (Math.random() - 0.5) * 6,
-                        vy: (Math.random() - 0.5) * 6,
-                        radius: Math.random() * 2.5 + 1,
+                        vx: (Math.random() - 0.5) * 7,
+                        vy: (Math.random() - 0.5) * 7,
+                        radius: Math.random() * 3 + 1,
                         alpha: 1
                     });
                 }
@@ -692,42 +643,33 @@
             animateSparks();
         }
 
-        /* ==========================================================================
-           4. PERSISTENCIA Y CARGA DE DATOS LOCALSTORAGE
-           ========================================================================== */
-        function initData() {
-            const savedData = localStorage.getItem('UPLA_PORTFOLIO_STATE_V3');
+        /* CONEXIÓN A GITHUB REST API PARA PERSISTENCIA EN NUBE (`data.json`) */
+        let githubFileSha = null;
 
-            if (savedData) {
-                try {
-                    const parsed = JSON.parse(savedData);
-                    AppState.courses = parsed.courses;
-                    AppState.user = parsed.user || AppState.user;
-                    AppState.userXP = parsed.userXP || 100;
-                    AppState.uplaLogo = parsed.uplaLogo || AppState.uplaLogo;
-                    AppState.authenticated = parsed.authenticated || false;
-                } catch(e) {
-                    console.error("Error al leer localStorage:", e);
-                }
-            } else {
-                // Crear estructura inicial de las 16 semanas por curso
-                ['algoritmos', 'desarrollo'].forEach(cKey => {
-                    for (let w = 1; w <= 16; w++) {
-                        const unitNum = Math.ceil(w / 4);
-                        AppState.courses[cKey].weeks[w] = {
-                            title: `Semana ${w}: Tema por Definir`,
-                            unit: unitNum,
-                            deliverables: []
-                        };
-                    }
+        async function initData() {
+            try {
+                const url = `https://api.github.com/repos/${CONFIG_GITHUB.usuario}/${CONFIG_GITHUB.repositorio}/contents/${CONFIG_GITHUB.archivo}`;
+                const res = await fetch(url, {
+                    headers: { 'Authorization': `token ${CONFIG_GITHUB.token}` }
                 });
 
-                // Nombres temáticos de muestra
-                AppState.courses.algoritmos.weeks[1].title = "Semana 1: Algoritmos y Complejidad O(n)";
-                AppState.courses.algoritmos.weeks[2].title = "Semana 2: Arreglos y Búsqueda Binaria";
-                AppState.courses.desarrollo.weeks[1].title = "Semana 1: Arquitectura Frontend Web";
-
-                saveToLocalStorage();
+                if (res.ok) {
+                    const json = await res.json();
+                    githubFileSha = json.sha;
+                    const contentDecoded = JSON.parse(decodeURIComponent(escape(atob(json.content))));
+                    
+                    AppState.courses = contentDecoded.courses || AppState.courses;
+                    AppState.user = contentDecoded.usuario || AppState.user;
+                    AppState.userXP = contentDecoded.usuario?.xp || 100;
+                    AppState.uplaLogo = contentDecoded.uplaLogo || AppState.uplaLogo;
+                    AppState.authenticated = contentDecoded.authenticated || false;
+                } else {
+                    initializeDefaultWeeks();
+                    await saveToGitHub();
+                }
+            } catch(e) {
+                console.error("Error conectando con GitHub, cargando respaldo local:", e);
+                initializeDefaultWeeks();
             }
 
             updateLogosUI();
@@ -737,31 +679,79 @@
             if (AppState.authenticated) {
                 document.getElementById('auth-overlay').classList.add('hidden');
             }
-
             selectUnit(1);
         }
 
-        function saveToLocalStorage() {
-            localStorage.setItem('UPLA_PORTFOLIO_STATE_V3', JSON.stringify({
-                courses: AppState.courses,
-                user: AppState.user,
-                userXP: AppState.userXP,
-                uplaLogo: AppState.uplaLogo,
-                authenticated: AppState.authenticated
-            }));
+        function initializeDefaultWeeks() {
+            ['algoritmos', 'desarrollo'].forEach(cKey => {
+                for (let w = 1; w <= 16; w++) {
+                    const unitNum = Math.ceil(w / 4);
+                    AppState.courses[cKey].weeks[w] = {
+                        title: `Semana ${w}: Tema por Definir`,
+                        unit: unitNum,
+                        deliverables: []
+                    };
+                }
+            });
+            AppState.courses.algoritmos.weeks[1].title = "Semana 1: Algoritmos y Complejidad O(n)";
+            AppState.courses.algoritmos.weeks[2].title = "Semana 2: Arreglos y Búsqueda Binaria";
+            AppState.courses.desarrollo.weeks[1].title = "Semana 1: Arquitectura Frontend Web";
         }
 
-        /* ==========================================================================
-           5. GESTIÓN DE LOGO Y FOTO DE PERFIL SIN URL (BASE64 DIRECTO)
-           ========================================================================== */
+        async function saveToGitHub() {
+            try {
+                const url = `https://api.github.com/repos/${CONFIG_GITHUB.usuario}/${CONFIG_GITHUB.repositorio}/contents/${CONFIG_GITHUB.archivo}`;
+                
+                const dataPayload = {
+                    usuario: {
+                        nombre: AppState.user.name,
+                        codigo: AppState.user.code,
+                        carrera: AppState.user.career,
+                        ciclo: AppState.user.cycle,
+                        xp: AppState.userXP
+                    },
+                    uplaLogo: AppState.uplaLogo,
+                    authenticated: AppState.authenticated,
+                    courses: AppState.courses
+                };
+
+                const contentEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(dataPayload, null, 2))));
+
+                const bodyData = {
+                    message: "Actualización automática de portafolio UPLA (Espacio Infinito)",
+                    content: contentEncoded
+                };
+
+                if (githubFileSha) {
+                    bodyData.sha = githubFileSha;
+                }
+
+                const res = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${CONFIG_GITHUB.token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(bodyData)
+                });
+
+                if (res.ok) {
+                    const jsonRes = await res.json();
+                    githubFileSha = jsonRes.content.sha;
+                }
+            } catch(e) {
+                console.error("Error al guardar en GitHub:", e);
+            }
+        }
+
         function handleLogoUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                AppState.uplaLogo = e.target.result; // Base64
-                saveToLocalStorage();
+                AppState.uplaLogo = e.target.result;
+                saveToGitHub();
                 updateLogosUI();
                 AudioFX.playSuccess();
             };
@@ -776,7 +766,6 @@
         function handleRegisterAvatar(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 document.getElementById('reg-avatar-preview').src = e.target.result;
@@ -788,7 +777,6 @@
         function handleProfileAvatarUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 document.getElementById('edit-avatar-preview').src = e.target.result;
@@ -797,9 +785,6 @@
             reader.readAsDataURL(file);
         }
 
-        /* ==========================================================================
-           6. SUBIDA DE TAREAS ULTRASIMPLIFICADA (SIN FORMULARIO)
-           ========================================================================== */
         function handleDirectFileUpload(event) {
             const files = event.target.files;
             if (!files || files.length === 0) return;
@@ -811,7 +796,6 @@
                     ? (file.size / (1024 * 1024)).toFixed(1) + ' MB' 
                     : Math.round(file.size / 1024) + ' KB';
 
-                // Crear el entregable directamente
                 const newDeliverable = {
                     id: 'del-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4),
                     name: file.name,
@@ -825,20 +809,18 @@
             });
 
             AppState.userXP += 40;
-            saveToLocalStorage();
+            saveToGitHub();
             AudioFX.playSuccess();
             renderWeekDeliverables();
             renderCourseProgress();
             updateUserProfileUI();
 
-            // Limpiar input
             event.target.value = '';
         }
 
         function handleDirectUrlUpload() {
             const input = document.getElementById('direct-url-input');
             const url = input.value.trim();
-
             if (!url) return;
 
             const currentWeekData = AppState.courses[AppState.currentCourse].weeks[AppState.currentWeek];
@@ -856,7 +838,7 @@
             currentWeekData.deliverables.push(newDeliverable);
             AppState.userXP += 30;
 
-            saveToLocalStorage();
+            saveToGitHub();
             AudioFX.playSuccess();
             renderWeekDeliverables();
             renderCourseProgress();
@@ -882,17 +864,13 @@
             const currentWeekData = AppState.courses[AppState.currentCourse].weeks[AppState.currentWeek];
             currentWeekData.deliverables = currentWeekData.deliverables.filter(d => d.id !== delivId);
 
-            saveToLocalStorage();
+            saveToGitHub();
             renderWeekDeliverables();
             renderCourseProgress();
         }
 
-        /* ==========================================================================
-           7. EDICIÓN DEL TÍTULO DE LA SEMANA EN TIEMPO REAL
-           ========================================================================== */
         function enableWeekTitleEdit() {
             if (AppState.isTeacherMode) return;
-
             const currentTitle = AppState.courses[AppState.currentCourse].weeks[AppState.currentWeek].title;
             document.getElementById('week-title-input').value = currentTitle;
             document.getElementById('week-title-edit-box').classList.remove('hidden');
@@ -903,19 +881,15 @@
             if (!newTitle) return;
 
             AppState.courses[AppState.currentCourse].weeks[AppState.currentWeek].title = newTitle;
-            saveToLocalStorage();
+            saveToGitHub();
 
             document.getElementById('current-week-title').textContent = newTitle;
             document.getElementById('week-title-edit-box').classList.add('hidden');
             selectUnitUIOnly(AppState.currentUnit);
         }
 
-        /* ==========================================================================
-           8. RENDERIZADO Y NAVEGACIÓN DE UNIDADES Y SEMANAS
-           ========================================================================== */
         function switchCourse(cKey) {
             AppState.currentCourse = cKey;
-
             const btnAlgo = document.getElementById('btn-course-algoritmos');
             const btnDesa = document.getElementById('btn-course-desarrollo');
 
@@ -934,7 +908,6 @@
 
         function selectUnit(unitNum) {
             AppState.currentUnit = unitNum;
-
             for (let i = 1; i <= 4; i++) {
                 const tab = document.getElementById(`unit-tab-${i}`);
                 if (i === unitNum) {
@@ -956,9 +929,7 @@
                 const btn = document.createElement('button');
                 btn.onclick = () => selectWeek(w);
                 btn.className = `p-3 rounded-xl border text-left transition flex flex-col justify-between ${
-                    isSelected 
-                    ? 'border-neutral-300 bg-neutral-800/80 shadow-lg' 
-                    : 'border-neutral-800 bg-neutral-900/60 hover:border-neutral-700'
+                    isSelected ? 'border-neutral-300 bg-neutral-800/80 shadow-lg' : 'border-neutral-800 bg-neutral-900/60 hover:border-neutral-700'
                 }`;
 
                 btn.innerHTML = `
@@ -968,20 +939,16 @@
                     </div>
                     <span class="text-xs font-bold text-neutral-200 line-clamp-1">Semana ${w}</span>
                 `;
-
                 weekContainer.appendChild(btn);
             }
-
             selectWeek(startWeek);
         }
 
         function selectWeek(weekNum) {
             AppState.currentWeek = weekNum;
             const weekData = AppState.courses[AppState.currentCourse].weeks[weekNum];
-
             document.getElementById('current-week-title').textContent = weekData.title;
             document.getElementById('week-title-edit-box').classList.add('hidden');
-
             renderWeekDeliverables();
             selectUnitUIOnly(AppState.currentUnit);
         }
@@ -990,15 +957,11 @@
             const startWeek = (unitNum - 1) * 4 + 1;
             const weekContainer = document.getElementById('week-buttons-container');
             const buttons = weekContainer.querySelectorAll('button');
-
             buttons.forEach((btn, index) => {
                 const w = startWeek + index;
                 const isSelected = AppState.currentWeek === w;
-
                 btn.className = `p-3 rounded-xl border text-left transition flex flex-col justify-between ${
-                    isSelected 
-                    ? 'border-neutral-300 bg-neutral-800/80 shadow-lg' 
-                    : 'border-neutral-800 bg-neutral-900/60 hover:border-neutral-700'
+                    isSelected ? 'border-neutral-300 bg-neutral-800/80 shadow-lg' : 'border-neutral-800 bg-neutral-900/60 hover:border-neutral-700'
                 }`;
             });
         }
@@ -1013,14 +976,13 @@
                     <div class="text-center py-8 border border-dashed border-neutral-800 rounded-xl bg-neutral-950/40">
                         <i class="fa-solid fa-folder-open text-2xl text-neutral-600 mb-1"></i>
                         <p class="text-xs text-neutral-400">No hay entregables subidos en esta semana.</p>
-                        <p class="text-[10px] text-neutral-500 mt-0.5">Utiliza la caja superior para subir archivos locales directamente.</p>
+                        <p class="text-[10px] text-neutral-500 mt-0.5">Sube archivos locales para sincronizarlos en GitHub.</p>
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = '';
-
             deliverables.forEach(item => {
                 let badgeIcon = 'fa-file';
                 if (item.type === 'code') badgeIcon = 'fa-code';
@@ -1042,24 +1004,14 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-2 shrink-0">
-                        ${item.isUrl ? `
-                            <a href="${item.url}" target="_blank" class="px-2.5 py-1 bg-neutral-800 hover:bg-neutral-700 text-[11px] font-semibold rounded-lg text-white border border-neutral-700">Abrir Enlace</a>
-                        ` : ''}
-                        ${!AppState.isTeacherMode ? `
-                            <button onclick="deleteDeliverable('${item.id}')" class="p-1.5 text-neutral-500 hover:text-rose-400 transition">
-                                <i class="fa-solid fa-trash-can text-xs"></i>
-                            </button>
-                        ` : ''}
+                        ${item.isUrl ? `<a href="${item.url}" target="_blank" class="px-2.5 py-1 bg-neutral-800 hover:bg-neutral-700 text-[11px] font-semibold rounded-lg text-white border border-neutral-700">Abrir Enlace</a>` : ''}
+                        ${!AppState.isTeacherMode ? `<button onclick="deleteDeliverable('${item.id}')" class="p-1.5 text-neutral-500 hover:text-rose-400 transition"><i class="fa-solid fa-trash-can text-xs"></i></button>` : ''}
                     </div>
                 `;
-
                 container.appendChild(card);
             });
         }
 
-        /* ==========================================================================
-           9. PROGRESO Y AUTENTICACIÓN
-           ========================================================================== */
         function renderCourseProgress() {
             ['algoritmos', 'desarrollo'].forEach(cKey => {
                 let activeWeeks = 0;
@@ -1076,7 +1028,6 @@
             document.getElementById('nav-user-code').textContent = AppState.user.code;
             document.getElementById('nav-avatar').src = AppState.user.avatar;
             document.getElementById('edit-avatar-preview').src = AppState.user.avatar;
-
             document.getElementById('user-xp-display').textContent = `${AppState.userXP} XP`;
             const barPct = Math.min(100, (AppState.userXP / 800) * 100);
             document.getElementById('user-xp-bar').style.width = `${barPct}%`;
@@ -1100,7 +1051,7 @@
             e.preventDefault();
             AppState.authenticated = true;
             AppState.isTeacherMode = false;
-            saveToLocalStorage();
+            saveToGitHub();
             document.getElementById('auth-overlay').classList.add('hidden');
             AudioFX.playSuccess();
         }
@@ -1111,12 +1062,10 @@
             AppState.user.code = document.getElementById('reg-code').value;
             AppState.user.career = document.getElementById('reg-career').value;
             AppState.user.cycle = document.getElementById('reg-cycle').value;
-
             AppState.authenticated = true;
             AppState.isTeacherMode = false;
-            saveToLocalStorage();
+            saveToGitHub();
             updateUserProfileUI();
-
             document.getElementById('auth-overlay').classList.add('hidden');
             AudioFX.playSuccess();
         }
@@ -1124,11 +1073,9 @@
         function loginAsTeacher() {
             AppState.authenticated = true;
             AppState.isTeacherMode = true;
-            
             document.getElementById('teacher-mode-banner').classList.remove('hidden');
             document.getElementById('upload-actions-container').classList.add('hidden');
             document.getElementById('btn-edit-week-title').classList.add('hidden');
-
             document.getElementById('auth-overlay').classList.add('hidden');
             renderWeekDeliverables();
             AudioFX.playSuccess();
@@ -1137,7 +1084,7 @@
         function logout() {
             AppState.authenticated = false;
             AppState.isTeacherMode = false;
-            saveToLocalStorage();
+            saveToGitHub();
             location.reload();
         }
 
@@ -1154,8 +1101,7 @@
             AppState.user.code = document.getElementById('prof-code').value;
             AppState.user.career = document.getElementById('prof-career').value;
             AppState.user.cycle = document.getElementById('prof-cycle').value;
-
-            saveToLocalStorage();
+            saveToGitHub();
             updateUserProfileUI();
             closeModal('modal-profile');
         }
